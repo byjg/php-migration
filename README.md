@@ -1,6 +1,8 @@
 # Database Migrations
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/byjg/migration/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/byjg/migration/?branch=master)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/571cb412-7018-4938-a4e5-0f9ce44956d7/mini.png)](https://insight.sensiolabs.com/projects/571cb412-7018-4938-a4e5-0f9ce44956d7)
 
-A simple library in PHP for managing a set of database migrations using pure Sql.
+A micro project in PHP for managing a set of database migrations using pure Sql.
 
 Database Migration is a set of commands for upgrade or downgrade a database.
 This library uses only SQL commands.

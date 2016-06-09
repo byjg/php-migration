@@ -6,9 +6,5 @@ $connection = new \ByJG\AnyDataset\ConnectionManagement('mysql://migrateuser:mig
 
 $migration = new \ByJG\DbMigration\Migration($connection, '.');
 
-//$migration->reset();
-
-//$migration->up(1);
-
-$migration->down(1);
+$migration->reset();
 
