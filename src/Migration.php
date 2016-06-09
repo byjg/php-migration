@@ -67,11 +67,23 @@ class Migration
         return $this->_dbCommand;
     }
 
+    /**
+     * Get the full path and name of the "base.sql" script
+     *
+     * @return string
+     */
     public function getBaseSql()
     {
         return $this->_folder . "/base.sql";
     }
 
+    /**
+     * Get the full path script based on the version
+     *
+     * @param $version
+     * @param $increment
+     * @return string
+     */
     public function getMigrationSql($version, $increment)
     {
         return $this->_folder 
@@ -79,7 +91,12 @@ class Migration
             . "/" . ($increment < 0 ? "down" : "up")
             . "/" . str_pad($version, 5, '0', STR_PAD_LEFT) . ".sql";
     }
-    
+
+    /**
+     * Create a fresh database based on the "base.sql" script and run all migration scripts
+     *
+     * @param int $upVersion
+     */
     public function reset($upVersion = null)
     {
         $this->getDbCommand()->dropDatabase();
@@ -88,12 +105,23 @@ class Migration
         $this->getDbCommand()->createVersion();
         $this->up($upVersion);
     }
-    
+
+    /**
+     * Get the current database version
+     *
+     * @return int
+     */
     public function getCurrentVersion()
     {
         return intval($this->getDbCommand()->getVersion());
     }
 
+    /**
+     * @param $currentVersion
+     * @param $upVersion
+     * @param $increment
+     * @return bool
+     */
     protected function canContinue($currentVersion, $upVersion, $increment)
     {
         $existsUpVersion = ($upVersion !== null);
@@ -104,7 +132,13 @@ class Migration
 
         return !($existsUpVersion && $compareVersion);
     }
-    
+
+    /**
+     * Method for execute the migration.
+     *
+     * @param int $upVersion
+     * @param int $increment Can accept 1 for UP or -1 for down
+     */
     protected function migrate($upVersion, $increment)
     {
         $currentVersion = $this->getCurrentVersion() + $increment;
@@ -117,12 +151,22 @@ class Migration
         }
     }
 
+    /**
+     * Run all scripts to up the database version from current up to latest version or the specified version.
+     *
+     * @param int $upVersion
+     */
     public function up($upVersion = null)
     {
         $this->migrate($upVersion, 1);
     }
 
-    public function down($upVersion = null)
+    /**
+     * Run all scripts to down the database version from current version up to the specified version.
+     *
+     * @param int $upVersion
+     */
+    public function down($upVersion)
     {
         $this->migrate($upVersion, -1);
     }
