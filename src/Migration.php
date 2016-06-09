@@ -40,7 +40,7 @@ class Migration
         $this->_folder = $_folder;
 
         if (!file_exists($this->_folder) || !is_dir($this->_folder)) {
-            throw new \InvalidArgumentException("Base migration directory '{$this->_folder}' not found");
+            throw new \InvalidArgumentException("Base migrations directory '{$this->_folder}' not found");
         }
     }
 
@@ -61,7 +61,7 @@ class Migration
     public function getDbCommand()
     {
         if (is_null($this->_dbCommand)) {
-            $class = "\\ByJG\\DbMigration\\Commands\\" . $this->_connection->getDriver() . "Command";
+            $class = "\\ByJG\\DbMigration\\Commands\\" . ucfirst($this->_connection->getDriver()) . "Command";
             $this->_dbCommand = new $class($this->getDbDataset());
         }
         return $this->_dbCommand;
@@ -72,9 +72,12 @@ class Migration
         return $this->_folder . "/base.sql";
     }
 
-    public function getMigrationSql($version)
+    public function getMigrationSql($version, $increment)
     {
-        return $this->_folder . "/migrations/" . str_pad($version, 5, '0') . ".sql";
+        return $this->_folder 
+            . "/migrations" 
+            . "/" . ($increment < 0 ? "down" : "up")
+            . "/" . str_pad($version, 5, '0', STR_PAD_LEFT) . ".sql";
     }
     
     public function reset($upVersion = null)
@@ -90,19 +93,37 @@ class Migration
     {
         return intval($this->getDbCommand()->getVersion());
     }
-    
-    public function up($upVersion = null)
+
+    protected function canContinue($currentVersion, $upVersion, $increment)
     {
-        $currentVersion = $this->getCurrentVersion();
-        
-        while (file_exists($file = $this->getMigrationSql($currentVersion))) {
-            $this->getDbDataset()->execSQL(file_get_contents($file));
-            $this->getDbCommand()->setVersion($currentVersion++);
-            
-            if (!empty($upVersion) && $currentVersion > $upVersion) {
-                break;
-            }
-        }
+        $existsUpVersion = ($upVersion !== null);
+        $compareVersion = strcmp(
+                str_pad($currentVersion, 5, '0', STR_PAD_LEFT),
+                str_pad($upVersion, 5, '0', STR_PAD_LEFT)
+            ) == $increment;
+
+        return !($existsUpVersion && $compareVersion);
     }
     
+    protected function migrate($upVersion, $increment)
+    {
+        $currentVersion = $this->getCurrentVersion() + $increment;
+        
+        while ($this->canContinue($currentVersion, $upVersion, $increment)
+            && file_exists($file = $this->getMigrationSql($currentVersion, $increment))
+        ) {
+            $this->getDbDataset()->execSQL(file_get_contents($file));
+            $this->getDbCommand()->setVersion($currentVersion++);
+        }
+    }
+
+    public function up($upVersion = null)
+    {
+        $this->migrate($upVersion, 1);
+    }
+
+    public function down($upVersion = null)
+    {
+        $this->migrate($upVersion, -1);
+    }
 }

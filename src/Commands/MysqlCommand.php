@@ -41,7 +41,7 @@ class MySqlCommand implements CommandInterface
     {
         $database = $this->getDbDataset()->getConnectionManagement()->getDatabase();
 
-        $this->getDbDataset()->execSQL("drop database `$database``");
+        $this->getDbDataset()->execSQL("drop database `$database`");
     }
 
     public function getVersion()
@@ -57,6 +57,12 @@ class MySqlCommand implements CommandInterface
     public function createVersion()
     {
         $this->getDbDataset()->execSQL('CREATE TABLE IF NOT EXISTS migration_table (version int)');
+
+        // Get the version to check if exists
+        $version = $this->getVersion();
+        if ($version === false) {
+            $this->getDbDataset()->execSQL('insert into migration_table values(0)');
+        }
     }
 
 }
