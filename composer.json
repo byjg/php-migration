@@ -1,0 +1,19 @@
+{
+    "name": "byjg/migration",
+    "description": "Simple library in PHP for managing a set of database migrations using pure Sql.",
+    "authors": [
+        {
+            "name": "jg",
+            "email": "joao@byjg.com.br"
+        }
+    ],
+    "require": {
+        "byjg/anydataset": "2.1.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "ByJG\\DbMigration\\": "src/"
+        }
+    },
+    "license": "MIT"
+}
