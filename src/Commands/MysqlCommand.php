@@ -2,31 +2,19 @@
 
 namespace ByJG\DbMigration\Commands;
 
+use ByJG\AnyDataset\ConnectionManagement;
 use ByJG\AnyDataset\Repository\DBDataset;
 
-class MySqlCommand implements CommandInterface
+class MySqlCommand extends AbstractCommand
 {
-    /**
-     * @var DBDataset
-     */
-    protected $_dbDataset;
 
-    /**
-     * MySqlCommand constructor.
-     *
-     * @param DBDataset $_dbDataset
-     */
-    public function __construct(DBDataset $_dbDataset)
+    public static function prepareEnvironment(ConnectionManagement $connection)
     {
-        $this->_dbDataset = $_dbDataset;
-    }
+        $database = $connection->getDatabase();
 
-    /**
-     * @return DBDataset
-     */
-    public function getDbDataset()
-    {
-        return $this->_dbDataset;
+        $newConnection = new ConnectionManagement(str_replace("/$database", "/", $connection->getDbConnectionString()));
+        $dbDataset = new DBDataset($newConnection->getDbConnectionString());
+        $dbDataset->execSQL("CREATE SCHEMA IF NOT EXISTS `$database` DEFAULT CHARACTER SET utf8 ;");
     }
 
     public function createDatabase()
@@ -44,25 +32,14 @@ class MySqlCommand implements CommandInterface
         $this->getDbDataset()->execSQL("drop database `$database`");
     }
 
-    public function getVersion()
-    {
-        return $this->getDbDataset()->getScalar('SELECT version FROM migration_table');
-    }
-
-    public function setVersion($version)
-    {
-        $this->getDbDataset()->execSQL('UPDATE migration_table SET version = [[version]]', ['version' => $version]);
-    }
-
     public function createVersion()
     {
-        $this->getDbDataset()->execSQL('CREATE TABLE IF NOT EXISTS migration_table (version int)');
-
-        // Get the version to check if exists
-        $version = $this->getVersion();
-        if ($version === false) {
-            $this->getDbDataset()->execSQL('insert into migration_table values(0)');
-        }
+        $this->getDbDataset()->execSQL('CREATE TABLE IF NOT EXISTS migration_version (version int)');
+        $this->checkExistsVersion();
     }
 
+    public function executeSql($sql)
+    {
+        $this->getDbDataset()->execSQL($sql);
+    }
 }

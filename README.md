@@ -2,7 +2,7 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/byjg/migration/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/byjg/migration/?branch=master)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/571cb412-7018-4938-a4e5-0f9ce44956d7/mini.png)](https://insight.sensiolabs.com/projects/571cb412-7018-4938-a4e5-0f9ce44956d7)
 
-A micro project in PHP for managing a set of database migrations using pure Sql.
+A micro framework in PHP for managing a set of database migrations using pure Sql.
 
 Database Migration is a set of commands for upgrade or downgrade a database.
 This library uses only SQL commands.
@@ -21,7 +21,8 @@ See an example:
 $connection = new ConnectionManagement('mysql://migrateuser:migratepwd@localhost/migratedatabase');
 $migration = new Migration($connection, '.');
 
-// Create the database from "base.sql" script and run ALL existing scripts for up the database version; 
+// Restore the database using the "base.sql" script and run ALL existing scripts for up the database version
+// and run the up() method to maintain the database updated;
 $migration->reset();
 
 // Run ALL existing scripts for up the database version from the current version to the last version; 

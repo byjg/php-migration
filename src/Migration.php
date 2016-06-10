@@ -61,10 +61,15 @@ class Migration
     public function getDbCommand()
     {
         if (is_null($this->_dbCommand)) {
-            $class = "\\ByJG\\DbMigration\\Commands\\" . ucfirst($this->_connection->getDriver()) . "Command";
+            $class = $this->getCommandClassName();
             $this->_dbCommand = new $class($this->getDbDataset());
         }
         return $this->_dbCommand;
+    }
+
+    protected function getCommandClassName()
+    {
+        return "\\ByJG\\DbMigration\\Commands\\" . ucfirst($this->_connection->getDriver()) . "Command";
     }
 
     /**
@@ -93,7 +98,17 @@ class Migration
     }
 
     /**
-     * Create a fresh database based on the "base.sql" script and run all migration scripts
+     * Create the database it it does not exists. Does not use this methos in a production environment; 
+     */
+    public function prepareEnvironment()
+    {
+        $class = $this->getCommandClassName();
+        $class::prepareEnvironment($this->_connection);
+    }
+    
+    /**
+     * Restore the database using the "base.sql" script and run all migration scripts
+     * Note: the database must exists. If dont exist run the method prepareEnvironment.  
      *
      * @param int $upVersion
      */
@@ -101,7 +116,7 @@ class Migration
     {
         $this->getDbCommand()->dropDatabase();
         $this->getDbCommand()->createDatabase();
-        $this->getDbDataset()->execSQL(file_get_contents($this->getBaseSql()));
+        $this->getDbCommand()->executeSql(file_get_contents($this->getBaseSql()));
         $this->getDbCommand()->createVersion();
         $this->up($upVersion);
     }
@@ -146,7 +161,7 @@ class Migration
         while ($this->canContinue($currentVersion, $upVersion, $increment)
             && file_exists($file = $this->getMigrationSql($currentVersion, $increment))
         ) {
-            $this->getDbDataset()->execSQL(file_get_contents($file));
+            $this->getDbCommand()->executeSql(file_get_contents($file));
             $this->getDbCommand()->setVersion($currentVersion++);
         }
     }

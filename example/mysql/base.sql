@@ -13,6 +13,6 @@ create table users (
 
 );
 
-insert into users (name, createdate) value ('John Doe', '20160110');
-insert into users (name, createdate) value ('Jane Doe', '20151230');
+insert into users (name, createdate) values ('John Doe', '20160110');
+insert into users (name, createdate) values ('Jane Doe', '20151230');
 

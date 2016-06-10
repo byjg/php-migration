@@ -1,6 +1,6 @@
 {
     "name": "byjg/migration",
-    "description": "A micro project in PHP for managing a set of database migrations using pure Sql.",
+    "description": "A micro framework in PHP for managing a set of database migrations using pure Sql.",
     "authors": [
         {
             "name": "jg",
