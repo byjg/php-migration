@@ -31,7 +31,7 @@ $migration->up();
 
 The Migration object controls the database version.  
 
-### The Scripts
+### The SQL Scripts
 
 The scripts are divided in three set of scripts:
 
@@ -66,4 +66,33 @@ For example: 00001.sql is the script for move the database from version '2' to '
 The "down" folder is optional. 
 
 
+## Running in the command line
 
+Migration library creates the 'migrate' script. It has the follow syntax:
+
+```
+Usage:
+  command [options] [arguments]
+
+Available commands:
+  down   Migrate down the database version.
+  reset  Create a fresh new database
+  up     Migrate Up the database version
+
+Arguments:
+  connection            The connection string. Ex. mysql://root:password@server/database [default: false]
+
+Example:
+  migrate reset mysql://root:password@server/database
+  migrate up mysql://root:password@server/database
+  migrate down mysql://root:password@server/database
+  migrate up --up-to=10 --path=/somepath mysql://root:password@server/database
+  migrate down --up-to=3 --path=/somepath mysql://root:password@server/database
+```
+
+## Installing Globally
+
+```bash
+composer global require 'byjg/migration=1.0.*'
+sudo ln -s $HOME/.composer/vendor/bin/migrate /usr/local/bin
+```
