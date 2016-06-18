@@ -27,6 +27,11 @@ class Migration
      * @var CommandInterface
      */
     protected $_dbCommand;
+
+    /**
+     * @var Callable
+     */
+    protected $_callableProgress;
     
     /**
      * Migration constructor.
@@ -39,8 +44,8 @@ class Migration
         $this->_connection = $_connection;
         $this->_folder = $_folder;
 
-        if (!file_exists($this->_folder) || !is_dir($this->_folder)) {
-            throw new \InvalidArgumentException("Base migrations directory '{$this->_folder}' not found");
+        if (!file_exists($this->_folder . '/base.sql')) {
+            throw new \InvalidArgumentException("Migration script '{$this->_folder}/base.sql' not found");
         }
     }
 
@@ -114,6 +119,9 @@ class Migration
      */
     public function reset($upVersion = null)
     {
+        if ($this->_callableProgress) {
+            call_user_func_array($this->_callableProgress, ['reset', 0]);
+        }
         $this->getDbCommand()->dropDatabase();
         $this->getDbCommand()->createDatabase();
         $this->getDbCommand()->executeSql(file_get_contents($this->getBaseSql()));
@@ -161,8 +169,13 @@ class Migration
         while ($this->canContinue($currentVersion, $upVersion, $increment)
             && file_exists($file = $this->getMigrationSql($currentVersion, $increment))
         ) {
+            if ($this->_callableProgress) {
+                call_user_func_array($this->_callableProgress, ['migrate', $currentVersion]);
+            }
+
             $this->getDbCommand()->executeSql(file_get_contents($file));
-            $this->getDbCommand()->setVersion($currentVersion++);
+            $this->getDbCommand()->setVersion($currentVersion);
+            $currentVersion = $currentVersion + $increment;
         }
     }
 
@@ -184,5 +197,10 @@ class Migration
     public function down($upVersion)
     {
         $this->migrate($upVersion, -1);
+    }
+    
+    public function addCallbackProgress(Callable $callable)
+    {
+        $this->_callableProgress = $callable;
     }
 }
