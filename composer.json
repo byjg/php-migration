@@ -1,19 +1,23 @@
 {
-    "name": "byjg/migration",
-    "description": "A micro framework in PHP for managing a set of database migrations using pure Sql.",
-    "authors": [
-        {
-            "name": "jg",
-            "email": "joao@byjg.com.br"
-        }
-    ],
-    "require": {
-        "byjg/anydataset": "2.1.*"
-    },
-    "autoload": {
-        "psr-4": {
-            "ByJG\\DbMigration\\": "src/"
-        }
-    },
-    "license": "MIT"
+  "name": "byjg/migration",
+  "description": "A micro framework in PHP for managing a set of database migrations using pure Sql.",
+  "authors": [
+    {
+      "name": "jg",
+      "email": "joao@byjg.com.br"
+    }
+  ],
+  "require": {
+    "byjg/anydataset": "2.1.*",
+    "symfony/console": "3.1.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "ByJG\\DbMigration\\": "src/"
+    }
+  },
+  "bin": [
+    "scripts/migrate"
+  ],
+  "license": "MIT"
 }

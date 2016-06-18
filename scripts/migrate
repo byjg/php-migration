@@ -1,0 +1,20 @@
+#!/usr/bin/env php
+<?php
+
+$autoload = realpath(__DIR__."/../vendor/autoload.php");
+if (!file_exists($autoload)) {
+    $autoload = realpath(__DIR__."/../../../autoload.php");
+    if (!file_exists($autoload)) {
+        throw new \Exception('Autoload not found. Did you run `composer dump-autload`?');
+    }
+}
+require_once($autoload);
+
+
+use Symfony\Component\Console\Application;
+
+$application = new Application('Migrate Script by JG', '1.0.2');
+$application->add(new \ByJG\DbMigration\Console\ResetCommand());
+$application->add(new \ByJG\DbMigration\Console\UpCommand());
+$application->add(new \ByJG\DbMigration\Console\DownCommand());
+$application->run();
