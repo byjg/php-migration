@@ -2,16 +2,17 @@
 
 namespace ByJG\DbMigration;
 
-use ByJG\AnyDataset\ConnectionManagement;
-use ByJG\AnyDataset\Repository\DBDataset;
+use ByJG\AnyDataset\DbDriverInterface;
+use ByJG\AnyDataset\Factory;
 use ByJG\DbMigration\Commands\CommandInterface;
+use ByJG\Util\Uri;
 
 class Migration
 {
     /**
-     * @var ConnectionManagement
+     * @var Uri
      */
-    protected $_connection;
+    protected $uri;
 
     /**
      * @var string
@@ -19,9 +20,9 @@ class Migration
     protected $_folder;
 
     /**
-     * @var DBDataset
+     * @var DbDriverInterface
      */
-    protected $_dbDataset;
+    protected $dbDriver;
 
     /**
      * @var CommandInterface
@@ -36,12 +37,12 @@ class Migration
     /**
      * Migration constructor.
      *
-     * @param ConnectionManagement $_connection
+     * @param Uri $uri
      * @param string $_folder
      */
-    public function __construct(ConnectionManagement $_connection, $_folder)
+    public function __construct(Uri $uri, $_folder)
     {
-        $this->_connection = $_connection;
+        $this->uri = $uri;
         $this->_folder = $_folder;
 
         if (!file_exists($this->_folder . '/base.sql')) {
@@ -50,14 +51,14 @@ class Migration
     }
 
     /**
-     * @return DBDataset
+     * @return DbDriverInterface
      */
-    public function getDbDataset()
+    public function getDbDriver()
     {
-        if (is_null($this->_dbDataset)) {
-            $this->_dbDataset = new DBDataset($this->_connection->getDbConnectionString());
+        if (is_null($this->dbDriver)) {
+            $this->dbDriver = Factory::getDbRelationalInstance($this->uri->__toString());
         }
-        return $this->_dbDataset;
+        return $this->dbDriver;
     }
 
     /**
@@ -67,14 +68,14 @@ class Migration
     {
         if (is_null($this->_dbCommand)) {
             $class = $this->getCommandClassName();
-            $this->_dbCommand = new $class($this->getDbDataset());
+            $this->_dbCommand = new $class($this->getDbDriver());
         }
         return $this->_dbCommand;
     }
 
     protected function getCommandClassName()
     {
-        return "\\ByJG\\DbMigration\\Commands\\" . ucfirst($this->_connection->getDriver()) . "Command";
+        return "\\ByJG\\DbMigration\\Commands\\" . ucfirst($this->uri->getScheme()) . "Command";
     }
 
     /**
@@ -108,7 +109,7 @@ class Migration
     public function prepareEnvironment()
     {
         $class = $this->getCommandClassName();
-        $class::prepareEnvironment($this->_connection);
+        $class::prepareEnvironment($this->uri);
     }
     
     /**

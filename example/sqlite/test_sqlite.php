@@ -1,10 +1,10 @@
 <?php
 
-require "../../vendor/autoload.php";
+require __DIR__ . "/../../vendor/autoload.php";
 
-$connection = new \ByJG\AnyDataset\ConnectionManagement('sqlite:///tmp/teste.sqlite');
+$uri = new \ByJG\Util\Uri('sqlite:///tmp/teste.sqlite');
 
-$migration = new \ByJG\DbMigration\Migration($connection, '.');
+$migration = new \ByJG\DbMigration\Migration($uri, __DIR__);
 
 $migration->reset();
 

@@ -2,49 +2,49 @@
 
 namespace ByJG\DbMigration\Commands;
 
-use ByJG\AnyDataset\Repository\DBDataset;
+use ByJG\AnyDataset\DbDriverInterface;
 
 abstract class AbstractCommand implements CommandInterface
 {
     /**
-     * @var DBDataset
+     * @var DbDriverInterface
      */
-    private $_dbDataset;
+    private $dbDriver;
 
     /**
      * Command constructor.
      *
-     * @param DBDataset $_dbDataset
+     * @param DbDriverInterface $dbDriver
      */
-    public function __construct(DBDataset $_dbDataset)
+    public function __construct(DbDriverInterface $dbDriver)
     {
-        $this->_dbDataset = $_dbDataset;
+        $this->dbDriver = $dbDriver;
     }
 
     /**
-     * @return DBDataset
+     * @return DbDriverInterface
      */
-    public function getDbDataset()
+    public function getDbDriver()
     {
-        return $this->_dbDataset;
+        return $this->dbDriver;
     }
 
     public function getVersion()
     {
-        return $this->getDbDataset()->getScalar('SELECT version FROM migration_version');
+        return $this->getDbDriver()->getScalar('SELECT version FROM migration_version');
     }
 
     public function setVersion($version)
     {
-        $this->getDbDataset()->execSQL('UPDATE migration_version SET version = :version', ['version' => $version]);
+        $this->getDbDriver()->execute('UPDATE migration_version SET version = :version', ['version' => $version]);
     }
 
     protected function checkExistsVersion()
     {
         // Get the version to check if exists
         $version = $this->getVersion();
-        if ($version === false) {
-            $this->getDbDataset()->execSQL('insert into migration_version values(0)');
+        if (empty($version)) {
+            $this->getDbDriver()->execute('insert into migration_version values(0)');
         }
     }
 }

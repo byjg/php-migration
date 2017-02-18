@@ -1,6 +1,6 @@
 <?php
 
-require "../../vendor/autoload.php";
+require __DIR__ . "/../../vendor/autoload.php";
 
 /**
  * Make sure you have a database with the user 'migrateuser' and password 'migratepwd'
@@ -8,9 +8,9 @@ require "../../vendor/autoload.php";
  * This user need to have grant for DDL commands; 
  */
 
-$connection = new \ByJG\AnyDataset\ConnectionManagement('mysql://migrateuser:migratepwd@localhost/migratedatabase');
+$uri = new \ByJG\Util\Uri('mysql://root:password@mysql-container/migratedatabase');
 
-$migration = new \ByJG\DbMigration\Migration($connection, '.');
+$migration = new \ByJG\DbMigration\Migration($uri, __DIR__);
 
 $migration->prepareEnvironment();
 
