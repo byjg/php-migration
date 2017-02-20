@@ -6,15 +6,17 @@
 -- This is the reverse operation of the script up/00001
 -- --------------------------------------------------------
 
-ALTER TABLE `users`
-ADD COLUMN `createdate_old` VARCHAR(8) NULL AFTER `createdate`;
+CREATE table users_backup (
+  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT ,
+  name varchar(50) NOT NULL,
+  createdate varchar(8) not NULL
+);
 
-update users
-set createdate_old = DATE_FORMAT(createdate,'%Y%m%d');
+INSERT INTO users_backup
+SELECT id, name, strftime('%Y%m%d', createdate)
+FROM users;
 
-ALTER TABLE `users`
-  DROP COLUMN `createdate`;
+DROP TABLE users;
 
-ALTER TABLE `users`
-  CHANGE COLUMN `createdate_old` `createdate` VARCHAR(8) NOT NULL ;
+ALTER TABLE users_backup RENAME TO users;
 
