@@ -1,13 +1,10 @@
 <?php
-/**
- * User: jg
- * Date: 19/02/17
- * Time: 19:52
- */
 
-
-use ByJG\DbMigration\Commands\SqliteCommand;
-
+// backward compatibility
+if (!class_exists('\PHPUnit\Framework\TestCase') &&
+    class_exists('\PHPUnit_Framework_TestCase')) {
+    class_alias('\PHPUnit_Framework_TestCase', '\PHPUnit\Framework\TestCase');
+}
 
 abstract class BaseCommand extends PHPUnit_Framework_TestCase
 {
