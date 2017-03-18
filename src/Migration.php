@@ -97,10 +97,18 @@ class Migration
      */
     public function getMigrationSql($version, $increment)
     {
-        return $this->_folder 
-            . "/migrations" 
+        $result = glob(
+            $this->_folder
+            . "/migrations"
             . "/" . ($increment < 0 ? "down" : "up")
-            . "/" . str_pad($version, 5, '0', STR_PAD_LEFT) . ".sql";
+            . "/*$version.sql"
+        );
+
+        foreach ($result as $file) {
+            if (intval(basename($file)) == $version) {
+                return $file;
+            }
+        }
     }
 
     /**

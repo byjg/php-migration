@@ -47,7 +47,7 @@ class PgsqlCommand extends AbstractCommand
             "select 'drop table if exists \"' || tablename || '\" cascade;' command from pg_tables where schemaname = 'public';"
         );
         foreach ($iterator as $singleRow) {
-            $this->getDbDriver()->execute($singleRow->getField('command'));
+            $this->getDbDriver()->execute($singleRow->get('command'));
         }
     }
 

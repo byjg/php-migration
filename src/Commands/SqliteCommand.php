@@ -26,7 +26,7 @@ class SqliteCommand extends AbstractCommand
         ");
 
         foreach ($iterator as $row) {
-            $this->getDbDriver()->execute($row->getField('command'));
+            $this->getDbDriver()->execute($row->get('command'));
         }
     }
 
