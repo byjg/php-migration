@@ -1,12 +1,11 @@
 <?php
 
 // backward compatibility
-if (!class_exists('\PHPUnit\Framework\TestCase') &&
-    class_exists('\PHPUnit_Framework_TestCase')) {
+if (!class_exists('\PHPUnit\Framework\TestCase')) {
     class_alias('\PHPUnit_Framework_TestCase', '\PHPUnit\Framework\TestCase');
 }
 
-abstract class BaseCommand extends PHPUnit_Framework_TestCase
+abstract class BaseCommand extends \PHPUnit\Framework\TestCase
 {
     protected $uri = null;
 

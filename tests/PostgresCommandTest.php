@@ -1,13 +1,6 @@
 <?php
-/**
- * User: jg
- * Date: 19/02/17
- * Time: 19:52
- */
-
 
 require_once 'BaseCommand.php';
-
 
 class PostgresCommandTest extends BaseCommand
 {
