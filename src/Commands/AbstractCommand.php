@@ -31,7 +31,11 @@ abstract class AbstractCommand implements CommandInterface
 
     public function getVersion()
     {
-        return $this->getDbDriver()->getScalar('SELECT version FROM migration_version');
+        try {
+            return $this->getDbDriver()->getScalar('SELECT version FROM migration_version');
+        } catch (\Exception $ex) {
+            throw new \Exception('This database does not have a migration version. Please use "migrate reset" to create one.');
+        }
     }
 
     public function setVersion($version)
