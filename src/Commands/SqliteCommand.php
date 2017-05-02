@@ -2,12 +2,12 @@
 
 namespace ByJG\DbMigration\Commands;
 
-use ByJG\AnyDataset\ConnectionManagement;
+use ByJG\Util\Uri;
 
 class SqliteCommand extends AbstractCommand
 {
 
-    public static function prepareEnvironment(ConnectionManagement $connection)
+    public static function prepareEnvironment(Uri $uri)
     {
     }
 
@@ -17,7 +17,7 @@ class SqliteCommand extends AbstractCommand
 
     public function dropDatabase()
     {
-        $iterator = $this->getDbDataset()->getIterator("
+        $iterator = $this->getDbDriver()->getIterator("
             select 
                 'drop table ' || name || ';' as command 
             from sqlite_master 
@@ -26,13 +26,13 @@ class SqliteCommand extends AbstractCommand
         ");
 
         foreach ($iterator as $row) {
-            $this->getDbDataset()->execSQL($row->getField('command'));
+            $this->getDbDriver()->execute($row->get('command'));
         }
     }
 
     public function createVersion()
     {
-        $this->getDbDataset()->execSQL('CREATE TABLE IF NOT EXISTS migration_version (version int)');
+        $this->getDbDriver()->execute('CREATE TABLE IF NOT EXISTS migration_version (version int)');
         $this->checkExistsVersion();
     }
 
@@ -47,6 +47,6 @@ class SqliteCommand extends AbstractCommand
 
     protected function executeSqlInternal($sql)
     {
-        $this->getDbDataset()->execSQL($sql);
+        $this->getDbDriver()->execute($sql);
     }
 }

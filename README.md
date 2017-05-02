@@ -1,6 +1,7 @@
 # Database Migrations
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/byjg/migration/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/byjg/migration/?branch=master)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/571cb412-7018-4938-a4e5-0f9ce44956d7/mini.png)](https://insight.sensiolabs.com/projects/571cb412-7018-4938-a4e5-0f9ce44956d7)
+[![Build Status](https://travis-ci.org/byjg/migration.svg?branch=master)](https://travis-ci.org/byjg/migration)
 
 A micro framework in PHP for managing a set of database migrations using pure Sql.
 
@@ -18,8 +19,8 @@ The basic usage is
 See an example:
 
 ```php
-$connection = new ConnectionManagement('mysql://migrateuser:migratepwd@localhost/migratedatabase');
-$migration = new Migration($connection, '.');
+$connectionUri = new \ByJG\Util\Uri('mysql://migrateuser:migratepwd@localhost/migratedatabase');
+$migration = new Migration($connectionUri, '.');
 
 // Restore the database using the "base.sql" script and run ALL existing scripts for up the database version
 // and run the up() method to maintain the database updated;
@@ -90,9 +91,29 @@ Example:
   migrate down --up-to=3 --path=/somepath mysql://root:password@server/database
 ```
 
+## Suportted databases:
+
+* Sqlite
+* Mysql / MariaDB
+* Postgres
+* SqlServer
+
 ## Installing Globally
 
 ```bash
-composer global require 'byjg/migration=1.0.*'
+composer global require 'byjg/migration=1.1.*'
 sudo ln -s $HOME/.composer/vendor/bin/migrate /usr/local/bin
+```
+
+## Unit Tests
+
+This library has integrated tests and need to be setup for each database you want to test. 
+
+Basiclly you have the follow tests:
+
+```
+phpunit tests/SqliteCommandTest.php
+phpunit tests/MysqlCommandTest.php
+phpunit tests/PostgresCommandTest.php
+phpunit tests/SqlServerCommandTest.php 
 ```

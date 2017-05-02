@@ -7,7 +7,7 @@
 
 create table users (
 
-  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT ,
+  id SERIAL NOT NULL PRIMARY KEY,
   name varchar(50) NOT NULL,
   createdate VARCHAR(8)
 

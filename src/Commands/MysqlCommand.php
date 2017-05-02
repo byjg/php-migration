@@ -2,44 +2,45 @@
 
 namespace ByJG\DbMigration\Commands;
 
-use ByJG\AnyDataset\ConnectionManagement;
-use ByJG\AnyDataset\Repository\DBDataset;
+use ByJG\AnyDataset\Factory;
+use ByJG\Util\Uri;
 
 class MySqlCommand extends AbstractCommand
 {
 
-    public static function prepareEnvironment(ConnectionManagement $connection)
+    public static function prepareEnvironment(Uri $uri)
     {
-        $database = $connection->getDatabase();
+        $database = preg_replace('~^/~', '', $uri->getPath());
 
-        $newConnection = new ConnectionManagement(str_replace("/$database", "/", $connection->getDbConnectionString()));
-        $dbDataset = new DBDataset($newConnection->getDbConnectionString());
-        $dbDataset->execSQL("CREATE SCHEMA IF NOT EXISTS `$database` DEFAULT CHARACTER SET utf8 ;");
+        $customUri = new Uri($uri->__toString());
+
+        $dbDriver = Factory::getDbRelationalInstance($customUri->withPath('/')->__toString());
+        $dbDriver->execute("CREATE SCHEMA IF NOT EXISTS `$database` DEFAULT CHARACTER SET utf8 ;");
     }
 
     public function createDatabase()
     {
-        $database = $this->getDbDataset()->getConnectionManagement()->getDatabase();
+        $database = preg_replace('~^/~', '', $this->getDbDriver()->getUri()->getPath());
 
-        $this->getDbDataset()->execSQL("CREATE SCHEMA IF NOT EXISTS `$database` DEFAULT CHARACTER SET utf8 ;");
-        $this->getDbDataset()->execSQL("USE `$database`");
+        $this->getDbDriver()->execute("CREATE SCHEMA IF NOT EXISTS `$database` DEFAULT CHARACTER SET utf8 ;");
+        $this->getDbDriver()->execute("USE `$database`");
     }
 
     public function dropDatabase()
     {
-        $database = $this->getDbDataset()->getConnectionManagement()->getDatabase();
+        $database = preg_replace('~^/~', '', $this->getDbDriver()->getUri()->getPath());
 
-        $this->getDbDataset()->execSQL("drop database `$database`");
+        $this->getDbDriver()->execute("drop database `$database`");
     }
 
     public function createVersion()
     {
-        $this->getDbDataset()->execSQL('CREATE TABLE IF NOT EXISTS migration_version (version int)');
+        $this->getDbDriver()->execute('CREATE TABLE IF NOT EXISTS migration_version (version int)');
         $this->checkExistsVersion();
     }
 
     public function executeSql($sql)
     {
-        $this->getDbDataset()->execSQL($sql);
+        $this->getDbDriver()->execute($sql);
     }
 }

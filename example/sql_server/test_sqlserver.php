@@ -8,7 +8,7 @@ require __DIR__ . "/../../vendor/autoload.php";
  * This user need to have grant for DDL commands; 
  */
 
-$uri = new \ByJG\Util\Uri('mysql://root:password@mysql-container/migratedatabase');
+$uri = new \ByJG\Util\Uri('dblib://sa:Pa$$word!@mssql-container/migratedatabase');
 
 $migration = new \ByJG\DbMigration\Migration($uri, __DIR__);
 

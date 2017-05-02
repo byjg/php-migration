@@ -4,6 +4,7 @@ namespace ByJG\DbMigration\Console;
 
 use ByJG\AnyDataset\ConnectionManagement;
 use ByJG\DbMigration\Migration;
+use ByJG\Util\Uri;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputArgument;
@@ -70,8 +71,8 @@ abstract class ConsoleCommand extends Command
 
         $this->upTo = $input->getOption('up-to');
 
-        $connectionObject = new ConnectionManagement($this->connection);
-        $this->migration = new Migration($connectionObject, $this->path);
+        $uri = new Uri($this->connection);
+        $this->migration = new Migration($uri, $this->path);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

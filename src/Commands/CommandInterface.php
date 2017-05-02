@@ -2,12 +2,11 @@
 
 namespace ByJG\DbMigration\Commands;
 
-
-use ByJG\AnyDataset\ConnectionManagement;
+use ByJG\Util\Uri;
 
 interface CommandInterface
 {
-    public static function prepareEnvironment(ConnectionManagement $connection);
+    public static function prepareEnvironment(Uri $dbDriver);
 
     public function createDatabase();
     
