@@ -21,7 +21,8 @@ and open the template in the editor.
 
     <testsuites>
         <testsuite name="Test Suite">
-            <directory>./tests/</directory>
+            <!--<directory>./tests/</directory>-->
+            <file>./tests/SqliteCommandTest.php</file>
         </testsuite>
     </testsuites>
 
