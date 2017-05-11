@@ -5,6 +5,7 @@ namespace ByJG\DbMigration;
 use ByJG\AnyDataset\DbDriverInterface;
 use ByJG\AnyDataset\Factory;
 use ByJG\DbMigration\Commands\CommandInterface;
+use ByJG\DbMigration\Exception\DatabaseIsIncompleteException;
 use ByJG\Util\Uri;
 
 class Migration
@@ -181,11 +182,17 @@ class Migration
      *
      * @param int $upVersion
      * @param int $increment Can accept 1 for UP or -1 for down
+     * @param bool $force
+     * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
      */
-    protected function migrate($upVersion, $increment)
+    protected function migrate($upVersion, $increment, $force)
     {
         $versionInfo = $this->getCurrentVersion();
         $currentVersion = intval($versionInfo['version']) + $increment;
+
+        if (strpos($versionInfo['status'], 'partial') !== false && !$force) {
+            throw new DatabaseIsIncompleteException('Database was not fully updated. Use --force for migrate.');
+        }
 
         while ($this->canContinue($currentVersion, $upVersion, $increment)
             && file_exists($file = $this->getMigrationSql($currentVersion, $increment))
@@ -205,20 +212,22 @@ class Migration
      * Run all scripts to up the database version from current up to latest version or the specified version.
      *
      * @param int $upVersion
+     * @param bool $force
      */
-    public function up($upVersion = null)
+    public function up($upVersion = null, $force = false)
     {
-        $this->migrate($upVersion, 1);
+        $this->migrate($upVersion, 1, $force);
     }
 
     /**
      * Run all scripts to down the database version from current version up to the specified version.
      *
      * @param int $upVersion
+     * @param bool $force
      */
-    public function down($upVersion)
+    public function down($upVersion, $force = false)
     {
-        $this->migrate($upVersion, -1);
+        $this->migrate($upVersion, -1, $force);
     }
     
     public function addCallbackProgress(Callable $callable)
