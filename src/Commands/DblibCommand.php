@@ -53,7 +53,7 @@ class DblibCommand extends AbstractCommand
     {
         $database = preg_replace('~^/~', '', $this->getDbDriver()->getUri()->getPath());
         $table = 'migration_version';
-        $createTable = 'CREATE TABLE migration_version (version int)';
+        $createTable = 'CREATE TABLE migration_version (version int, status varchar(20))';
         $this->createTableIfNotExists($database, $table, $createTable);
         $this->checkExistsVersion();
     }

@@ -84,6 +84,8 @@ abstract class BaseCommand extends \PHPUnit\Framework\TestCase
     {
         $version = $this->migrate->getDbDriver()->getScalar('select version from migration_version');
         $this->assertEquals(0, $version);
+        $status = $this->migrate->getDbDriver()->getScalar('select status from migration_version');
+        $this->assertEquals('complete', $status);
 
         $iterator = $this->migrate->getDbDriver()->getIterator('select * from users');
 
@@ -114,6 +116,8 @@ abstract class BaseCommand extends \PHPUnit\Framework\TestCase
     {
         $version = $this->migrate->getDbDriver()->getScalar('select version from migration_version');
         $this->assertEquals(1, $version);
+        $status = $this->migrate->getDbDriver()->getScalar('select status from migration_version');
+        $this->assertEquals('complete', $status);
 
         $iterator = $this->migrate->getDbDriver()->getIterator('select * from users');
 
@@ -144,6 +148,8 @@ abstract class BaseCommand extends \PHPUnit\Framework\TestCase
     {
         $version = $this->migrate->getDbDriver()->getScalar('select version from migration_version');
         $this->assertEquals(2, $version);
+        $status = $this->migrate->getDbDriver()->getScalar('select status from migration_version');
+        $this->assertEquals('complete', $status);
 
         $iterator = $this->migrate->getDbDriver()->getIterator('select * from users');
 

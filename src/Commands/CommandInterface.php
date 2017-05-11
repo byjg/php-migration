@@ -13,10 +13,12 @@ interface CommandInterface
     public function dropDatabase();
     
     public function getVersion();
+
+    public function updateVersionTable();
     
     public function executeSql($sql);
     
-    public function setVersion($version);
+    public function setVersion($version, $status);
     
     public function createVersion();
 }

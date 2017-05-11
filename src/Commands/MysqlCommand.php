@@ -35,7 +35,7 @@ class MySqlCommand extends AbstractCommand
 
     public function createVersion()
     {
-        $this->getDbDriver()->execute('CREATE TABLE IF NOT EXISTS migration_version (version int)');
+        $this->getDbDriver()->execute('CREATE TABLE IF NOT EXISTS migration_version (version int, status varchar(20))');
         $this->checkExistsVersion();
     }
 
