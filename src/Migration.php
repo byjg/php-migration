@@ -101,13 +101,18 @@ class Migration
         // I could use the GLOB_BRACE but it is not supported on ALPINE distros.
         // So, I have to call multiple times to simulate the braces.
 
+        if (intval($version) != $version) {
+            throw new \InvalidArgumentException("Version '$version' should be a integer number");
+        }
+        $version = intval($version);
+
         $filePattern = $this->_folder
             . "/migrations"
             . "/" . ($increment < 0 ? "down" : "up")
             . "/*%s.sql";
 
         $result = array_merge(
-            glob(sprintf($filePattern, $version)),
+            glob(sprintf($filePattern, "$version")),
             glob(sprintf($filePattern, "$version-dev"))
         );
 
@@ -117,7 +122,7 @@ class Migration
         }
 
         foreach ($result as $file) {
-            if (intval(basename($file)) == $version) {
+            if (intval(basename($file)) === $version) {
                 return $file;
             }
         }
