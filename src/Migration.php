@@ -98,12 +98,17 @@ class Migration
      */
     public function getMigrationSql($version, $increment)
     {
-        $result = glob(
-            $this->_folder
+        // I could use the GLOB_BRACE but it is not supported on ALPINE distros.
+        // So, I have to call multiple times to simulate the braces.
+
+        $filePattern = $this->_folder
             . "/migrations"
             . "/" . ($increment < 0 ? "down" : "up")
-            . "/*\{$version,{$version}-dev\}.sql",
-            GLOB_BRACE
+            . "/*%s.sql";
+
+        $result = array_merge(
+            glob(sprintf($filePattern, $version)),
+            glob(sprintf($filePattern, "$version-dev"))
         );
 
         // Valid values are 0 or 1
