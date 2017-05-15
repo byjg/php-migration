@@ -185,12 +185,16 @@ class Migration
     protected function canContinue($currentVersion, $upVersion, $increment)
     {
         $existsUpVersion = ($upVersion !== null);
-        $compareVersion = strcmp(
-                str_pad($currentVersion, 10, '0', STR_PAD_LEFT),
-                str_pad($upVersion, 10, '0', STR_PAD_LEFT)
-            ) == $increment;
+        $compareVersion =
+            intval($currentVersion) < intval($upVersion)
+                ? -1
+                : (
+                    intval($currentVersion) > intval($upVersion)
+                        ? 1
+                        : 0
+                );
 
-        return !($existsUpVersion && $compareVersion);
+        return !($existsUpVersion && ($compareVersion === intval($increment)));
     }
 
     /**
