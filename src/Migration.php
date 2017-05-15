@@ -102,8 +102,14 @@ class Migration
             $this->_folder
             . "/migrations"
             . "/" . ($increment < 0 ? "down" : "up")
-            . "/*$version.sql"
+            . "/*\{$version,{$version}-dev\}.sql",
+            GLOB_BRACE
         );
+
+        // Valid values are 0 or 1
+        if (count($result) > 1) {
+            throw new \InvalidArgumentException("You have two files with the same version $version number");
+        }
 
         foreach ($result as $file) {
             if (intval(basename($file)) == $version) {
@@ -170,8 +176,8 @@ class Migration
     {
         $existsUpVersion = ($upVersion !== null);
         $compareVersion = strcmp(
-                str_pad($currentVersion, 5, '0', STR_PAD_LEFT),
-                str_pad($upVersion, 5, '0', STR_PAD_LEFT)
+                str_pad($currentVersion, 10, '0', STR_PAD_LEFT),
+                str_pad($upVersion, 10, '0', STR_PAD_LEFT)
             ) == $increment;
 
         return !($existsUpVersion && $compareVersion);

@@ -66,6 +66,25 @@ For example: 00002.sql is the script for move the database from version '1' to '
 For example: 00001.sql is the script for move the database from version '2' to '1'.
 The "down" folder is optional. 
 
+### Multi Development environment 
+
+If you work with multiple developers and multiple branches it is to difficult to determine what is the next number.
+
+In that case you have the suffix "-dev" after the version number. 
+
+See the scenario:
+
+- Developer 1 create a branch and the most recent version in e.g. 42.
+- Developer 2 create a branch at the same time and have the same database version number.
+
+In both case the developers will create a file called 43-dev.sql. Both developers will migrate UP and DOWN with
+no problem and your local version will be 43. 
+
+But developer 1 merged your changes and created a final version 43.sql (`git mv 43-dev.sql 43.sql`). If the developer 2
+update your local branch he will have a file 43.sql (from dev 1) and your file 43-dev.sql. 
+If he is try to migrate UP or DOWN
+the migration script will down and alert him there a TWO versions 43. In that case, developer 2 will have to update your
+file do 44-dev.sql and continue to work until merge your changes and generate a final version. 
 
 ## Running in the command line
 
@@ -76,9 +95,12 @@ Usage:
   command [options] [arguments]
 
 Available commands:
+  create   Create the directory structure FROM a pre-existing database
+  install  Install or upgrade the migrate version in a existing database
   down   Migrate down the database version.
   reset  Create a fresh new database
   up     Migrate Up the database version
+  version  Get the current database version
 
 Arguments:
   connection            The connection string. Ex. mysql://root:password@server/database [default: false]
@@ -91,7 +113,7 @@ Example:
   migrate down --up-to=3 --path=/somepath mysql://root:password@server/database
 ```
 
-## Suportted databases:
+## Supported databases:
 
 * Sqlite
 * Mysql / MariaDB
@@ -101,7 +123,7 @@ Example:
 ## Installing Globally
 
 ```bash
-composer global require 'byjg/migration=1.1.*'
+composer global require 'byjg/migration=2.0.*'
 sudo ln -s $HOME/.composer/vendor/bin/migrate /usr/local/bin
 ```
 
