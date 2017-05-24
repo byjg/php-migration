@@ -126,6 +126,7 @@ class Migration
                 return $file;
             }
         }
+        return null;
     }
 
     /**
@@ -237,6 +238,23 @@ class Migration
     public function up($upVersion = null, $force = false)
     {
         $this->migrate($upVersion, 1, $force);
+    }
+
+    /**
+     * Run all scripts to up or down the database version from current up to latest version or the specified version.
+     *
+     * @param int $upVersion
+     * @param bool $force
+     */
+    public function update($upVersion = null, $force = false)
+    {
+        $versionInfo = $this->getCurrentVersion();
+        $version = intval($versionInfo['version']);
+        $increment = 1;
+        if ($upVersion !== null && $upVersion < $version) {
+            $increment = -1;
+        }
+        $this->migrate($upVersion, $increment, $force);
     }
 
     /**

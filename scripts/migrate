@@ -20,4 +20,5 @@ $application->add(new \ByJG\DbMigration\Console\DownCommand());
 $application->add(new \ByJG\DbMigration\Console\CreateCommand());
 $application->add(new \ByJG\DbMigration\Console\DatabaseVersionCommand());
 $application->add(new \ByJG\DbMigration\Console\InstallCommand());
+$application->add(new \ByJG\DbMigration\Console\UpdateCommand());
 $application->run();
