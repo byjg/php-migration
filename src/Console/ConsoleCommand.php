@@ -89,5 +89,14 @@ abstract class ConsoleCommand extends Command
         }
     }
 
+    protected function handleError($ex, OutputInterface $output)
+    {
+        $output->writeln('-- Error migrating tables --');
+        if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
+            $output->writeln(get_class($ex));
+            $output->writeln($ex->getMessage());
+        }
+    }
+
 
 }

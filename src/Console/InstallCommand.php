@@ -26,22 +26,26 @@ class InstallCommand extends ConsoleCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        parent::execute($input, $output);
-
-        $action = 'Database is already versioned. ';
         try {
-            $this->migration->getCurrentVersion();
-        } catch (DatabaseNotVersionedException $ex) {
-            $action = 'Created the version table';
-            $this->migration->createVersion();
-        } catch (OldVersionSchemaException $ex) {
-            $action = 'Updated the version table';
-            $this->migration->updateTableVersion();
-        }
+            parent::execute($input, $output);
 
-        $version = $this->migration->getCurrentVersion();
-        $output->writeln($action);
-        $output->writeln('current version: ' . $version['version']);
-        $output->writeln('current status.: ' . $version['status']);
+            $action = 'Database is already versioned. ';
+            try {
+                $this->migration->getCurrentVersion();
+            } catch (DatabaseNotVersionedException $ex) {
+                $action = 'Created the version table';
+                $this->migration->createVersion();
+            } catch (OldVersionSchemaException $ex) {
+                $action = 'Updated the version table';
+                $this->migration->updateTableVersion();
+            }
+
+            $version = $this->migration->getCurrentVersion();
+            $output->writeln($action);
+            $output->writeln('current version: ' . $version['version']);
+            $output->writeln('current status.: ' . $version['status']);
+        } catch (\Exception $ex) {
+            $this->handleError($ex, $output);
+        }
     }
 }

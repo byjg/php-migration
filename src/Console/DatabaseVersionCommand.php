@@ -25,8 +25,12 @@ class DatabaseVersionCommand extends ConsoleCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
-        $versionInfo = $this->migration->getCurrentVersion();
-        $output->writeln('version: ' . $versionInfo['version']);
-        $output->writeln('status.: ' . $versionInfo['status']);
+        try {
+            $versionInfo = $this->migration->getCurrentVersion();
+            $output->writeln('version: ' . $versionInfo['version']);
+            $output->writeln('status.: ' . $versionInfo['status']);
+        } catch (\Exception $ex) {
+            $this->handleError($ex, $output);
+        }
     }
 }
