@@ -3,7 +3,7 @@
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/571cb412-7018-4938-a4e5-0f9ce44956d7/mini.png)](https://insight.sensiolabs.com/projects/571cb412-7018-4938-a4e5-0f9ce44956d7)
 [![Build Status](https://travis-ci.org/byjg/migration.svg?branch=master)](https://travis-ci.org/byjg/migration)
 
-A micro framework in PHP for managing a set of database migrations using pure Sql.
+Simple library in PHP for database version control. Supports Sqlite, MySql, Sql Server and Postgres.
 
 Database Migration is a set of commands for upgrade or downgrade a database.
 This library uses only SQL commands.
