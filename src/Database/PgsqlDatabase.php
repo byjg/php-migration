@@ -1,11 +1,11 @@
 <?php
 
-namespace ByJG\DbMigration\Commands;
+namespace ByJG\DbMigration\Database;
 
 use ByJG\AnyDataset\Factory;
 use ByJG\Util\Uri;
 
-class PgsqlCommand extends AbstractCommand
+class PgsqlDatabase extends AbstractDatabase
 {
 
     public static function prepareEnvironment(Uri $uri)

@@ -1,12 +1,12 @@
 <?php
 
-namespace ByJG\DbMigration\Commands;
+namespace ByJG\DbMigration\Database;
 
 use ByJG\AnyDataset\DbDriverInterface;
 use ByJG\DbMigration\Exception\DatabaseNotVersionedException;
 use ByJG\DbMigration\Exception\OldVersionSchemaException;
 
-abstract class AbstractCommand implements CommandInterface
+abstract class AbstractDatabase implements DatabaseInterface
 {
     /**
      * @var DbDriverInterface

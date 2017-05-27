@@ -1,10 +1,10 @@
 <?php
 
-namespace ByJG\DbMigration\Commands;
+namespace ByJG\DbMigration\Database;
 
 use ByJG\Util\Uri;
 
-class SqliteCommand extends AbstractCommand
+class SqliteDatabase extends AbstractDatabase
 {
 
     public static function prepareEnvironment(Uri $uri)

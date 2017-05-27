@@ -4,7 +4,7 @@ namespace ByJG\DbMigration;
 
 use ByJG\AnyDataset\DbDriverInterface;
 use ByJG\AnyDataset\Factory;
-use ByJG\DbMigration\Commands\CommandInterface;
+use ByJG\DbMigration\Database\DatabaseInterface;
 use ByJG\DbMigration\Exception\DatabaseIsIncompleteException;
 use ByJG\Util\Uri;
 
@@ -26,7 +26,7 @@ class Migration
     protected $dbDriver;
 
     /**
-     * @var CommandInterface
+     * @var DatabaseInterface
      */
     protected $_dbCommand;
 
@@ -63,20 +63,20 @@ class Migration
     }
 
     /**
-     * @return CommandInterface
+     * @return DatabaseInterface
      */
     public function getDbCommand()
     {
         if (is_null($this->_dbCommand)) {
-            $class = $this->getCommandClassName();
+            $class = $this->getDatabaseClassName();
             $this->_dbCommand = new $class($this->getDbDriver());
         }
         return $this->_dbCommand;
     }
 
-    protected function getCommandClassName()
+    protected function getDatabaseClassName()
     {
-        return "\\ByJG\\DbMigration\\Commands\\" . ucfirst($this->uri->getScheme()) . "Command";
+        return "\\ByJG\\DbMigration\\Database\\" . ucfirst($this->uri->getScheme()) . "Database";
     }
 
     /**
@@ -134,7 +134,7 @@ class Migration
      */
     public function prepareEnvironment()
     {
-        $class = $this->getCommandClassName();
+        $class = $this->getDatabaseClassName();
         $class::prepareEnvironment($this->uri);
     }
     

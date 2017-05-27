@@ -134,8 +134,8 @@ This library has integrated tests and need to be setup for each database you wan
 Basiclly you have the follow tests:
 
 ```
-phpunit tests/SqliteCommandTest.php
-phpunit tests/MysqlCommandTest.php
-phpunit tests/PostgresCommandTest.php
-phpunit tests/SqlServerCommandTest.php 
+phpunit tests/SqliteDatabaseTest.php
+phpunit tests/MysqlDatabaseTest.php
+phpunit tests/PostgresDatabaseTest.php
+phpunit tests/SqlServerDatabaseTest.php 
 ```

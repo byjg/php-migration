@@ -1,8 +1,8 @@
 <?php
 
-require_once 'BaseCommand.php';
+require_once 'BaseDatabase.php';
 
-class SqlServerCommandTest extends BaseCommand
+class SqlServerDatabaseTest extends BaseDatabase
 {
     protected $uri = 'dblib://sa:Pa$$word!@mssql-container/migratedatabase';
 

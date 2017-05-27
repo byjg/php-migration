@@ -1,8 +1,8 @@
 <?php
 
-require_once 'BaseCommand.php';
+require_once 'BaseDatabase.php';
 
-class PostgresCommandTest extends BaseCommand
+class PostgresDatabaseTest extends BaseDatabase
 {
     protected $uri = 'pgsql://postgres:password@postgres-container/migratedatabase';
 

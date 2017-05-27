@@ -1,10 +1,10 @@
 <?php
 
-namespace ByJG\DbMigration\Commands;
+namespace ByJG\DbMigration\Database;
 
 use ByJG\Util\Uri;
 
-interface CommandInterface
+interface DatabaseInterface
 {
     public static function prepareEnvironment(Uri $dbDriver);
 

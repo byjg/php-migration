@@ -1,8 +1,8 @@
 <?php
 
-require_once 'BaseCommand.php';
+require_once 'BaseDatabase.php';
 
-class SqliteCommandTest extends BaseCommand
+class SqliteDatabaseTest extends BaseDatabase
 {
     protected $uri = 'sqlite:///tmp/teste.sqlite';
 

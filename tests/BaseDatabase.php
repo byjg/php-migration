@@ -5,7 +5,7 @@ if (!class_exists('\PHPUnit\Framework\TestCase')) {
     class_alias('\PHPUnit_Framework_TestCase', '\PHPUnit\Framework\TestCase');
 }
 
-abstract class BaseCommand extends \PHPUnit\Framework\TestCase
+abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
 {
     protected $uri = null;
 
