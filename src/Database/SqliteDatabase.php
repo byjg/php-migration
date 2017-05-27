@@ -1,10 +1,10 @@
 <?php
 
-namespace ByJG\DbMigration\Commands;
+namespace ByJG\DbMigration\Database;
 
 use ByJG\Util\Uri;
 
-class SqliteCommand extends AbstractCommand
+class SqliteDatabase extends AbstractDatabase
 {
 
     public static function prepareEnvironment(Uri $uri)
@@ -32,7 +32,7 @@ class SqliteCommand extends AbstractCommand
 
     public function createVersion()
     {
-        $this->getDbDriver()->execute('CREATE TABLE IF NOT EXISTS migration_version (version int)');
+        $this->getDbDriver()->execute('CREATE TABLE IF NOT EXISTS migration_version (version int, status varchar(20))');
         $this->checkExistsVersion();
     }
 

@@ -25,17 +25,23 @@ class ResetCommand extends ConsoleCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $helper = $this->getHelper('question');
-        $question = new ConfirmationQuestion('This will ERASE all of data in your data. Continue with this action? (y/N) ', false);
+        try {
+            $helper = $this->getHelper('question');
+            $question = new ConfirmationQuestion('This will ERASE all of data in your data. Continue with this action? (y/N) ',
+                false);
 
-        if (!$helper->ask($input, $output, $question)) {
-            $output->writeln('Aborted.');
-            return;
+            if (!$helper->ask($input, $output, $question)) {
+                $output->writeln('Aborted.');
+
+                return;
+            }
+
+            parent::execute($input, $output);
+            $this->migration->prepareEnvironment();
+            $this->migration->reset($this->upTo);
+        } catch (\Exception $ex) {
+            $this->handleError($ex, $output);
         }
-
-        parent::execute($input, $output);
-        $this->migration->prepareEnvironment();
-        $this->migration->reset($this->upTo);
     }
 
 }

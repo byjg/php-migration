@@ -12,14 +12,16 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
-class DownCommand extends ConsoleCommand
+class UpdateCommand extends ConsoleCommand
 {
     protected function configure()
     {
         parent::configure(); 
         $this
-            ->setName('down')
-            ->setDescription('Migrate down the database version.');
+            ->setName('update')
+            ->setDescription('Migrate Up or Down the database version based on the current database version and the ' .
+                'migration scripts available'
+            );
 
     }
 
@@ -30,7 +32,7 @@ class DownCommand extends ConsoleCommand
             if (strpos($versionInfo['status'], 'partial') !== false) {
                 $helper = $this->getHelper('question');
                 $question = new ConfirmationQuestion(
-                    'The database was not fully updated and maybe be unstable. Did you really want migrate the version? (y/N)',
+                    'The database was not fully updated and maybe be unstable. Did you really want migrate the version? (y/N) ',
                     false
                 );
 
@@ -42,10 +44,9 @@ class DownCommand extends ConsoleCommand
             }
 
             parent::execute($input, $output);
-            $this->migration->down($this->upTo, true);
+            $this->migration->update($this->upTo, true);
         } catch (\Exception $ex) {
             $this->handleError($ex, $output);
         }
     }
-
 }

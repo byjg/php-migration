@@ -4,7 +4,8 @@ namespace ByJG\DbMigration;
 
 use ByJG\AnyDataset\DbDriverInterface;
 use ByJG\AnyDataset\Factory;
-use ByJG\DbMigration\Commands\CommandInterface;
+use ByJG\DbMigration\Database\DatabaseInterface;
+use ByJG\DbMigration\Exception\DatabaseIsIncompleteException;
 use ByJG\Util\Uri;
 
 class Migration
@@ -25,7 +26,7 @@ class Migration
     protected $dbDriver;
 
     /**
-     * @var CommandInterface
+     * @var DatabaseInterface
      */
     protected $_dbCommand;
 
@@ -62,20 +63,20 @@ class Migration
     }
 
     /**
-     * @return CommandInterface
+     * @return DatabaseInterface
      */
     public function getDbCommand()
     {
         if (is_null($this->_dbCommand)) {
-            $class = $this->getCommandClassName();
+            $class = $this->getDatabaseClassName();
             $this->_dbCommand = new $class($this->getDbDriver());
         }
         return $this->_dbCommand;
     }
 
-    protected function getCommandClassName()
+    protected function getDatabaseClassName()
     {
-        return "\\ByJG\\DbMigration\\Commands\\" . ucfirst($this->uri->getScheme()) . "Command";
+        return "\\ByJG\\DbMigration\\Database\\" . ucfirst($this->uri->getScheme()) . "Database";
     }
 
     /**
@@ -97,18 +98,35 @@ class Migration
      */
     public function getMigrationSql($version, $increment)
     {
-        $result = glob(
-            $this->_folder
+        // I could use the GLOB_BRACE but it is not supported on ALPINE distros.
+        // So, I have to call multiple times to simulate the braces.
+
+        if (intval($version) != $version) {
+            throw new \InvalidArgumentException("Version '$version' should be a integer number");
+        }
+        $version = intval($version);
+
+        $filePattern = $this->_folder
             . "/migrations"
             . "/" . ($increment < 0 ? "down" : "up")
-            . "/*$version.sql"
+            . "/*%s.sql";
+
+        $result = array_merge(
+            glob(sprintf($filePattern, "$version")),
+            glob(sprintf($filePattern, "$version-dev"))
         );
 
+        // Valid values are 0 or 1
+        if (count($result) > 1) {
+            throw new \InvalidArgumentException("You have two files with the same version $version number");
+        }
+
         foreach ($result as $file) {
-            if (intval(basename($file)) == $version) {
+            if (intval(basename($file)) === $version) {
                 return $file;
             }
         }
+        return null;
     }
 
     /**
@@ -116,7 +134,7 @@ class Migration
      */
     public function prepareEnvironment()
     {
-        $class = $this->getCommandClassName();
+        $class = $this->getDatabaseClassName();
         $class::prepareEnvironment($this->uri);
     }
     
@@ -133,9 +151,20 @@ class Migration
         }
         $this->getDbCommand()->dropDatabase();
         $this->getDbCommand()->createDatabase();
-        $this->getDbCommand()->executeSql(file_get_contents($this->getBaseSql()));
         $this->getDbCommand()->createVersion();
+        $this->getDbCommand()->executeSql(file_get_contents($this->getBaseSql()));
+        $this->getDbCommand()->setVersion(0, 'complete');
         $this->up($upVersion);
+    }
+
+    public function createVersion()
+    {
+        $this->getDbCommand()->createVersion();
+    }
+
+    public function updateTableVersion()
+    {
+        $this->getDbCommand()->updateVersionTable();
     }
 
     /**
@@ -145,7 +174,7 @@ class Migration
      */
     public function getCurrentVersion()
     {
-        return intval($this->getDbCommand()->getVersion());
+        return $this->getDbCommand()->getVersion();
     }
 
     /**
@@ -157,12 +186,16 @@ class Migration
     protected function canContinue($currentVersion, $upVersion, $increment)
     {
         $existsUpVersion = ($upVersion !== null);
-        $compareVersion = strcmp(
-                str_pad($currentVersion, 5, '0', STR_PAD_LEFT),
-                str_pad($upVersion, 5, '0', STR_PAD_LEFT)
-            ) == $increment;
+        $compareVersion =
+            intval($currentVersion) < intval($upVersion)
+                ? -1
+                : (
+                    intval($currentVersion) > intval($upVersion)
+                        ? 1
+                        : 0
+                );
 
-        return !($existsUpVersion && $compareVersion);
+        return !($existsUpVersion && ($compareVersion === intval($increment)));
     }
 
     /**
@@ -170,11 +203,18 @@ class Migration
      *
      * @param int $upVersion
      * @param int $increment Can accept 1 for UP or -1 for down
+     * @param bool $force
+     * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
      */
-    protected function migrate($upVersion, $increment)
+    protected function migrate($upVersion, $increment, $force)
     {
-        $currentVersion = $this->getCurrentVersion() + $increment;
-        
+        $versionInfo = $this->getCurrentVersion();
+        $currentVersion = intval($versionInfo['version']) + $increment;
+
+        if (strpos($versionInfo['status'], 'partial') !== false && !$force) {
+            throw new DatabaseIsIncompleteException('Database was not fully updated. Use --force for migrate.');
+        }
+
         while ($this->canContinue($currentVersion, $upVersion, $increment)
             && file_exists($file = $this->getMigrationSql($currentVersion, $increment))
         ) {
@@ -182,8 +222,9 @@ class Migration
                 call_user_func_array($this->_callableProgress, ['migrate', $currentVersion]);
             }
 
+            $this->getDbCommand()->setVersion($currentVersion, 'partial ' . ($increment>0 ? 'up' : 'down'));
             $this->getDbCommand()->executeSql(file_get_contents($file));
-            $this->getDbCommand()->setVersion($currentVersion);
+            $this->getDbCommand()->setVersion($currentVersion, 'complete');
             $currentVersion = $currentVersion + $increment;
         }
     }
@@ -192,20 +233,39 @@ class Migration
      * Run all scripts to up the database version from current up to latest version or the specified version.
      *
      * @param int $upVersion
+     * @param bool $force
      */
-    public function up($upVersion = null)
+    public function up($upVersion = null, $force = false)
     {
-        $this->migrate($upVersion, 1);
+        $this->migrate($upVersion, 1, $force);
+    }
+
+    /**
+     * Run all scripts to up or down the database version from current up to latest version or the specified version.
+     *
+     * @param int $upVersion
+     * @param bool $force
+     */
+    public function update($upVersion = null, $force = false)
+    {
+        $versionInfo = $this->getCurrentVersion();
+        $version = intval($versionInfo['version']);
+        $increment = 1;
+        if ($upVersion !== null && $upVersion < $version) {
+            $increment = -1;
+        }
+        $this->migrate($upVersion, $increment, $force);
     }
 
     /**
      * Run all scripts to down the database version from current version up to the specified version.
      *
      * @param int $upVersion
+     * @param bool $force
      */
-    public function down($upVersion)
+    public function down($upVersion, $force = false)
     {
-        $this->migrate($upVersion, -1);
+        $this->migrate($upVersion, -1, $force);
     }
     
     public function addCallbackProgress(Callable $callable)

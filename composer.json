@@ -1,6 +1,6 @@
 {
   "name": "byjg/migration",
-  "description": "A micro framework in PHP for managing a set of database migrations using pure Sql.",
+  "description": "Simple library in PHP for database version control. Supports Sqlite, MySql, Sql Server and Postgres.",
   "authors": [
     {
       "name": "jg",

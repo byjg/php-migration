@@ -1,11 +1,11 @@
 <?php
 
-namespace ByJG\DbMigration\Commands;
+namespace ByJG\DbMigration\Database;
 
 use ByJG\AnyDataset\Factory;
 use ByJG\Util\Uri;
 
-class PgsqlCommand extends AbstractCommand
+class PgsqlDatabase extends AbstractDatabase
 {
 
     public static function prepareEnvironment(Uri $uri)
@@ -21,6 +21,10 @@ class PgsqlCommand extends AbstractCommand
         return Factory::getDbRelationalInstance($customUri->withPath('/')->__toString());
     }
 
+    /**
+     * @param \ByJG\AnyDataset\DbDriverInterface $dbDriver
+     * @param $database
+     */
     protected static function createDatabaseIfNotExists($dbDriver, $database)
     {
         $currentDbName = $dbDriver->getScalar(
@@ -53,7 +57,7 @@ class PgsqlCommand extends AbstractCommand
 
     public function createVersion()
     {
-        $this->getDbDriver()->execute('CREATE TABLE IF NOT EXISTS migration_version (version int)');
+        $this->getDbDriver()->execute('CREATE TABLE IF NOT EXISTS migration_version (version int, status varchar(20))');
         $this->checkExistsVersion();
     }
 

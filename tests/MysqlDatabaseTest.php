@@ -1,8 +1,8 @@
 <?php
 
-require_once 'BaseCommand.php';
+require_once 'BaseDatabase.php';
 
-class MysqlCommandTest extends BaseCommand
+class MysqlDatabaseTest extends BaseDatabase
 {
     protected $uri = 'mysql://root:password@mysql-container/migratedatabase';
 

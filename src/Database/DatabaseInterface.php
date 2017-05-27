@@ -1,10 +1,10 @@
 <?php
 
-namespace ByJG\DbMigration\Commands;
+namespace ByJG\DbMigration\Database;
 
 use ByJG\Util\Uri;
 
-interface CommandInterface
+interface DatabaseInterface
 {
     public static function prepareEnvironment(Uri $dbDriver);
 
@@ -13,10 +13,12 @@ interface CommandInterface
     public function dropDatabase();
     
     public function getVersion();
+
+    public function updateVersionTable();
     
     public function executeSql($sql);
     
-    public function setVersion($version);
+    public function setVersion($version, $status);
     
     public function createVersion();
 }

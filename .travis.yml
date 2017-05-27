@@ -8,5 +8,5 @@ install:
   - composer install
 
 script: 
-  - phpunit tests/SqliteCommandTest.php
+  - phpunit tests/SqliteDatabaseTest.php
 
