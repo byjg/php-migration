@@ -21,6 +21,10 @@ class PgsqlDatabase extends AbstractDatabase
         return Factory::getDbRelationalInstance($customUri->withPath('/')->__toString());
     }
 
+    /**
+     * @param \ByJG\AnyDataset\DbDriverInterface $dbDriver
+     * @param $database
+     */
     protected static function createDatabaseIfNotExists($dbDriver, $database)
     {
         $currentDbName = $dbDriver->getScalar(

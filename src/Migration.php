@@ -174,7 +174,7 @@ class Migration
      */
     public function getCurrentVersion()
     {
-        return $this->getDbCommand()->getVersion();;
+        return $this->getDbCommand()->getVersion();
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace ByJG\DbMigration\Console;
 
-use ByJG\AnyDataset\ConnectionManagement;
 use ByJG\DbMigration\Migration;
 use ByJG\Util\Uri;
 use Symfony\Component\Console\Command\Command;
@@ -89,6 +88,10 @@ abstract class ConsoleCommand extends Command
         }
     }
 
+    /**
+     * @param \Exception|\Error $ex
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     */
     protected function handleError($ex, OutputInterface $output)
     {
         $output->writeln('-- Error migrating tables --');
