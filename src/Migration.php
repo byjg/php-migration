@@ -6,6 +6,7 @@ use ByJG\AnyDataset\DbDriverInterface;
 use ByJG\AnyDataset\Factory;
 use ByJG\DbMigration\Database\DatabaseInterface;
 use ByJG\DbMigration\Exception\DatabaseIsIncompleteException;
+use ByJG\DbMigration\Exception\InvalidMigrationFile;
 use ByJG\Util\Uri;
 
 class Migration
@@ -18,7 +19,7 @@ class Migration
     /**
      * @var string
      */
-    protected $_folder;
+    protected $folder;
 
     /**
      * @var DbDriverInterface
@@ -28,26 +29,27 @@ class Migration
     /**
      * @var DatabaseInterface
      */
-    protected $_dbCommand;
+    protected $dbCommand;
 
     /**
      * @var Callable
      */
-    protected $_callableProgress;
-    
+    protected $callableProgress;
+
     /**
      * Migration constructor.
      *
      * @param Uri $uri
-     * @param string $_folder
+     * @param string $folder
+     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
      */
-    public function __construct(Uri $uri, $_folder)
+    public function __construct(Uri $uri, $folder)
     {
         $this->uri = $uri;
-        $this->_folder = $_folder;
+        $this->folder = $folder;
 
-        if (!file_exists($this->_folder . '/base.sql')) {
-            throw new \InvalidArgumentException("Migration script '{$this->_folder}/base.sql' not found");
+        if (!file_exists($this->folder . '/base.sql')) {
+            throw new InvalidMigrationFile("Migration script '{$this->folder}/base.sql' not found");
         }
     }
 
@@ -67,11 +69,11 @@ class Migration
      */
     public function getDbCommand()
     {
-        if (is_null($this->_dbCommand)) {
+        if (is_null($this->dbCommand)) {
             $class = $this->getDatabaseClassName();
-            $this->_dbCommand = new $class($this->getDbDriver());
+            $this->dbCommand = new $class($this->getDbDriver());
         }
-        return $this->_dbCommand;
+        return $this->dbCommand;
     }
 
     protected function getDatabaseClassName()
@@ -86,7 +88,7 @@ class Migration
      */
     public function getBaseSql()
     {
-        return $this->_folder . "/base.sql";
+        return $this->folder . "/base.sql";
     }
 
     /**
@@ -95,6 +97,7 @@ class Migration
      * @param $version
      * @param $increment
      * @return string
+     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
      */
     public function getMigrationSql($version, $increment)
     {
@@ -106,19 +109,18 @@ class Migration
         }
         $version = intval($version);
 
-        $filePattern = $this->_folder
+        $filePattern = $this->folder
             . "/migrations"
             . "/" . ($increment < 0 ? "down" : "up")
-            . "/*%s.sql";
+            . "/*.sql";
 
-        $result = array_merge(
-            glob(sprintf($filePattern, "$version")),
-            glob(sprintf($filePattern, "$version-dev"))
-        );
+        $result = array_filter(glob($filePattern), function ($file) use ($version) {
+            return preg_match("/^0*$version(-dev)?\.sql$/", basename($file));
+        });
 
         // Valid values are 0 or 1
         if (count($result) > 1) {
-            throw new \InvalidArgumentException("You have two files with the same version $version number");
+            throw new InvalidMigrationFile("You have two files with the same version number '$version'");
         }
 
         foreach ($result as $file) {
@@ -130,7 +132,7 @@ class Migration
     }
 
     /**
-     * Create the database it it does not exists. Does not use this methos in a production environment; 
+     * Create the database it it does not exists. Does not use this methos in a production environment
      */
     public function prepareEnvironment()
     {
@@ -140,14 +142,14 @@ class Migration
     
     /**
      * Restore the database using the "base.sql" script and run all migration scripts
-     * Note: the database must exists. If dont exist run the method prepareEnvironment.  
+     * Note: the database must exists. If dont exist run the method prepareEnvironment
      *
      * @param int $upVersion
      */
     public function reset($upVersion = null)
     {
-        if ($this->_callableProgress) {
-            call_user_func_array($this->_callableProgress, ['reset', 0]);
+        if ($this->callableProgress) {
+            call_user_func_array($this->callableProgress, ['reset', 0]);
         }
         $this->getDbCommand()->dropDatabase();
         $this->getDbCommand()->createDatabase();
@@ -218,8 +220,8 @@ class Migration
         while ($this->canContinue($currentVersion, $upVersion, $increment)
             && file_exists($file = $this->getMigrationSql($currentVersion, $increment))
         ) {
-            if ($this->_callableProgress) {
-                call_user_func_array($this->_callableProgress, ['migrate', $currentVersion]);
+            if ($this->callableProgress) {
+                call_user_func_array($this->callableProgress, ['migrate', $currentVersion]);
             }
 
             $this->getDbCommand()->setVersion($currentVersion, 'partial ' . ($increment>0 ? 'up' : 'down'));
@@ -267,9 +269,12 @@ class Migration
     {
         $this->migrate($upVersion, -1, $force);
     }
-    
-    public function addCallbackProgress(Callable $callable)
+
+    /**
+     * @param callable $callable
+     */
+    public function addCallbackProgress(callable $callable)
     {
-        $this->_callableProgress = $callable;
+        $this->callableProgress = $callable;
     }
 }
