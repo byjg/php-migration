@@ -23,6 +23,7 @@ and open the template in the editor.
         <testsuite name="Test Suite">
             <!--<directory>./tests/</directory>-->
             <file>./tests/SqliteDatabaseTest.php</file>
+            <file>./tests/MigrationTest.php</file>
         </testsuite>
     </testsuites>
 

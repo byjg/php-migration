@@ -94,23 +94,70 @@ Migration library creates the 'migrate' script. It has the follow syntax:
 Usage:
   command [options] [arguments]
 
+Options:
+  -h, --help            Display this help message
+  -q, --quiet           Do not output any message
+  -V, --version         Display this application version
+      --ansi            Force ANSI output
+      --no-ansi         Disable ANSI output
+  -n, --no-interaction  Do not ask any interactive question
+  -v|vv|vvv, --verbose  Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
+
 Available commands:
   create   Create the directory structure FROM a pre-existing database
+  down     Migrate down the database version.
+  help     Displays help for a command
   install  Install or upgrade the migrate version in a existing database
-  down   Migrate down the database version.
-  reset  Create a fresh new database
-  up     Migrate Up the database version
+  list     Lists commands
+  reset    Create a fresh new database
+  up       Migrate Up the database version
+  update   Migrate Up or Down the database version based on the current database version and the migration scripts available
   version  Get the current database version
+```
 
-Arguments:
-  connection            The connection string. Ex. mysql://root:password@server/database [default: false]
+## Commands
 
-Example:
-  migrate reset mysql://root:password@server/database
-  migrate up mysql://root:password@server/database
-  migrate down mysql://root:password@server/database
-  migrate up --up-to=10 --path=/somepath mysql://root:password@server/database
-  migrate down --up-to=3 --path=/somepath mysql://root:password@server/database
+### migrate create
+
+Create a empty directory structure with base.sql and migrations/up and migrations/down for migrations. This is
+useful for create from scratch a migration scheme.
+
+Ex.
+
+```bash
+migrate create /path/to/sql 
+```
+
+### migrate install 
+
+If you already have a database but it is not controlled by the migration system you can use this method for 
+install the required tables for migration.
+
+```bash
+migrate install mysql://server/database
+```
+
+### migrate update
+
+Will apply all necessary migrations to keep your database updated.
+
+```bash
+migrate update mysql://server/database
+```
+
+Update command can choose if up or down your database depending on your current database version. 
+
+```bash
+migrate update --up-to=34
+``` 
+
+### migrate reset
+
+Creates/replace a database with the "base.sql" and apply ALL migrations
+
+```bash
+migrate reset
+migrate reset --up-to=5
 ```
 
 ## Supported databases:
@@ -120,7 +167,15 @@ Example:
 * Postgres
 * SqlServer
 
-## Installing Globally
+## Installing
+
+### At your project level
+
+```
+composer require 'byjg/migration=2.0.*'
+```
+
+### Globally
 
 ```bash
 composer global require 'byjg/migration=2.0.*'
