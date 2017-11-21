@@ -16,24 +16,28 @@ class ResetCommand extends ConsoleCommand
 {
     protected function configure()
     {
-        parent::configure(); 
+        parent::configure();
         $this
             ->setName('reset')
-            ->setDescription('Create a fresh new database');
-
+            ->setDescription('Create a fresh new database')
+            ->addOption('yes', null, null, 'Answer yes to any interactive question');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
             $helper = $this->getHelper('question');
-            $question = new ConfirmationQuestion('This will ERASE all of data in your data. Continue with this action? (y/N) ',
-                false);
+            if (!$input->getOption('yes')) {
+                $question = new ConfirmationQuestion(
+                    'This will ERASE all of data in your data. Continue with this action? (y/N) ',
+                    false
+                );
 
-            if (!$helper->ask($input, $output, $question)) {
-                $output->writeln('Aborted.');
+                if (!$helper->ask($input, $output, $question)) {
+                    $output->writeln('Aborted.');
 
-                return;
+                    return;
+                }
             }
 
             parent::execute($input, $output);
@@ -43,5 +47,4 @@ class ResetCommand extends ConsoleCommand
             $this->handleError($ex, $output);
         }
     }
-
 }

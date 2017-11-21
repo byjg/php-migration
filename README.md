@@ -156,8 +156,9 @@ migrate update --up-to=34
 Creates/replace a database with the "base.sql" and apply ALL migrations
 
 ```bash
-migrate reset
-migrate reset --up-to=5
+migrate reset            # reset the database and apply all migrations scripts.
+migrate reset --up-to=5  # reset the database and apply the migration version up to 5.
+migrate reset --yes      # reset the database without ask anything. Be careful!!
 ```
 
 ## Supported databases:
