@@ -59,7 +59,9 @@ abstract class ConsoleCommand extends Command
     {
         $this->connection = $input->getArgument('connection');
         if (!$this->connection) {
-            throw new InvalidArgumentException('You need to setup the connection in the argument or setting the environment MIGRATE_CONNECTION');
+            throw new InvalidArgumentException(
+                'You need to setup the connection in the argument or setting the environment MIGRATE_CONNECTION'
+            );
         }
 
         $this->path = $input->getOption('path');
@@ -82,22 +84,22 @@ abstract class ConsoleCommand extends Command
         }
 
         if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERY_VERBOSE) {
-            $this->migration->addCallbackProgress(function($command, $version) use ($output) {
+            $this->migration->addCallbackProgress(function ($command, $version) use ($output) {
                 $output->writeln('Doing: ' . $command . " to " . $version);
             });
         }
     }
 
     /**
-     * @param \Exception|\Error $ex
+     * @param \Exception|\Error $exception
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      */
-    protected function handleError($ex, OutputInterface $output)
+    protected function handleError($exception, OutputInterface $output)
     {
         $output->writeln('-- Error migrating tables --');
         if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
-            $output->writeln(get_class($ex));
-            $output->writeln($ex->getMessage());
+            $output->writeln(get_class($exception));
+            $output->writeln($exception->getMessage());
         }
     }
 
