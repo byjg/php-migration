@@ -66,7 +66,7 @@ abstract class ConsoleCommand extends Command
 
         $this->path = $input->getOption('path');
         if (!$this->path) {
-            $this->path = ".";
+            $this->path = (!empty(getenv('MIGRATE_PATH')) ? getenv('MIGRATE_PATH') : ".");
         }
         $this->path = realpath($this->path);
 

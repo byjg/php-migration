@@ -8,6 +8,7 @@
 
 namespace ByJG\DbMigration\Console;
 
+use ByJG\DbMigration\Exception\ResetDisabledException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
@@ -25,6 +26,10 @@ class ResetCommand extends ConsoleCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        if (getenv('MIGRATE_DISABLE_RESET') === "true") {
+            throw new ResetDisabledException('Reset was disabled by MIGRATE_DISABLE_RESET environment variable. Cannot continue.');
+        }
+
         try {
             $helper = $this->getHelper('question');
             if (!$input->getOption('yes')) {

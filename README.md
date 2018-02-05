@@ -117,7 +117,30 @@ Available commands:
 
 ## Commands
 
-### migrate create
+### Basic Usage
+
+The basic usage is:
+
+```text
+migrate <COMMAND> --path=<scripts> uri://connection
+```
+
+The `--path` specify where the base.sql and migrate scripts are located. 
+If you omitted the `--path` it will assume the current directory. You can also
+set the `MIGRATE_PATH` environment variable with the base path 
+
+The uri://connection is the uri that represents the connection to the database. 
+You can see [here](https://github.com/byjg/anydataset#connection-based-on-uri)
+to know more about the connection string.
+
+You can omit the uri parameter if you define it in the 
+`MIGRATE_CONNECTION` environment variable
+
+```bash
+export MIGRATE_CONNECTION=sqlite:///path/to/my.db
+```
+  
+### Command: create
 
 Create a empty directory structure with base.sql and migrations/up and migrations/down for migrations. This is
 useful for create from scratch a migration scheme.
@@ -128,7 +151,7 @@ Ex.
 migrate create /path/to/sql 
 ```
 
-### migrate install 
+### Command: install 
 
 If you already have a database but it is not controlled by the migration system you can use this method for 
 install the required tables for migration.
@@ -137,7 +160,7 @@ install the required tables for migration.
 migrate install mysql://server/database
 ```
 
-### migrate update
+### Command: update
 
 Will apply all necessary migrations to keep your database updated.
 
@@ -145,20 +168,29 @@ Will apply all necessary migrations to keep your database updated.
 migrate update mysql://server/database
 ```
 
-Update command can choose if up or down your database depending on your current database version. 
+Update command can choose if up or down your database depending on your current database version.
+You can also specify a version: 
 
 ```bash
 migrate update --up-to=34
 ``` 
 
-### migrate reset
+### Command: reset
 
 Creates/replace a database with the "base.sql" and apply ALL migrations
 
 ```bash
 migrate reset            # reset the database and apply all migrations scripts.
-migrate reset --up-to=5  # reset the database and apply the migration version up to 5.
+migrate reset --up-to=5  # reset the database and apply the migration from the 
+                         # start up to the version 5.
 migrate reset --yes      # reset the database without ask anything. Be careful!!
+```
+
+**Note on reset:** You can disable the reset command by setting the environment variable 
+`MIGRATE_DISABLE_RESET` to true:
+
+```bash
+export MIGRATE_DISABLE_RESET=true
 ```
 
 ## Supported databases:
