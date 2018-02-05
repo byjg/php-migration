@@ -1,0 +1,5 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run Sqlite Example" type="PhpLocalRunConfigurationType" factoryName="PHP Console" path="$PROJECT_DIR$/example/sqlite/test_sqlite.php">
+    <method />
+  </configuration>
+</component>

@@ -1,0 +1,5 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run MySql Example" type="PhpLocalRunConfigurationType" factoryName="PHP Console" path="$PROJECT_DIR$/example/mysql/test_mysql.php">
+    <method />
+  </configuration>
+</component>

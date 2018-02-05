@@ -1,0 +1,6 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Test Postgres" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+    <TestRunner class="PostgresDatabaseTest" configuration_file="$PROJECT_DIR$/phpunit.xml.dist" file="$PROJECT_DIR$/tests/PostgresDatabaseTest.php" scope="Class" use_alternative_configuration_file="true" />
+    <method />
+  </configuration>
+</component>

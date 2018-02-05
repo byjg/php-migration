@@ -1,0 +1,6 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Test Sqlite" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+    <TestRunner class="SqliteDatabaseTest" configuration_file="$PROJECT_DIR$/phpunit.xml.dist" file="$PROJECT_DIR$/tests/SqliteDatabaseTest.php" scope="Class" use_alternative_configuration_file="true" />
+    <method />
+  </configuration>
+</component>
