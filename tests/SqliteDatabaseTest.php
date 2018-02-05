@@ -4,7 +4,7 @@ require_once 'BaseDatabase.php';
 
 class SqliteDatabaseTest extends BaseDatabase
 {
-    protected $uri = 'sqlite:///tmp/teste.sqlite';
+    protected $path = __DIR__ . '/../example/sqlite/test.sqlite';
 
     /**
      * @var \ByJG\DbMigration\Migration
@@ -13,7 +13,11 @@ class SqliteDatabaseTest extends BaseDatabase
 
     public function setUp()
     {
-        $this->migrate = new \ByJG\DbMigration\Migration(new \ByJG\Util\Uri($this->uri), __DIR__ . '/../example/sqlite');
+        # Dump SQLite database.
+        file_put_contents($this->path, '');
+
+        $uri = new \ByJG\Util\Uri("sqlite://{$this->path}");
+        $this->migrate = new \ByJG\DbMigration\Migration($uri, __DIR__ . '/../example/sqlite');
         parent::setUp();
     }
 }
