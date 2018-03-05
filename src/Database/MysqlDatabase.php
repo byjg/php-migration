@@ -4,11 +4,12 @@ namespace ByJG\DbMigration\Database;
 
 use ByJG\AnyDataset\Factory;
 use ByJG\Util\Uri;
+use Psr\Http\Message\UriInterface;
 
 class MySqlDatabase extends AbstractDatabase
 {
 
-    public static function prepareEnvironment(Uri $uri)
+    public static function prepareEnvironment(UriInterface $uri)
     {
         $database = preg_replace('~^/~', '', $uri->getPath());
 

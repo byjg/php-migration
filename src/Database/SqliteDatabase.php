@@ -2,12 +2,12 @@
 
 namespace ByJG\DbMigration\Database;
 
-use ByJG\Util\Uri;
+use Psr\Http\Message\UriInterface;
 
 class SqliteDatabase extends AbstractDatabase
 {
 
-    public static function prepareEnvironment(Uri $uri)
+    public static function prepareEnvironment(UriInterface $uri)
     {
     }
 

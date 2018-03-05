@@ -2,11 +2,11 @@
 
 namespace ByJG\DbMigration\Database;
 
-use ByJG\Util\Uri;
+use Psr\Http\Message\UriInterface;
 
 interface DatabaseInterface
 {
-    public static function prepareEnvironment(Uri $dbDriver);
+    public static function prepareEnvironment(UriInterface $dbDriver);
 
     public function createDatabase();
     
