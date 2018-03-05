@@ -4,18 +4,19 @@ namespace ByJG\DbMigration\Database;
 
 use ByJG\AnyDataset\Factory;
 use ByJG\Util\Uri;
+use Psr\Http\Message\UriInterface;
 
 class PgsqlDatabase extends AbstractDatabase
 {
 
-    public static function prepareEnvironment(Uri $uri)
+    public static function prepareEnvironment(UriInterface $uri)
     {
         $database = preg_replace('~^/~', '', $uri->getPath());
         $dbDriver = self::getDbDriverWithoutDatabase($uri);
         self::createDatabaseIfNotExists($dbDriver, $database);
     }
 
-    protected static function getDbDriverWithoutDatabase(Uri $uri)
+    protected static function getDbDriverWithoutDatabase(UriInterface $uri)
     {
         $customUri = new Uri($uri->__toString());
         return Factory::getDbRelationalInstance($customUri->withPath('/')->__toString());

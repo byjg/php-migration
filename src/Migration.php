@@ -7,12 +7,12 @@ use ByJG\AnyDataset\Factory;
 use ByJG\DbMigration\Database\DatabaseInterface;
 use ByJG\DbMigration\Exception\DatabaseIsIncompleteException;
 use ByJG\DbMigration\Exception\InvalidMigrationFile;
-use ByJG\Util\Uri;
+use Psr\Http\Message\UriInterface;
 
 class Migration
 {
     /**
-     * @var Uri
+     * @var UriInterface
      */
     protected $uri;
 
@@ -39,11 +39,11 @@ class Migration
     /**
      * Migration constructor.
      *
-     * @param Uri $uri
+     * @param UriInterface $uri
      * @param string $folder
      * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
      */
-    public function __construct(Uri $uri, $folder)
+    public function __construct(UriInterface $uri, $folder)
     {
         $this->uri = $uri;
         $this->folder = $folder;
