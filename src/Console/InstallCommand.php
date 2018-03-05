@@ -11,7 +11,7 @@ class InstallCommand extends ConsoleCommand
 {
     protected function configure()
     {
-        parent::configure(); 
+        parent::configure();
         $this
             ->setName('install')
             ->setDescription('Install or upgrade the migrate version in a existing database');

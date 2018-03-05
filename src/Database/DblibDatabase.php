@@ -50,6 +50,10 @@ class DblibDatabase extends AbstractDatabase
         $this->getDbDriver()->execute($sql);
     }
 
+    /**
+     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
+     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
+     */
     public function createVersion()
     {
         $database = preg_replace('~^/~', '', $this->getDbDriver()->getUri()->getPath());

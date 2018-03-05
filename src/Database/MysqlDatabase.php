@@ -34,6 +34,10 @@ class MySqlDatabase extends AbstractDatabase
         $this->getDbDriver()->execute("drop database `$database`");
     }
 
+    /**
+     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
+     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
+     */
     public function createVersion()
     {
         $this->getDbDriver()->execute('CREATE TABLE IF NOT EXISTS migration_version (version int, status varchar(20))');

@@ -9,7 +9,7 @@ class DatabaseVersionCommand extends ConsoleCommand
 {
     protected function configure()
     {
-        parent::configure(); 
+        parent::configure();
         $this
             ->setName('version')
             ->setDescription('Get the current database version');

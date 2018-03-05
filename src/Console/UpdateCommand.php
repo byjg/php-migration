@@ -10,7 +10,7 @@ class UpdateCommand extends ConsoleCommand
 {
     protected function configure()
     {
-        parent::configure(); 
+        parent::configure();
         $this
             ->setName('update')
             ->setDescription('Migrate Up or Down the database version based on the current database version and the ' .

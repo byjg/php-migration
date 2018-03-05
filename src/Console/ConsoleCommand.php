@@ -55,6 +55,11 @@ abstract class ConsoleCommand extends Command
 
     protected $path;
 
+    /**
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
+     */
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
         $this->connection = $input->getArgument('connection');
@@ -102,6 +107,4 @@ abstract class ConsoleCommand extends Command
             $output->writeln($exception->getMessage());
         }
     }
-
-
 }

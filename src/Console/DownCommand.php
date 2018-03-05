@@ -10,7 +10,7 @@ class DownCommand extends ConsoleCommand
 {
     protected function configure()
     {
-        parent::configure(); 
+        parent::configure();
         $this
             ->setName('down')
             ->setDescription('Migrate down the database version.');
@@ -41,5 +41,4 @@ class DownCommand extends ConsoleCommand
             $this->handleError($ex, $output);
         }
     }
-
 }

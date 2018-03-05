@@ -10,7 +10,7 @@ class UpCommand extends ConsoleCommand
 {
     protected function configure()
     {
-        parent::configure(); 
+        parent::configure();
         $this
             ->setName('up')
             ->setDescription('Migrate Up the database version');

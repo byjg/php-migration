@@ -139,12 +139,14 @@ class Migration
         $class = $this->getDatabaseClassName();
         $class::prepareEnvironment($this->uri);
     }
-    
+
     /**
      * Restore the database using the "base.sql" script and run all migration scripts
      * Note: the database must exists. If dont exist run the method prepareEnvironment
      *
      * @param int $upVersion
+     * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
+     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
      */
     public function reset($upVersion = null)
     {
@@ -207,6 +209,7 @@ class Migration
      * @param int $increment Can accept 1 for UP or -1 for down
      * @param bool $force
      * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
+     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
      */
     protected function migrate($upVersion, $increment, $force)
     {
@@ -236,6 +239,8 @@ class Migration
      *
      * @param int $upVersion
      * @param bool $force
+     * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
+     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
      */
     public function up($upVersion = null, $force = false)
     {
@@ -247,6 +252,8 @@ class Migration
      *
      * @param int $upVersion
      * @param bool $force
+     * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
+     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
      */
     public function update($upVersion = null, $force = false)
     {
@@ -264,6 +271,8 @@ class Migration
      *
      * @param int $upVersion
      * @param bool $force
+'     * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
+     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
      */
     public function down($upVersion, $force = false)
     {

@@ -31,6 +31,11 @@ abstract class AbstractDatabase implements DatabaseInterface
         return $this->dbDriver;
     }
 
+    /**
+     * @return array
+     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
+     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
+     */
     public function getVersion()
     {
         $result = [];
@@ -60,6 +65,10 @@ abstract class AbstractDatabase implements DatabaseInterface
         );
     }
 
+    /**
+     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
+     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
+     */
     protected function checkExistsVersion()
     {
         // Get the version to check if exists
@@ -75,5 +84,5 @@ abstract class AbstractDatabase implements DatabaseInterface
         $this->getDbDriver()->execute('drop table migration_version');
         $this->createVersion();
         $this->setVersion($currentVersion, 'unknow');
-   }
+    }
 }
