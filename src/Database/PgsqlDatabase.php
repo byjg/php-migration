@@ -34,7 +34,7 @@ class PgsqlDatabase extends AbstractDatabase
         );
 
         if (empty($currentDbName)) {
-            $dbDriver->execute("CREATE DATABASE $database WITH encoding=UTF8;");
+            $dbDriver->execute("CREATE DATABASE $database WITH encoding=\"UTF8\";");
         }
     }
 

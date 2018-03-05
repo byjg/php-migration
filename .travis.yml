@@ -17,7 +17,7 @@ services:
 
 before_install:
   - sudo service mysql stop || echo "mysql not stopped"
-  - sudo service postgres stop || echo "postgres not stopped"
+  - sudo service pgsql stop || echo "postgres not stopped"
   - npm i @usdocker/usdocker @usdocker/postgres @usdocker/mysql @usdocker/mssql
   - node_modules/.bin/usdocker --refresh
 #  - node_modules/.bin/usdocker mssql up
@@ -26,6 +26,7 @@ before_install:
 
 install:
   - composer install
+  - docker ps
 
 script: 
   - vendor/bin/phpunit
