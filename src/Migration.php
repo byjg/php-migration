@@ -174,7 +174,7 @@ class Migration
     /**
      * Get the current database version
      *
-     * @return int
+     * @return string[] The current 'version' and 'status' as an associative array
      */
     public function getCurrentVersion()
     {
