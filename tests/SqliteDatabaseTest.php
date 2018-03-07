@@ -18,6 +18,7 @@ class SqliteDatabaseTest extends BaseDatabase
 
         $uri = new \ByJG\Util\Uri("sqlite://{$this->path}");
         $this->migrate = new \ByJG\DbMigration\Migration($uri, __DIR__ . '/../example/sqlite');
+        $this->migrate->registerDatabase("sqlite", \ByJG\DbMigration\Database\SqliteDatabase::class);
         parent::setUp();
     }
 }

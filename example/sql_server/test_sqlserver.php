@@ -11,6 +11,7 @@ require __DIR__ . "/../../vendor/autoload.php";
 $uri = new \ByJG\Util\Uri('dblib://sa:Pa$$word!@mssql-container/migratedatabase');
 
 $migration = new \ByJG\DbMigration\Migration($uri, __DIR__);
+$migration->registerDatabase('dblib', \ByJG\DbMigration\Database\DblibDatabase::class);
 
 $migration->prepareEnvironment();
 

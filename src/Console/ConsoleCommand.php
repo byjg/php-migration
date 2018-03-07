@@ -2,6 +2,10 @@
 
 namespace ByJG\DbMigration\Console;
 
+use ByJG\DbMigration\Database\DblibDatabase;
+use ByJG\DbMigration\Database\MySqlDatabase;
+use ByJG\DbMigration\Database\PgsqlDatabase;
+use ByJG\DbMigration\Database\SqliteDatabase;
 use ByJG\DbMigration\Migration;
 use ByJG\Util\Uri;
 use Symfony\Component\Console\Command\Command;
@@ -79,6 +83,11 @@ abstract class ConsoleCommand extends Command
 
         $uri = new Uri($this->connection);
         $this->migration = new Migration($uri, $this->path);
+        $this->migration
+            ->registerDatabase('sqlite', SqliteDatabase::class)
+            ->registerDatabase('mysql', MySqlDatabase::class)
+            ->registerDatabase('pgsql', PgsqlDatabase::class)
+            ->registerDatabase('dblib', DblibDatabase::class);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

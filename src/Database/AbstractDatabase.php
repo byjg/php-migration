@@ -3,8 +3,10 @@
 namespace ByJG\DbMigration\Database;
 
 use ByJG\AnyDataset\DbDriverInterface;
+use ByJG\AnyDataset\Factory;
 use ByJG\DbMigration\Exception\DatabaseNotVersionedException;
 use ByJG\DbMigration\Exception\OldVersionSchemaException;
+use Psr\Http\Message\UriInterface;
 
 abstract class AbstractDatabase implements DatabaseInterface
 {
@@ -14,13 +16,18 @@ abstract class AbstractDatabase implements DatabaseInterface
     private $dbDriver;
 
     /**
+     * @var \Psr\Http\Message\UriInterface
+     */
+    private $uri;
+
+    /**
      * Command constructor.
      *
-     * @param DbDriverInterface $dbDriver
+     * @param UriInterface $uri
      */
-    public function __construct(DbDriverInterface $dbDriver)
+    public function __construct(UriInterface $uri)
     {
-        $this->dbDriver = $dbDriver;
+        $this->uri = $uri;
     }
 
     /**
@@ -28,6 +35,9 @@ abstract class AbstractDatabase implements DatabaseInterface
      */
     public function getDbDriver()
     {
+        if (is_null($this->dbDriver)) {
+            $this->dbDriver = Factory::getDbRelationalInstance($this->uri->__toString());
+        }
         return $this->dbDriver;
     }
 

@@ -21,4 +21,6 @@ interface DatabaseInterface
     public function setVersion($version, $status);
     
     public function createVersion();
+
+    public function getDbDriver();
 }
