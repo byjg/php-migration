@@ -11,7 +11,12 @@ interface DatabaseInterface
     public function createDatabase();
     
     public function dropDatabase();
-    
+
+    /**
+     * @return array
+     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
+     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
+     */
     public function getVersion();
 
     public function updateVersionTable();

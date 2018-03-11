@@ -64,6 +64,10 @@ abstract class AbstractDatabase implements DatabaseInterface
         return $result;
     }
 
+    /**
+     * @param $version
+     * @param $status
+     */
     public function setVersion($version, $status)
     {
         $this->getDbDriver()->execute(
@@ -88,6 +92,9 @@ abstract class AbstractDatabase implements DatabaseInterface
         }
     }
 
+    /**
+     *
+     */
     public function updateVersionTable()
     {
         $currentVersion = $this->getDbDriver()->getScalar('select version from migration_version');

@@ -3,7 +3,6 @@
 namespace ByJG\DbMigration;
 
 use ByJG\AnyDataset\DbDriverInterface;
-use ByJG\AnyDataset\Factory;
 use ByJG\DbMigration\Database\DatabaseInterface;
 use ByJG\DbMigration\Exception\DatabaseDoesNotRegistered;
 use ByJG\DbMigration\Exception\DatabaseIsIncompleteException;
@@ -172,9 +171,11 @@ class Migration
      * Note: the database must exists. If dont exist run the method prepareEnvironment
      *
      * @param int $upVersion
-     * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
-     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
      * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
+     * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
+     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
+     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
+     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
      */
     public function reset($upVersion = null)
     {
@@ -210,6 +211,8 @@ class Migration
      *
      * @return string[] The current 'version' and 'status' as an associative array
      * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
+     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
+     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
      */
     public function getCurrentVersion()
     {
@@ -243,9 +246,11 @@ class Migration
      * @param int $upVersion
      * @param int $increment Can accept 1 for UP or -1 for down
      * @param bool $force
-     * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
-     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
      * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
+     * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
+     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
+     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
+     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
      */
     protected function migrate($upVersion, $increment, $force)
     {
@@ -275,9 +280,11 @@ class Migration
      *
      * @param int $upVersion
      * @param bool $force
-     * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
-     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
      * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
+     * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
+     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
+     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
+     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
      */
     public function up($upVersion = null, $force = false)
     {
@@ -289,9 +296,11 @@ class Migration
      *
      * @param int $upVersion
      * @param bool $force
-     * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
-     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
      * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
+     * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
+     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
+     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
+     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
      */
     public function update($upVersion = null, $force = false)
     {
@@ -309,9 +318,11 @@ class Migration
      *
      * @param int $upVersion
      * @param bool $force
-     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
-     * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
      * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
+     * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
+     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
+     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
+     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
      */
     public function down($upVersion, $force = false)
     {
