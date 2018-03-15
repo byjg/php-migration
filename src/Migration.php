@@ -47,10 +47,6 @@ class Migration
     {
         $this->uri = $uri;
         $this->folder = $folder;
-
-        if (!file_exists($this->folder . '/base.sql')) {
-            throw new InvalidMigrationFile("Migration script '{$this->folder}/base.sql' not found");
-        }
     }
 
     /**
@@ -154,7 +150,11 @@ class Migration
         $this->getDbCommand()->dropDatabase();
         $this->getDbCommand()->createDatabase();
         $this->getDbCommand()->createVersion();
-        $this->getDbCommand()->executeSql(file_get_contents($this->getBaseSql()));
+
+        if (file_exists($this->getBaseSql())) {
+            $this->getDbCommand()->executeSql(file_get_contents($this->getBaseSql()));
+        }
+
         $this->getDbCommand()->setVersion(0, 'complete');
         $this->up($upVersion);
     }
