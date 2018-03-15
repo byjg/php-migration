@@ -33,15 +33,6 @@ class MigrationTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(__DIR__ . '/dirstructure/base.sql', $base);
     }
 
-    /**
-     * @expectedException \ByJG\DbMigration\Exception\InvalidMigrationFile
-     */
-    public function testGetBaseSqlNotFound()
-    {
-        $this->object = new Migration(new Uri('mysql://localhost'), __DIR__ . '/invalid');
-        $this->object->getBaseSql();
-    }
-
     public function testGetMigrationSql1()
     {
         $version = $this->object->getMigrationSql(1, 1);
