@@ -3,8 +3,10 @@
 namespace ByJG\DbMigration\Database;
 
 use ByJG\AnyDataset\DbDriverInterface;
+use ByJG\AnyDataset\Factory;
 use ByJG\DbMigration\Exception\DatabaseNotVersionedException;
 use ByJG\DbMigration\Exception\OldVersionSchemaException;
+use Psr\Http\Message\UriInterface;
 
 abstract class AbstractDatabase implements DatabaseInterface
 {
@@ -14,13 +16,18 @@ abstract class AbstractDatabase implements DatabaseInterface
     private $dbDriver;
 
     /**
+     * @var \Psr\Http\Message\UriInterface
+     */
+    private $uri;
+
+    /**
      * Command constructor.
      *
-     * @param DbDriverInterface $dbDriver
+     * @param UriInterface $uri
      */
-    public function __construct(DbDriverInterface $dbDriver)
+    public function __construct(UriInterface $uri)
     {
-        $this->dbDriver = $dbDriver;
+        $this->uri = $uri;
     }
 
     /**
@@ -28,9 +35,17 @@ abstract class AbstractDatabase implements DatabaseInterface
      */
     public function getDbDriver()
     {
+        if (is_null($this->dbDriver)) {
+            $this->dbDriver = Factory::getDbRelationalInstance($this->uri->__toString());
+        }
         return $this->dbDriver;
     }
 
+    /**
+     * @return array
+     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
+     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
+     */
     public function getVersion()
     {
         $result = [];
@@ -49,6 +64,10 @@ abstract class AbstractDatabase implements DatabaseInterface
         return $result;
     }
 
+    /**
+     * @param $version
+     * @param $status
+     */
     public function setVersion($version, $status)
     {
         $this->getDbDriver()->execute(
@@ -60,6 +79,10 @@ abstract class AbstractDatabase implements DatabaseInterface
         );
     }
 
+    /**
+     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
+     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
+     */
     protected function checkExistsVersion()
     {
         // Get the version to check if exists
@@ -69,11 +92,14 @@ abstract class AbstractDatabase implements DatabaseInterface
         }
     }
 
+    /**
+     *
+     */
     public function updateVersionTable()
     {
         $currentVersion = $this->getDbDriver()->getScalar('select version from migration_version');
         $this->getDbDriver()->execute('drop table migration_version');
         $this->createVersion();
         $this->setVersion($currentVersion, 'unknow');
-   }
+    }
 }

@@ -25,6 +25,7 @@ class SqlServerDatabaseTest extends BaseDatabase
     public function setUp()
     {
         $this->migrate = new \ByJG\DbMigration\Migration(new \ByJG\Util\Uri($this->uri), __DIR__ . '/../example/sql_server');
+        $this->migrate->registerDatabase("dblib", \ByJG\DbMigration\Database\DblibDatabase::class);
         parent::setUp();
     }
 }

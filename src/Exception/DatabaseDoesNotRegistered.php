@@ -2,7 +2,7 @@
 
 namespace ByJG\DbMigration\Exception;
 
-class ResetDisabledException extends \Exception
+class DatabaseDoesNotRegistered extends \Exception
 {
 
 }

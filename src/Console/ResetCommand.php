@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: jg
- * Date: 17/06/16
- * Time: 21:52
- */
 
 namespace ByJG\DbMigration\Console;
 
@@ -24,6 +18,12 @@ class ResetCommand extends ConsoleCommand
             ->addOption('yes', null, null, 'Answer yes to any interactive question');
     }
 
+    /**
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @return int|null|void
+     * @throws \ByJG\DbMigration\Exception\ResetDisabledException
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         if (getenv('MIGRATE_DISABLE_RESET') === "true") {

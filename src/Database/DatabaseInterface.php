@@ -2,16 +2,21 @@
 
 namespace ByJG\DbMigration\Database;
 
-use ByJG\Util\Uri;
+use Psr\Http\Message\UriInterface;
 
 interface DatabaseInterface
 {
-    public static function prepareEnvironment(Uri $dbDriver);
+    public static function prepareEnvironment(UriInterface $dbDriver);
 
     public function createDatabase();
     
     public function dropDatabase();
-    
+
+    /**
+     * @return array
+     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
+     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
+     */
     public function getVersion();
 
     public function updateVersionTable();
@@ -21,4 +26,6 @@ interface DatabaseInterface
     public function setVersion($version, $status);
     
     public function createVersion();
+
+    public function getDbDriver();
 }

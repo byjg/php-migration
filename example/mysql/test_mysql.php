@@ -11,6 +11,7 @@ require __DIR__ . "/../../vendor/autoload.php";
 $uri = new \ByJG\Util\Uri('mysql://root:password@mysql-container/migratedatabase');
 
 $migration = new \ByJG\DbMigration\Migration($uri, __DIR__);
+$migration->registerDatabase('mysql', \ByJG\DbMigration\Database\MySqlDatabase::class);
 
 $migration->prepareEnvironment();
 

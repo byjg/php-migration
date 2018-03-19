@@ -4,11 +4,12 @@ namespace ByJG\DbMigration\Database;
 
 use ByJG\AnyDataset\Factory;
 use ByJG\Util\Uri;
+use Psr\Http\Message\UriInterface;
 
 class DblibDatabase extends AbstractDatabase
 {
 
-    public static function prepareEnvironment(Uri $uri)
+    public static function prepareEnvironment(UriInterface $uri)
     {
         $database = preg_replace('~^/~', '', $uri->getPath());
 
@@ -49,6 +50,10 @@ class DblibDatabase extends AbstractDatabase
         $this->getDbDriver()->execute($sql);
     }
 
+    /**
+     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
+     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
+     */
     public function createVersion()
     {
         $database = preg_replace('~^/~', '', $this->getDbDriver()->getUri()->getPath());
