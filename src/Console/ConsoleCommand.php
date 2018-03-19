@@ -38,6 +38,12 @@ abstract class ConsoleCommand extends Command
                 InputOption::VALUE_OPTIONAL,
                 'Run up to the specified version'
             )
+            ->addOption(
+                'no-base',
+                null,
+                InputOption::VALUE_NONE,
+                'Remove the check for base.sql file'
+            )
             ->addUsage('')
             ->addUsage('Example: ')
             ->addUsage('   migrate reset mysql://root:password@server/database')
@@ -81,8 +87,10 @@ abstract class ConsoleCommand extends Command
 
         $this->upTo = $input->getOption('up-to');
 
+        $requiredBase = !$input->getOption('no-base');
+
         $uri = new Uri($this->connection);
-        $this->migration = new Migration($uri, $this->path);
+        $this->migration = new Migration($uri, $this->path, $requiredBase);
         $this->migration
             ->registerDatabase('sqlite', SqliteDatabase::class)
             ->registerDatabase('mysql', MySqlDatabase::class)

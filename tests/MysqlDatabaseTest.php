@@ -2,6 +2,9 @@
 
 require_once 'BaseDatabase.php';
 
+/**
+ * @requires extension pdo_mysql
+ */
 class MysqlDatabaseTest extends BaseDatabase
 {
     protected $uri = 'mysql://root:password@mysql-container/migratedatabase';
