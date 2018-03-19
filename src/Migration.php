@@ -41,12 +41,16 @@ class Migration
      *
      * @param Uri $uri
      * @param string $folder
+     * @param bool $requiredBase Define if base.sql is required
      * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
      */
-    public function __construct(Uri $uri, $folder)
+    public function __construct(Uri $uri, $folder, $requiredBase = true)
     {
         $this->uri = $uri;
         $this->folder = $folder;
+        if ($requiredBase && !file_exists($this->folder . '/base.sql')) {
+            throw new InvalidMigrationFile("Migration script '{$this->folder}/base.sql' not found");
+        }
     }
 
     /**
