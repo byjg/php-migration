@@ -2,6 +2,9 @@
 
 require_once 'BaseDatabase.php';
 
+/**
+ * @requires extension pdo_sqlite
+ */
 class SqliteDatabaseTest extends BaseDatabase
 {
     protected $path = __DIR__ . '/../example/sqlite/test.sqlite';

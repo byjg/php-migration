@@ -2,6 +2,9 @@
 
 require_once 'BaseDatabase.php';
 
+/**
+ * @requires extension pdo_dblib
+ */
 class SqlServerDatabaseTest extends BaseDatabase
 {
     protected $uri = 'dblib://sa:Pa$$word!@mssql-container/migratedatabase';

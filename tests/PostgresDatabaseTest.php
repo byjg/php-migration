@@ -2,6 +2,10 @@
 
 require_once 'BaseDatabase.php';
 
+
+/**
+ * @requires extension pdo_pgsql
+ */
 class PostgresDatabaseTest extends BaseDatabase
 {
     protected $uri = 'pgsql://postgres:password@postgres-container/migratedatabase';
