@@ -2,6 +2,10 @@
 
 require_once 'BaseDatabase.php';
 
+
+/**
+ * @requires extension pdo_pgsql
+ */
 class PostgresDatabaseTest extends BaseDatabase
 {
     protected $uri = 'pgsql://postgres:password@postgres-container/migratedatabase';
@@ -14,6 +18,7 @@ class PostgresDatabaseTest extends BaseDatabase
     public function setUp()
     {
         $this->migrate = new \ByJG\DbMigration\Migration(new \ByJG\Util\Uri($this->uri), __DIR__ . '/../example/postgres');
+        $this->migrate->registerDatabase("pgsql", \ByJG\DbMigration\Database\PgsqlDatabase::class);
         parent::setUp();
     }
 }

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: jg
- * Date: 17/06/16
- * Time: 21:52
- */
 
 namespace ByJG\DbMigration\Console;
 
@@ -17,13 +11,18 @@ class InstallCommand extends ConsoleCommand
 {
     protected function configure()
     {
-        parent::configure(); 
+        parent::configure();
         $this
             ->setName('install')
             ->setDescription('Install or upgrade the migrate version in a existing database');
 
     }
 
+    /**
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @return int|null|void
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {

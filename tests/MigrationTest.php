@@ -1,14 +1,8 @@
 <?php
 namespace Test;
 
-use ByJG\AnyDataset\Store\PdoMysql;
 use ByJG\DbMigration\Migration;
 use ByJG\Util\Uri;
-
-// backward compatibility
-if (!class_exists('\PHPUnit\Framework\TestCase')) {
-    class_alias('\PHPUnit_Framework_TestCase', '\PHPUnit\Framework\TestCase');
-}
 
 class MigrationTest extends \PHPUnit\Framework\TestCase
 {
@@ -40,6 +34,13 @@ class MigrationTest extends \PHPUnit\Framework\TestCase
     {
         $this->object = new Migration(new Uri('mysql://localhost'), __DIR__ . '/invalid');
         $this->object->getBaseSql();
+    }
+
+    public function testGetBaseSqlNotFoundAndNotRequired()
+    {
+        $this->object = new Migration(new Uri('mysql://localhost'), __DIR__ . '/invalid', false);
+        $this->object->getBaseSql();
+        $this->assertTrue(true);
     }
 
     public function testGetMigrationSql1()

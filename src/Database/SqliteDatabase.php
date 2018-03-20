@@ -2,12 +2,12 @@
 
 namespace ByJG\DbMigration\Database;
 
-use ByJG\Util\Uri;
+use Psr\Http\Message\UriInterface;
 
 class SqliteDatabase extends AbstractDatabase
 {
 
-    public static function prepareEnvironment(Uri $uri)
+    public static function prepareEnvironment(UriInterface $uri)
     {
     }
 
@@ -30,6 +30,10 @@ class SqliteDatabase extends AbstractDatabase
         }
     }
 
+    /**
+     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
+     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
+     */
     public function createVersion()
     {
         $this->getDbDriver()->execute('CREATE TABLE IF NOT EXISTS migration_version (version int, status varchar(20))');

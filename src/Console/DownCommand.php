@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: jg
- * Date: 17/06/16
- * Time: 21:52
- */
 
 namespace ByJG\DbMigration\Console;
 
@@ -16,7 +10,7 @@ class DownCommand extends ConsoleCommand
 {
     protected function configure()
     {
-        parent::configure(); 
+        parent::configure();
         $this
             ->setName('down')
             ->setDescription('Migrate down the database version.');
@@ -47,5 +41,4 @@ class DownCommand extends ConsoleCommand
             $this->handleError($ex, $output);
         }
     }
-
 }
