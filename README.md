@@ -1,4 +1,6 @@
 # Database Migrations
+
+[![Opensource ByJG](https://img.shields.io/badge/opensource-byjg.com-brightgreen.svg)](http://opensource.byjg.com)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/byjg/migration/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/byjg/migration/?branch=master)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/571cb412-7018-4938-a4e5-0f9ce44956d7/mini.png)](https://insight.sensiolabs.com/projects/571cb412-7018-4938-a4e5-0f9ce44956d7)
 [![Build Status](https://travis-ci.org/byjg/migration.svg?branch=master)](https://travis-ci.org/byjg/migration)
@@ -238,3 +240,54 @@ phpunit tests/MysqlDatabaseTest.php
 phpunit tests/PostgresDatabaseTest.php
 phpunit tests/SqlServerDatabaseTest.php 
 ```
+
+### Using Docker for testing
+
+#### MySql
+
+```bash
+npm i @usdocker/usdocker @usdocker/mysql
+./node_modules/.bin/usdocker --refresh mysql up --home /tmp
+
+docker run -it --rm \
+    --link mysql-container \
+    -v $PWD:/work \
+    -w /work \
+    byjg/php:7.2-cli \
+    phpunit tests/MysqlDatabaseTest
+```
+
+#### Postgresql
+
+```bash
+npm i @usdocker/usdocker @usdocker/postgres
+./node_modules/.bin/usdocker --refresh postgres up --home /tmp
+
+docker run -it --rm \
+    --link postgres-container \
+    -v $PWD:/work \
+    -w /work \
+    byjg/php:7.2-cli \
+    phpunit tests/PostgresDatabaseTest
+```
+
+#### Microsoft SqlServer
+
+```bash
+npm i @usdocker/usdocker @usdocker/mssql
+./node_modules/.bin/usdocker --refresh mssql up --home /tmp
+
+docker run -it --rm \
+    --link mssql-container \
+    -v $PWD:/work \
+    -w /work \
+    byjg/php:7.2-cli \
+    phpunit tests/SqlserverDatabaseTest
+```
+
+## Related Projects
+
+- [Micro ORM](https://github.com/byjg/micro-orm)
+- [Anydataset](https://github.com/byjg/anydataset)
+- [PHP Rest Template](https://github.com/byjg/php-rest-template)
+- [USDocker](https://github.com/usdocker/usdocker)
