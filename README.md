@@ -5,10 +5,27 @@
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/571cb412-7018-4938-a4e5-0f9ce44956d7/mini.png)](https://insight.sensiolabs.com/projects/571cb412-7018-4938-a4e5-0f9ce44956d7)
 [![Build Status](https://travis-ci.org/byjg/migration.svg?branch=master)](https://travis-ci.org/byjg/migration)
 
-Simple library in PHP for database version control. Supports Sqlite, MySql, Sql Server and Postgres.
+This is a simple library written in PHP for database version control. Currently supports Sqlite, MySql, Sql Server and Postgres.
 
-Database Migration is a set of commands for upgrade or downgrade a database.
-This library uses only SQL commands.
+Database Migration can be used as:
+  - Command Line Interface
+  - PHP Library to be integrated in your functional tests
+  - Integrated in you CI/CD indenpent of your programming language or framework.
+  
+Database Migrates uses only SQL commands for versioning your database.
+
+**Why pure SQL commands?**
+
+The most of frameworks tend to use programming statements for versioning your database instead of use pure SQL. 
+
+There are some advantages to use the native programming language of your framework to maintain the database:
+  - Framework commands have some trick codes to do complex tasks;
+  - You can code once and deploy to different database systems;
+  - And others
+
+But at the end despite these good features the reality in big projects someone will use the MySQL Workbench to change your database and then spend some hours translating that code for PHP. So, why do not use the feature existing in MySQL Workbench, JetBrains DataGrip and others that provides the SQL Commands necessary to update your database and put directly into the database versioning system?
+
+Because of that this is an agnostic project (independent of framework and Programming Language) and use pure and native SQL commands for migrate your database.
 
 ## Installing
 
@@ -192,7 +209,7 @@ migrate reset --yes      # reset the database without ask anything. Be careful!!
 export MIGRATE_DISABLE_RESET=true
 ```
 
-### Using the API
+### Using the PHP API and Integrate it into your projects.
 
 The basic usage is 
 
