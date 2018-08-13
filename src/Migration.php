@@ -40,6 +40,10 @@ class Migration
      * @var array
      */
     protected $databases = [];
+    /**
+     * @var string
+     */
+    private $migrationTable;
 
     /**
      * Migration constructor.
@@ -47,15 +51,17 @@ class Migration
      * @param UriInterface $uri
      * @param string $folder
      * @param bool $requiredBase Define if base.sql is required
-     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
+     * @param string $migrationTable
+     * @throws InvalidMigrationFile
      */
-    public function __construct(UriInterface $uri, $folder, $requiredBase = true)
+    public function __construct(UriInterface $uri, $folder, $requiredBase = true, $migrationTable = 'migration_version')
     {
         $this->uri = $uri;
         $this->folder = $folder;
         if ($requiredBase && !file_exists($this->folder . '/base.sql')) {
             throw new InvalidMigrationFile("Migration script '{$this->folder}/base.sql' not found");
         }
+        $this->migrationTable = $migrationTable;
     }
 
     /**
@@ -86,7 +92,7 @@ class Migration
     {
         if (is_null($this->dbCommand)) {
             $class = $this->getDatabaseClassName();
-            $this->dbCommand = new $class($this->uri);
+            $this->dbCommand = new $class($this->uri, $this->migrationTable);
         }
         return $this->dbCommand;
     }
