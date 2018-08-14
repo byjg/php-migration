@@ -243,6 +243,22 @@ $migration->up();
 
 The Migration object controls the database version.  
 
+### Handle different migration inside one schema
+
+If you need to create different migration scripts and version inside the same schema it is possible
+but is too risky and I do not recommend at all. 
+
+To do this, you need to create different "migration tables" by passing the parameter to the constructor. 
+
+```php
+<?php
+$migration = new \ByJG\DbMigration\Migration("db:/uri", "/path", true, "NEW_MIGRATION_TABLE_NAME");
+```
+
+For security reasons, this feature is not available at command line, but you can use the environment variable
+`MIGRATION_VERSION` to store the name. 
+
+We really recommend do not use this feature. The recommendation is one migration for one schema. 
 
 
 ## Unit Tests

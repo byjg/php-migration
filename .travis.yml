@@ -20,7 +20,7 @@ before_install:
   - sudo service postgresql stop || echo "postgresql not stopped"
   - npm i @usdocker/usdocker @usdocker/postgres @usdocker/mysql @usdocker/mssql
   - node_modules/.bin/usdocker --refresh
-  - node_modules/.bin/usdocker mssql up
+#  - node_modules/.bin/usdocker mssql up
   - node_modules/.bin/usdocker postgres up
   - node_modules/.bin/usdocker mysql up
 
