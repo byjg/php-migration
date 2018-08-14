@@ -44,18 +44,10 @@ abstract class ConsoleCommand extends Command
                 InputOption::VALUE_NONE,
                 'Remove the check for base.sql file'
             )
-            ->addOption(
-                'migration-table',
-                'm',
-                InputOption::VALUE_OPTIONAL,
-                'Name of the migration table',
-                'migration_version'
-            )
             ->addUsage('')
             ->addUsage('Example: ')
             ->addUsage('   migrate reset mysql://root:password@server/database')
             ->addUsage('   migrate up mysql://root:password@server/database')
-            ->addUsage('   migrate up mysql://root:password@server/database --migration-table=my_migrations')
             ->addUsage('   migrate down mysql://root:password@server/database')
             ->addUsage('   migrate up --up-to=10 --path=/somepath mysql://root:password@server/database')
             ->addUsage('   migrate down --up-to=3 --path=/somepath mysql://root:password@server/database')
@@ -97,10 +89,7 @@ abstract class ConsoleCommand extends Command
 
         $requiredBase = !$input->getOption('no-base');
 
-        $migrationTable = $input->getOption('migration-table');
-        if (!$migrationTable) {
-            $migrationTable = (!empty(getenv('MIGRATE_TABLE')) ? getenv('MIGRATE_TABLE') : "migration_version");
-        }
+        $migrationTable = (empty(getenv('MIGRATE_TABLE')) ? "migration_version" : getenv('MIGRATE_TABLE'));
         $this->path = realpath($this->path);
         $uri = new Uri($this->connection);
         $this->migration = new Migration($uri, $this->path, $requiredBase, $migrationTable);

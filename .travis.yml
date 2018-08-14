@@ -20,19 +20,19 @@ before_install:
   - sudo service postgresql stop || echo "postgresql not stopped"
   - npm i @usdocker/usdocker @usdocker/postgres @usdocker/mysql @usdocker/mssql
   - node_modules/.bin/usdocker --refresh
-#  - node_modules/.bin/usdocker mssql up
+  - node_modules/.bin/usdocker mssql up
   - node_modules/.bin/usdocker postgres up
   - node_modules/.bin/usdocker mysql up
 
 install:
   - composer install
-  - node_modules/.bin/usdocker mssql status
   - node_modules/.bin/usdocker postgres status
   - node_modules/.bin/usdocker mysql status
+  - node_modules/.bin/usdocker mssql status
 
 script: 
   - vendor/bin/phpunit
-#  - vendor/bin/phpunit tests/SqlServerDatabaseTest.php
   - vendor/bin/phpunit tests/PostgresDatabaseTest.php
   - vendor/bin/phpunit tests/MysqlDatabaseTest.php
+  - vendor/bin/phpunit tests/SqlServerDatabaseTest.php
 

@@ -264,7 +264,8 @@ phpunit tests/SqlServerDatabaseTest.php
 
 ```bash
 npm i @usdocker/usdocker @usdocker/mysql
-./node_modules/.bin/usdocker --refresh mysql up --home /tmp
+./node_modules/.bin/usdocker --refresh --home /tmp
+./node_modules/.bin/usdocker mysql up --home /tmp
 
 docker run -it --rm \
     --link mysql-container \
@@ -278,7 +279,8 @@ docker run -it --rm \
 
 ```bash
 npm i @usdocker/usdocker @usdocker/postgres
-./node_modules/.bin/usdocker --refresh postgres up --home /tmp
+./node_modules/.bin/usdocker --refresh --home /tmp
+./node_modules/.bin/usdocker postgres up --home /tmp
 
 docker run -it --rm \
     --link postgres-container \
@@ -292,14 +294,15 @@ docker run -it --rm \
 
 ```bash
 npm i @usdocker/usdocker @usdocker/mssql
-./node_modules/.bin/usdocker --refresh mssql up --home /tmp
+./node_modules/.bin/usdocker --refresh --home /tmp
+./node_modules/.bin/usdocker mssql up --home /tmp
 
 docker run -it --rm \
     --link mssql-container \
     -v $PWD:/work \
     -w /work \
     byjg/php:7.2-cli \
-    phpunit tests/SqlserverDatabaseTest
+    phpunit tests/SqlServerDatabaseTest
 ```
 
 ## Related Projects
