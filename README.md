@@ -252,10 +252,10 @@ This library has integrated tests and need to be setup for each database you wan
 Basiclly you have the follow tests:
 
 ```
-phpunit tests/SqliteDatabaseTest.php
-phpunit tests/MysqlDatabaseTest.php
-phpunit tests/PostgresDatabaseTest.php
-phpunit tests/SqlServerDatabaseTest.php 
+vendor/bin/phpunit tests/SqliteDatabaseTest.php
+vendor/bin/phpunit tests/MysqlDatabaseTest.php
+vendor/bin/phpunit tests/PostgresDatabaseTest.php
+vendor/bin/phpunit tests/SqlServerDatabaseTest.php 
 ```
 
 ### Using Docker for testing

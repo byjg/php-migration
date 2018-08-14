@@ -36,3 +36,8 @@ script:
   - vendor/bin/phpunit tests/MysqlDatabaseTest.php
   - vendor/bin/phpunit tests/SqlServerDatabaseTest.php
 
+  - vendor/bin/phpunit tests/SqliteDatabaseCustomTest.php
+  - vendor/bin/phpunit tests/PostgresDatabaseCustomTest.php
+  - vendor/bin/phpunit tests/MysqlDatabaseCustomTest.php
+  - vendor/bin/phpunit tests/SqlServerDatabaseCustomTest.php
+

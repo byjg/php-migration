@@ -9,7 +9,7 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
      */
     protected $migrate = null;
 
-    protected $migrationTable = 'migration_version';
+    protected $migrationTable = "migration_version";
 
     public function setUp()
     {
