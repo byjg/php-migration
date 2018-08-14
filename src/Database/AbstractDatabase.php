@@ -19,15 +19,29 @@ abstract class AbstractDatabase implements DatabaseInterface
      * @var \Psr\Http\Message\UriInterface
      */
     private $uri;
+    /**
+     * @var string
+     */
+    private $migrationTable;
 
     /**
      * Command constructor.
      *
      * @param UriInterface $uri
+     * @param string $migrationTable
      */
-    public function __construct(UriInterface $uri)
+    public function __construct(UriInterface $uri, $migrationTable = 'migration_version')
     {
         $this->uri = $uri;
+        $this->migrationTable = $migrationTable;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMigrationTable()
+    {
+        return $this->migrationTable;
     }
 
     /**
@@ -50,13 +64,13 @@ abstract class AbstractDatabase implements DatabaseInterface
     {
         $result = [];
         try {
-            $result['version'] = $this->getDbDriver()->getScalar('SELECT version FROM migration_version');
+            $result['version'] = $this->getDbDriver()->getScalar('SELECT version FROM ' . $this->getMigrationTable());
         } catch (\Exception $ex) {
             throw new DatabaseNotVersionedException('This database does not have a migration version. Please use "migrate reset" or "migrate install" to create one.');
         }
 
         try {
-            $result['status'] = $this->getDbDriver()->getScalar('SELECT status FROM migration_version');
+            $result['status'] = $this->getDbDriver()->getScalar('SELECT status FROM ' . $this->getMigrationTable());
         } catch (\Exception $ex) {
             throw new OldVersionSchemaException('This database does not have a migration version. Please use "migrate install" for update it.');
         }
@@ -71,10 +85,10 @@ abstract class AbstractDatabase implements DatabaseInterface
     public function setVersion($version, $status)
     {
         $this->getDbDriver()->execute(
-            'UPDATE migration_version SET version = :version, status = :status',
+            'UPDATE ' . $this->getMigrationTable() . ' SET version = :version, status = :status',
             [
                 'version' => $version,
-                'status' => $status
+                'status' => $status,
             ]
         );
     }
@@ -88,7 +102,7 @@ abstract class AbstractDatabase implements DatabaseInterface
         // Get the version to check if exists
         $versionInfo = $this->getVersion();
         if (empty($versionInfo['version'])) {
-            $this->getDbDriver()->execute("insert into migration_version values(0, 'unknow')");
+            $this->getDbDriver()->execute("insert into " . $this->getMigrationTable() . " values(0, 'unknow')");
         }
     }
 
@@ -97,8 +111,8 @@ abstract class AbstractDatabase implements DatabaseInterface
      */
     public function updateVersionTable()
     {
-        $currentVersion = $this->getDbDriver()->getScalar('select version from migration_version');
-        $this->getDbDriver()->execute('drop table migration_version');
+        $currentVersion = $this->getDbDriver()->getScalar('select version from ' . $this->getMigrationTable());
+        $this->getDbDriver()->execute('drop table ' . $this->getMigrationTable());
         $this->createVersion();
         $this->setVersion($currentVersion, 'unknow');
     }

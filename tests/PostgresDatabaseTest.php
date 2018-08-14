@@ -21,4 +21,14 @@ class PostgresDatabaseTest extends BaseDatabase
         $this->migrate->registerDatabase("pgsql", \ByJG\DbMigration\Database\PgsqlDatabase::class);
         parent::setUp();
     }
+
+    public function testUsingCustomTable()
+    {
+        $this->migrationTable = 'migration_table';
+
+        $this->migrate = new \ByJG\DbMigration\Migration(new \ByJG\Util\Uri($this->uri), __DIR__ . '/../example/postgres', true, $this->migrationTable);
+        $this->migrate->registerDatabase("pgsql", \ByJG\DbMigration\Database\PgsqlDatabase::class);
+
+        parent::testUpVersion1();
+    }
 }

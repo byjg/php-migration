@@ -9,6 +9,8 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
      */
     protected $migrate = null;
 
+    protected $migrationTable = 'migration_version';
+
     public function setUp()
     {
         // create Migrate object in the parent!!!
@@ -77,9 +79,9 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
 
     protected function assertVersion0()
     {
-        $version = $this->migrate->getDbDriver()->getScalar('select version from migration_version');
+        $version = $this->migrate->getDbDriver()->getScalar('select version from '. $this->migrationTable);
         $this->assertEquals(0, $version);
-        $status = $this->migrate->getDbDriver()->getScalar('select status from migration_version');
+        $status = $this->migrate->getDbDriver()->getScalar('select status from '. $this->migrationTable);
         $this->assertEquals('complete', $status);
 
         $iterator = $this->migrate->getDbDriver()->getIterator('select * from users');
@@ -109,9 +111,9 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
 
     protected function assertVersion1()
     {
-        $version = $this->migrate->getDbDriver()->getScalar('select version from migration_version');
+        $version = $this->migrate->getDbDriver()->getScalar('select version from '. $this->migrationTable);
         $this->assertEquals(1, $version);
-        $status = $this->migrate->getDbDriver()->getScalar('select status from migration_version');
+        $status = $this->migrate->getDbDriver()->getScalar('select status from '. $this->migrationTable);
         $this->assertEquals('complete', $status);
 
         $iterator = $this->migrate->getDbDriver()->getIterator('select * from users');
@@ -141,9 +143,9 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
 
     protected function assertVersion2()
     {
-        $version = $this->migrate->getDbDriver()->getScalar('select version from migration_version');
+        $version = $this->migrate->getDbDriver()->getScalar('select version from '. $this->migrationTable);
         $this->assertEquals(2, $version);
-        $status = $this->migrate->getDbDriver()->getScalar('select status from migration_version');
+        $status = $this->migrate->getDbDriver()->getScalar('select status from '. $this->migrationTable);
         $this->assertEquals('complete', $status);
 
         $iterator = $this->migrate->getDbDriver()->getIterator('select * from users');
