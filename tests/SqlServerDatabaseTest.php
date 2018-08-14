@@ -28,4 +28,14 @@ class SqlServerDatabaseTest extends BaseDatabase
         $this->migrate->registerDatabase("dblib", \ByJG\DbMigration\Database\DblibDatabase::class);
         parent::setUp();
     }
+
+    public function testUsingCustomTable()
+    {
+        $this->migrationTable = 'migration_table';
+
+        $this->migrate = new \ByJG\DbMigration\Migration(new \ByJG\Util\Uri($this->uri), __DIR__ . '/../example/sql_server', true, $this->migrationTable);
+        $this->migrate->registerDatabase("dblib", \ByJG\DbMigration\Database\DblibDatabase::class);
+
+        parent::testUpVersion1();
+    }
 }

@@ -28,4 +28,6 @@ interface DatabaseInterface
     public function createVersion();
 
     public function getDbDriver();
+
+    public function getMigrationTable();
 }
