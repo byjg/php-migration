@@ -29,13 +29,13 @@ abstract class ConsoleCommand extends Command
             ->addOption(
                 'path',
                 'p',
-                InputOption::VALUE_OPTIONAL,
+                InputOption::VALUE_REQUIRED,
                 'Define the path where the base.sql resides. If not set assumes the current folder'
             )
             ->addOption(
                 'up-to',
                 'u',
-                InputOption::VALUE_OPTIONAL,
+                InputOption::VALUE_REQUIRED,
                 'Run up to the specified version'
             )
             ->addOption(
