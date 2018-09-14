@@ -42,7 +42,7 @@ class SqliteDatabase extends AbstractDatabase
 
     public function executeSql($sql)
     {
-        $statements = explode(";", $sql);
+        $statements = preg_split("/;(\r\n|\r|\n)/", $sql);
 
         foreach ($statements as $sql) {
             $this->executeSqlInternal($sql);
