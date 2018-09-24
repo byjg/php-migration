@@ -48,3 +48,6 @@ crashlytics-build.properties
 fabric.properties
 /composer.lock
 /vendor/
+node_modules
+package-lock.json
+.usdocker

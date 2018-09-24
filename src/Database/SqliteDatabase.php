@@ -36,13 +36,13 @@ class SqliteDatabase extends AbstractDatabase
      */
     public function createVersion()
     {
-        $this->getDbDriver()->execute('CREATE TABLE IF NOT EXISTS migration_version (version int, status varchar(20))');
+        $this->getDbDriver()->execute('CREATE TABLE IF NOT EXISTS ' . $this->getMigrationTable() . ' (version int, status varchar(20))');
         $this->checkExistsVersion();
     }
 
     public function executeSql($sql)
     {
-        $statements = explode(";", $sql);
+        $statements = preg_split("/;(\r\n|\r|\n)/", $sql);
 
         foreach ($statements as $sql) {
             $this->executeSqlInternal($sql);

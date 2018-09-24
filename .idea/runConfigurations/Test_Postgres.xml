@@ -7,7 +7,7 @@
         <option name="commandLineOptions" value="-w /work --link postgres-container:postgres-container" />
         <option name="containerName" value="migration7.1-test" />
         <option name="entrypoint" value="" />
-        <option name="imageTag" value="byjg/php:7.1-base" />
+        <option name="imageTag" value="byjg/php:7.1-cli" />
         <option name="startBrowserSettings">
           <browser url="http://127.0.0.1" />
         </option>
@@ -21,6 +21,6 @@
         </option>
       </settings>
     </deployment>
-    <method />
+    <method v="2" />
   </configuration>
 </component>

@@ -16,7 +16,7 @@ class MysqlDatabaseTest extends BaseDatabase
 
     public function setUp()
     {
-        $this->migrate = new \ByJG\DbMigration\Migration(new \ByJG\Util\Uri($this->uri), __DIR__ . '/../example/mysql');
+        $this->migrate = new \ByJG\DbMigration\Migration(new \ByJG\Util\Uri($this->uri), __DIR__ . '/../example/mysql', true, $this->migrationTable);
         $this->migrate->registerDatabase("mysql", \ByJG\DbMigration\Database\MySqlDatabase::class);
         parent::setUp();
     }

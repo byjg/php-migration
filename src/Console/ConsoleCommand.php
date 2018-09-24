@@ -29,13 +29,13 @@ abstract class ConsoleCommand extends Command
             ->addOption(
                 'path',
                 'p',
-                InputOption::VALUE_OPTIONAL,
+                InputOption::VALUE_REQUIRED,
                 'Define the path where the base.sql resides. If not set assumes the current folder'
             )
             ->addOption(
                 'up-to',
                 'u',
-                InputOption::VALUE_OPTIONAL,
+                InputOption::VALUE_REQUIRED,
                 'Run up to the specified version'
             )
             ->addOption(
@@ -89,8 +89,10 @@ abstract class ConsoleCommand extends Command
 
         $requiredBase = !$input->getOption('no-base');
 
+        $migrationTable = (empty(getenv('MIGRATE_TABLE')) ? "migration_version" : getenv('MIGRATE_TABLE'));
+        $this->path = realpath($this->path);
         $uri = new Uri($this->connection);
-        $this->migration = new Migration($uri, $this->path, $requiredBase);
+        $this->migration = new Migration($uri, $this->path, $requiredBase, $migrationTable);
         $this->migration
             ->registerDatabase('sqlite', SqliteDatabase::class)
             ->registerDatabase('mysql', MySqlDatabase::class)

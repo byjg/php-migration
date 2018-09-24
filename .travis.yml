@@ -26,13 +26,18 @@ before_install:
 
 install:
   - composer install
-  - node_modules/.bin/usdocker mssql status
   - node_modules/.bin/usdocker postgres status
   - node_modules/.bin/usdocker mysql status
+  - node_modules/.bin/usdocker mssql status
 
 script: 
   - vendor/bin/phpunit
-#  - vendor/bin/phpunit tests/SqlServerDatabaseTest.php
   - vendor/bin/phpunit tests/PostgresDatabaseTest.php
   - vendor/bin/phpunit tests/MysqlDatabaseTest.php
+  - vendor/bin/phpunit tests/SqlServerDatabaseTest.php
+
+  - vendor/bin/phpunit tests/SqliteDatabaseCustomTest.php
+  - vendor/bin/phpunit tests/PostgresDatabaseCustomTest.php
+  - vendor/bin/phpunit tests/MysqlDatabaseCustomTest.php
+  - vendor/bin/phpunit tests/SqlServerDatabaseCustomTest.php
 

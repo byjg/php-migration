@@ -4,6 +4,7 @@ namespace ByJG\DbMigration\Console;
 
 use ByJG\DbMigration\Exception\ResetDisabledException;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
@@ -15,7 +16,12 @@ class ResetCommand extends ConsoleCommand
         $this
             ->setName('reset')
             ->setDescription('Create a fresh new database')
-            ->addOption('yes', null, null, 'Answer yes to any interactive question');
+            ->addOption(
+                'yes',
+                null,
+                InputOption::VALUE_NONE,
+                'Answer yes to any interactive question'
+            );
     }
 
     /**

@@ -35,14 +35,14 @@ class DblibDatabase extends AbstractDatabase
         $this->getDbDriver()->execute("drop database $database");
     }
 
-    protected function createTableIfNotExists($database, $table, $createTable)
+    protected function createTableIfNotExists($database, $createTable)
     {
         $this->getDbDriver()->execute("use $database");
 
         $sql = "IF (NOT EXISTS (SELECT * 
                  FROM INFORMATION_SCHEMA.TABLES 
                  WHERE TABLE_SCHEMA = 'dbo' 
-                 AND  TABLE_NAME = '$table'))
+                 AND  TABLE_NAME = '" . $this->getMigrationTable() . "'))
             BEGIN
                 $createTable
             END";
@@ -57,15 +57,14 @@ class DblibDatabase extends AbstractDatabase
     public function createVersion()
     {
         $database = preg_replace('~^/~', '', $this->getDbDriver()->getUri()->getPath());
-        $table = 'migration_version';
-        $createTable = 'CREATE TABLE migration_version (version int, status varchar(20))';
-        $this->createTableIfNotExists($database, $table, $createTable);
+        $createTable = 'CREATE TABLE ' . $this->getMigrationTable() . ' (version int, status varchar(20))';
+        $this->createTableIfNotExists($database, $createTable);
         $this->checkExistsVersion();
     }
 
     public function executeSql($sql)
     {
-        $statements = explode(";", $sql);
+        $statements = preg_split("/;(\r\n|\r|\n)/", $sql);
 
         foreach ($statements as $sql) {
             $this->executeSqlInternal($sql);

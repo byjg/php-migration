@@ -12,7 +12,7 @@ require_once($autoload);
 
 use Symfony\Component\Console\Application;
 
-$application = new Application('Migrate Script by JG', '2.0.4');
+$application = new Application('Migrate Script by JG', '2.1.0');
 $application->add(new \ByJG\DbMigration\Console\ResetCommand());
 $application->add(new \ByJG\DbMigration\Console\UpCommand());
 $application->add(new \ByJG\DbMigration\Console\DownCommand());

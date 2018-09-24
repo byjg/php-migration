@@ -241,8 +241,157 @@ $migration->reset();
 $migration->up();
 ```
 
-The Migration object controls the database version.  
+The Migration object controls the database version.
 
+
+### Tips on writing SQL migrations
+
+#### Rely on explicit transactions
+
+```sql
+-- DO
+BEGIN;
+
+ALTER TABLE 1;
+UPDATE 1;
+UPDATE 2;
+UPDATE 3;
+ALTER TABLE 2;
+
+COMMIT;
+
+
+-- DON'T
+ALTER TABLE 1;
+UPDATE 1;
+UPDATE 2;
+UPDATE 3;
+ALTER TABLE 2;
+```
+
+It is generally desirable to wrap migration scripts inside a `BEGIN; ... COMMIT;` block.
+This way, if _any_ of the inner statements fail, _none_ of them are committed and the
+database does not end up in an inconsistent state.
+
+Mind that in case of a failure `byjg/migration` will always mark the migration as `partial`
+and warn you when you attempt to run it again. The difference is that with explicit
+transactions you know that the database cannot be in an inconsistent state after an
+unexpected failure.
+
+#### On creating triggers and SQL functions
+
+```sql
+-- DO
+CREATE FUNCTION emp_stamp() RETURNS trigger AS $emp_stamp$
+    BEGIN
+        -- Check that empname and salary are given
+        IF NEW.empname IS NULL THEN
+            RAISE EXCEPTION 'empname cannot be null'; -- it doesn't matter if these comments are blank or not
+        END IF; --
+        IF NEW.salary IS NULL THEN
+            RAISE EXCEPTION '% cannot have null salary', NEW.empname; --
+        END IF; --
+
+        -- Who works for us when they must pay for it?
+        IF NEW.salary < 0 THEN
+            RAISE EXCEPTION '% cannot have a negative salary', NEW.empname; --
+        END IF; --
+
+        -- Remember who changed the payroll when
+        NEW.last_date := current_timestamp; --
+        NEW.last_user := current_user; --
+        RETURN NEW; --
+    END; --
+$emp_stamp$ LANGUAGE plpgsql;
+
+
+-- DON'T
+CREATE FUNCTION emp_stamp() RETURNS trigger AS $emp_stamp$
+    BEGIN
+        -- Check that empname and salary are given
+        IF NEW.empname IS NULL THEN
+            RAISE EXCEPTION 'empname cannot be null';
+        END IF;
+        IF NEW.salary IS NULL THEN
+            RAISE EXCEPTION '% cannot have null salary', NEW.empname;
+        END IF;
+
+        -- Who works for us when they must pay for it?
+        IF NEW.salary < 0 THEN
+            RAISE EXCEPTION '% cannot have a negative salary', NEW.empname;
+        END IF;
+
+        -- Remember who changed the payroll when
+        NEW.last_date := current_timestamp;
+        NEW.last_user := current_user;
+        RETURN NEW;
+    END;
+$emp_stamp$ LANGUAGE plpgsql;
+```
+
+Since the `PDO` database abstraction layer cannot run batches of SQL statements,
+when `byjg/migration` reads a migration file it has to split up the whole contents of the SQL
+file at the semicolons, and run the statements one by one. However, there is one kind of
+statement that can have multiple semicolons in-between its body: functions.
+
+In order to be able to parse functions correctly, `byjg/migration` 2.1.0 started splitting migration
+files at the `semicolon + EOL` sequence instead of just the semicolon. This way, if you append an empty
+comment after every inner semicolon of a function definition `byjg/migration` will be able to parse it.
+
+Unfortunately, if you forget to add any of these comments the library will split the `CREATE FUNCTION` statement in
+multiple parts and the migration will fail.
+
+#### Avoid the colon character (`:`)
+
+```sql
+-- DO
+CREATE TABLE bookings (
+  booking_id UUID PRIMARY KEY,
+  booked_at  TIMESTAMPTZ NOT NULL CHECK (CAST(booked_at AS DATE) <= check_in),
+  check_in   DATE NOT NULL
+);
+
+
+-- DON'T
+CREATE TABLE bookings (
+  booking_id UUID PRIMARY KEY,
+  booked_at  TIMESTAMPTZ NOT NULL CHECK (booked_at::DATE <= check_in),
+  check_in   DATE NOT NULL
+);
+```
+
+Since `PDO` uses the colon character to prefix named parameters in prepared statements, its use will trip it
+up in other contexts.
+
+For instance, PostgreSQL statements can use `::` to cast values between types. On the other hand `PDO` will
+read this as an invalid named parameter in an invalid context and fail when it tries to run it.
+
+The only way to fix this inconsistency is avoiding colons altogether (in this case, PostgreSQL also has an alternative
+ syntax: `CAST(value AS type)`).
+
+#### Use an SQL editor
+
+Finally, writing manual SQL migrations can be tiresome, but it is significantly easier if
+you use an editor capable of understanding the SQL syntax, providing autocomplete,
+introspecting your current database schema and/or autoformatting your code.
+
+
+### Handle different migration inside one schema
+
+If you need to create different migration scripts and version inside the same schema it is possible
+but is too risky and I do not recommend at all. 
+
+To do this, you need to create different "migration tables" by passing the parameter to the constructor. 
+
+```php
+<?php
+$migration = new \ByJG\DbMigration\Migration("db:/uri", "/path", true, "NEW_MIGRATION_TABLE_NAME");
+```
+
+For security reasons, this feature is not available at command line, but you can use the environment variable
+`MIGRATION_VERSION` to store the name. 
+
+We really recommend do not use this feature. The recommendation is one migration for one schema. 
 
 
 ## Unit Tests
@@ -252,10 +401,10 @@ This library has integrated tests and need to be setup for each database you wan
 Basiclly you have the follow tests:
 
 ```
-phpunit tests/SqliteDatabaseTest.php
-phpunit tests/MysqlDatabaseTest.php
-phpunit tests/PostgresDatabaseTest.php
-phpunit tests/SqlServerDatabaseTest.php 
+vendor/bin/phpunit tests/SqliteDatabaseTest.php
+vendor/bin/phpunit tests/MysqlDatabaseTest.php
+vendor/bin/phpunit tests/PostgresDatabaseTest.php
+vendor/bin/phpunit tests/SqlServerDatabaseTest.php 
 ```
 
 ### Using Docker for testing
@@ -264,7 +413,8 @@ phpunit tests/SqlServerDatabaseTest.php
 
 ```bash
 npm i @usdocker/usdocker @usdocker/mysql
-./node_modules/.bin/usdocker --refresh mysql up --home /tmp
+./node_modules/.bin/usdocker --refresh --home /tmp
+./node_modules/.bin/usdocker mysql up --home /tmp
 
 docker run -it --rm \
     --link mysql-container \
@@ -278,7 +428,8 @@ docker run -it --rm \
 
 ```bash
 npm i @usdocker/usdocker @usdocker/postgres
-./node_modules/.bin/usdocker --refresh postgres up --home /tmp
+./node_modules/.bin/usdocker --refresh --home /tmp
+./node_modules/.bin/usdocker postgres up --home /tmp
 
 docker run -it --rm \
     --link postgres-container \
@@ -292,14 +443,15 @@ docker run -it --rm \
 
 ```bash
 npm i @usdocker/usdocker @usdocker/mssql
-./node_modules/.bin/usdocker --refresh mssql up --home /tmp
+./node_modules/.bin/usdocker --refresh --home /tmp
+./node_modules/.bin/usdocker mssql up --home /tmp
 
 docker run -it --rm \
     --link mssql-container \
     -v $PWD:/work \
     -w /work \
     byjg/php:7.2-cli \
-    phpunit tests/SqlserverDatabaseTest
+    phpunit tests/SqlServerDatabaseTest
 ```
 
 ## Related Projects
