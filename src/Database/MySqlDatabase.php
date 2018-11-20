@@ -2,7 +2,7 @@
 
 namespace ByJG\DbMigration\Database;
 
-use ByJG\AnyDataset\Factory;
+use ByJG\AnyDataset\Db\Factory;
 use ByJG\Util\Uri;
 use Psr\Http\Message\UriInterface;
 
