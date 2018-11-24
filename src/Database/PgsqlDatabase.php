@@ -23,7 +23,7 @@ class PgsqlDatabase extends AbstractDatabase
     }
 
     /**
-     * @param \ByJG\AnyDataset\DbDriverInterface $dbDriver
+     * @param \ByJG\AnyDataset\Db\DbDriverInterface $dbDriver
      * @param $database
      */
     protected static function createDatabaseIfNotExists($dbDriver, $database)
