@@ -10,7 +10,7 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "byjg/anydataset": "^3.0",
+    "byjg/anydataset-db": "4.0.*",
     "byjg/uri": "^1.0",
     "symfony/console": "^3.1"
   },

@@ -30,7 +30,7 @@ Because of that this is an agnostic project (independent of framework and Progra
 ## Installing
 
 ```
-composer require 'byjg/migration=2.0.*'
+composer require 'byjg/migration=4.0.*'
 ```
 
 ## Supported databases:

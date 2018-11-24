@@ -2,7 +2,7 @@
 
 namespace ByJG\DbMigration;
 
-use ByJG\AnyDataset\DbDriverInterface;
+use ByJG\AnyDataset\Db\DbDriverInterface;
 use ByJG\DbMigration\Database\DatabaseInterface;
 use ByJG\DbMigration\Exception\DatabaseDoesNotRegistered;
 use ByJG\DbMigration\Exception\DatabaseIsIncompleteException;
@@ -241,11 +241,7 @@ class Migration
         $compareVersion =
             intval($currentVersion) < intval($upVersion)
                 ? -1
-                : (
-                    intval($currentVersion) > intval($upVersion)
-                        ? 1
-                        : 0
-                );
+                : (intval($currentVersion) > intval($upVersion) ? 1 : 0);
 
         return !($existsUpVersion && ($compareVersion === intval($increment)));
     }

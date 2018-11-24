@@ -2,7 +2,7 @@
 
 namespace ByJG\DbMigration\Database;
 
-use ByJG\AnyDataset\Factory;
+use ByJG\AnyDataset\Db\Factory;
 use ByJG\Util\Uri;
 use Psr\Http\Message\UriInterface;
 
@@ -23,7 +23,7 @@ class PgsqlDatabase extends AbstractDatabase
     }
 
     /**
-     * @param \ByJG\AnyDataset\DbDriverInterface $dbDriver
+     * @param \ByJG\AnyDataset\Db\DbDriverInterface $dbDriver
      * @param $database
      */
     protected static function createDatabaseIfNotExists($dbDriver, $database)

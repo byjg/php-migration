@@ -2,8 +2,8 @@
 
 namespace ByJG\DbMigration\Database;
 
-use ByJG\AnyDataset\DbDriverInterface;
-use ByJG\AnyDataset\Factory;
+use ByJG\AnyDataset\Db\DbDriverInterface;
+use ByJG\AnyDataset\Db\Factory;
 use ByJG\DbMigration\Exception\DatabaseNotVersionedException;
 use ByJG\DbMigration\Exception\OldVersionSchemaException;
 use Psr\Http\Message\UriInterface;
@@ -16,7 +16,7 @@ abstract class AbstractDatabase implements DatabaseInterface
     private $dbDriver;
 
     /**
-     * @var \Psr\Http\Message\UriInterface
+     * @var UriInterface
      */
     private $uri;
     /**
