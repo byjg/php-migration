@@ -1,4 +1,4 @@
-# Database Migrations
+# Database Migrations PHP
 
 [![Opensource ByJG](https://img.shields.io/badge/opensource-byjg.com-brightgreen.svg)](http://opensource.byjg.com)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/byjg/migration/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/byjg/migration/?branch=master)
@@ -27,16 +27,16 @@ But at the end despite these good features the reality in big projects someone w
 
 Because of that this is an agnostic project (independent of framework and Programming Language) and use pure and native SQL commands for migrate your database.
 
-## Installing
+# Installing
 
-### PHP Library
+## PHP Library
 
 If you want to use only the PHP Library in your project:
 
 ```
 composer require 'byjg/migration=4.0.*'
 ```
-### Command Line Interface
+## Command Line Interface
 
 The command line interface is standalone and does not require you install with your project.
 
@@ -48,14 +48,14 @@ composer require 'byjg/migration-cli=4.0.*'
 
 Please visit https://github.com/byjg/migration-cli to get more informations about Migration CLI.
 
-## Supported databases:
+# Supported databases:
 
  * Sqlite
  * Mysql / MariaDB
  * Postgres
  * SqlServer
 
-## How It Works?
+# How It Works?
 
 The Database Migration uses PURE SQL to manage the database versioning. 
 In order to get working you need to:
@@ -63,7 +63,7 @@ In order to get working you need to:
  - Create the SQL Scripts
  - Manage using Command Line or the API.  
 
-### The SQL Scripts
+## The SQL Scripts
 
 The scripts are divided in three set of scripts:
 
@@ -118,7 +118,7 @@ the migration script will down and alert him there a TWO versions 43. In that ca
 file do 44-dev.sql and continue to work until merge your changes and generate a final version. 
 
 
-## Using the PHP API and Integrate it into your projects.
+# Using the PHP API and Integrate it into your projects.
 
 The basic usage is 
 
@@ -154,7 +154,7 @@ $migration->update($version = null);
 The Migration object controls the database version.
 
 
-### Creating a version control in your project:
+## Creating a version control in your project:
 
 ```php
 <?php
@@ -168,14 +168,14 @@ $migration->registerDatabase('mysql', \ByJG\DbMigration\Database\MySqlDatabase::
 $migration->createVersion();
 ```
 
-### Getting the current version
+## Getting the current version
 
 ```php
 <?php
 $migration->getCurrentVersion();
 ```
 
-### Add Callback to control the progress
+## Add Callback to control the progress
 
 ```php
 <?php
@@ -184,7 +184,7 @@ $migration->addCallbackProgress(function ($command, $version) {
 });
 ```
 
-### Getting the Db Driver instance
+## Getting the Db Driver instance
 
 ```php
 <?php
@@ -194,9 +194,9 @@ $migration->getDbDriver();
 To use it, please visit: https://github.com/byjg/anydataset-db
 
 
-### Tips on writing SQL migrations
+# Tips on writing SQL migrations
 
-#### Rely on explicit transactions
+## Rely on explicit transactions
 
 ```sql
 -- DO
@@ -228,7 +228,7 @@ and warn you when you attempt to run it again. The difference is that with expli
 transactions you know that the database cannot be in an inconsistent state after an
 unexpected failure.
 
-#### On creating triggers and SQL functions
+## On creating triggers and SQL functions
 
 ```sql
 -- DO
@@ -291,7 +291,7 @@ comment after every inner semicolon of a function definition `byjg/migration` wi
 Unfortunately, if you forget to add any of these comments the library will split the `CREATE FUNCTION` statement in
 multiple parts and the migration will fail.
 
-#### Avoid the colon character (`:`)
+## Avoid the colon character (`:`)
 
 ```sql
 -- DO
@@ -319,14 +319,14 @@ read this as an invalid named parameter in an invalid context and fail when it t
 The only way to fix this inconsistency is avoiding colons altogether (in this case, PostgreSQL also has an alternative
  syntax: `CAST(value AS type)`).
 
-#### Use an SQL editor
+## Use an SQL editor
 
 Finally, writing manual SQL migrations can be tiresome, but it is significantly easier if
 you use an editor capable of understanding the SQL syntax, providing autocomplete,
 introspecting your current database schema and/or autoformatting your code.
 
 
-### Handle different migration inside one schema
+# Handle different migration inside one schema
 
 If you need to create different migration scripts and version inside the same schema it is possible
 but is too risky and I do not recommend at all. 
@@ -344,7 +344,7 @@ For security reasons, this feature is not available at command line, but you can
 We really recommend do not use this feature. The recommendation is one migration for one schema. 
 
 
-## Unit Tests
+# Unit Tests
 
 This library has integrated tests and need to be setup for each database you want to test. 
 
@@ -357,9 +357,9 @@ vendor/bin/phpunit tests/PostgresDatabaseTest.php
 vendor/bin/phpunit tests/SqlServerDatabaseTest.php 
 ```
 
-### Using Docker for testing
+## Using Docker for testing
 
-#### MySql
+### MySql
 
 ```bash
 npm i @usdocker/usdocker @usdocker/mysql
@@ -374,7 +374,7 @@ docker run -it --rm \
     phpunit tests/MysqlDatabaseTest
 ```
 
-#### Postgresql
+### Postgresql
 
 ```bash
 npm i @usdocker/usdocker @usdocker/postgres
@@ -389,7 +389,7 @@ docker run -it --rm \
     phpunit tests/PostgresDatabaseTest
 ```
 
-#### Microsoft SqlServer
+### Microsoft SqlServer
 
 ```bash
 npm i @usdocker/usdocker @usdocker/mssql
@@ -404,7 +404,7 @@ docker run -it --rm \
     phpunit tests/SqlServerDatabaseTest
 ```
 
-## Related Projects
+# Related Projects
 
 - [Micro ORM](https://github.com/byjg/micro-orm)
 - [Anydataset](https://github.com/byjg/anydataset)
