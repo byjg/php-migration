@@ -1,4 +1,4 @@
-# Database Migrations
+# Database Migrations PHP
 
 [![Opensource ByJG](https://img.shields.io/badge/opensource-byjg.com-brightgreen.svg)](http://opensource.byjg.com)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/byjg/migration/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/byjg/migration/?branch=master)
@@ -27,20 +27,35 @@ But at the end despite these good features the reality in big projects someone w
 
 Because of that this is an agnostic project (independent of framework and Programming Language) and use pure and native SQL commands for migrate your database.
 
-## Installing
+# Installing
+
+## PHP Library
+
+If you want to use only the PHP Library in your project:
 
 ```
 composer require 'byjg/migration=4.0.*'
 ```
+## Command Line Interface
 
-## Supported databases:
+The command line interface is standalone and does not require you install with your project.
+
+You can install global and create a symbolic lynk 
+
+```
+composer require 'byjg/migration-cli=4.0.*'
+```
+
+Please visit https://github.com/byjg/migration-cli to get more informations about Migration CLI.
+
+# Supported databases:
 
  * Sqlite
  * Mysql / MariaDB
  * Postgres
  * SqlServer
 
-## How It Works?
+# How It Works?
 
 The Database Migration uses PURE SQL to manage the database versioning. 
 In order to get working you need to:
@@ -48,7 +63,7 @@ In order to get working you need to:
  - Create the SQL Scripts
  - Manage using Command Line or the API.  
 
-### The SQL Scripts
+## The SQL Scripts
 
 The scripts are divided in three set of scripts:
 
@@ -102,114 +117,8 @@ If he is try to migrate UP or DOWN
 the migration script will down and alert him there a TWO versions 43. In that case, developer 2 will have to update your
 file do 44-dev.sql and continue to work until merge your changes and generate a final version. 
 
-### Running in the command line
 
-Migration library creates the 'migrate' script. It has the follow syntax:
-
-```
-Usage:
-  command [options] [arguments]
-
-Options:
-  -h, --help            Display this help message
-  -q, --quiet           Do not output any message
-  -V, --version         Display this application version
-      --ansi            Force ANSI output
-      --no-ansi         Disable ANSI output
-  -n, --no-interaction  Do not ask any interactive question
-  -v|vv|vvv, --verbose  Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
-
-Available commands:
-  create   Create the directory structure FROM a pre-existing database
-  down     Migrate down the database version.
-  help     Displays help for a command
-  install  Install or upgrade the migrate version in a existing database
-  list     Lists commands
-  reset    Create a fresh new database
-  up       Migrate Up the database version
-  update   Migrate Up or Down the database version based on the current database version and the migration scripts available
-  version  Get the current database version
-```
-
-#### Commands
-
-##### Basic Usage
-
-The basic usage is:
-
-```text
-migrate <COMMAND> --path=<scripts> uri://connection
-```
-
-The `--path` specify where the base.sql and migrate scripts are located. 
-If you omitted the `--path` it will assume the current directory. You can also
-set the `MIGRATE_PATH` environment variable with the base path 
-
-The uri://connection is the uri that represents the connection to the database. 
-You can see [here](https://github.com/byjg/anydataset#connection-based-on-uri)
-to know more about the connection string.
-
-You can omit the uri parameter if you define it in the 
-`MIGRATE_CONNECTION` environment variable
-
-```bash
-export MIGRATE_CONNECTION=sqlite:///path/to/my.db
-```
-  
-##### Command: create
-
-Create a empty directory structure with base.sql and migrations/up and migrations/down for migrations. This is
-useful for create from scratch a migration scheme.
-
-Ex.
-
-```bash
-migrate create /path/to/sql 
-```
-
-##### Command: install 
-
-If you already have a database but it is not controlled by the migration system you can use this method for 
-install the required tables for migration.
-
-```bash
-migrate install mysql://server/database
-```
-
-##### Command: update
-
-Will apply all necessary migrations to keep your database updated.
-
-```bash
-migrate update mysql://server/database
-```
-
-Update command can choose if up or down your database depending on your current database version.
-You can also specify a version: 
-
-```bash
-migrate update --up-to=34
-``` 
-
-##### Command: reset
-
-Creates/replace a database with the "base.sql" and apply ALL migrations
-
-```bash
-migrate reset            # reset the database and apply all migrations scripts.
-migrate reset --up-to=5  # reset the database and apply the migration from the 
-                         # start up to the version 5.
-migrate reset --yes      # reset the database without ask anything. Be careful!!
-```
-
-**Note on reset:** You can disable the reset command by setting the environment variable 
-`MIGRATE_DISABLE_RESET` to true:
-
-```bash
-export MIGRATE_DISABLE_RESET=true
-```
-
-### Using the PHP API and Integrate it into your projects.
+# Using the PHP API and Integrate it into your projects.
 
 The basic usage is 
 
@@ -236,17 +145,58 @@ $migration->registerDatabase('maria', \ByJG\DbMigration\Database\MySqlDatabase::
 // and run ALL existing scripts for up the database version to the latest version
 $migration->reset();
 
-// Run ALL existing scripts for up the database version
-// from the current version to the last version; 
-$migration->up();
+// Run ALL existing scripts for up or down the database version
+// from the current version until the $version number;
+// If the version number is not specified migrate until the last database version 
+$migration->update($version = null);
 ```
 
 The Migration object controls the database version.
 
 
-### Tips on writing SQL migrations
+## Creating a version control in your project:
 
-#### Rely on explicit transactions
+```php
+<?php
+// Create the Migration instance
+$migration = new \ByJG\DbMigration\Migration($connectionUri, '.');
+
+// Register the Database or Databases can handle that URI:
+$migration->registerDatabase('mysql', \ByJG\DbMigration\Database\MySqlDatabase::class);
+
+// This command will create the version table in your database
+$migration->createVersion();
+```
+
+## Getting the current version
+
+```php
+<?php
+$migration->getCurrentVersion();
+```
+
+## Add Callback to control the progress
+
+```php
+<?php
+$migration->addCallbackProgress(function ($command, $version) {
+    echo "Doing Command: $command at version $version";
+});
+```
+
+## Getting the Db Driver instance
+
+```php
+<?php
+$migration->getDbDriver();
+```
+
+To use it, please visit: https://github.com/byjg/anydataset-db
+
+
+# Tips on writing SQL migrations
+
+## Rely on explicit transactions
 
 ```sql
 -- DO
@@ -278,7 +228,7 @@ and warn you when you attempt to run it again. The difference is that with expli
 transactions you know that the database cannot be in an inconsistent state after an
 unexpected failure.
 
-#### On creating triggers and SQL functions
+## On creating triggers and SQL functions
 
 ```sql
 -- DO
@@ -341,7 +291,7 @@ comment after every inner semicolon of a function definition `byjg/migration` wi
 Unfortunately, if you forget to add any of these comments the library will split the `CREATE FUNCTION` statement in
 multiple parts and the migration will fail.
 
-#### Avoid the colon character (`:`)
+## Avoid the colon character (`:`)
 
 ```sql
 -- DO
@@ -369,14 +319,14 @@ read this as an invalid named parameter in an invalid context and fail when it t
 The only way to fix this inconsistency is avoiding colons altogether (in this case, PostgreSQL also has an alternative
  syntax: `CAST(value AS type)`).
 
-#### Use an SQL editor
+## Use an SQL editor
 
 Finally, writing manual SQL migrations can be tiresome, but it is significantly easier if
 you use an editor capable of understanding the SQL syntax, providing autocomplete,
 introspecting your current database schema and/or autoformatting your code.
 
 
-### Handle different migration inside one schema
+# Handle different migration inside one schema
 
 If you need to create different migration scripts and version inside the same schema it is possible
 but is too risky and I do not recommend at all. 
@@ -394,7 +344,7 @@ For security reasons, this feature is not available at command line, but you can
 We really recommend do not use this feature. The recommendation is one migration for one schema. 
 
 
-## Unit Tests
+# Unit Tests
 
 This library has integrated tests and need to be setup for each database you want to test. 
 
@@ -407,9 +357,9 @@ vendor/bin/phpunit tests/PostgresDatabaseTest.php
 vendor/bin/phpunit tests/SqlServerDatabaseTest.php 
 ```
 
-### Using Docker for testing
+## Using Docker for testing
 
-#### MySql
+### MySql
 
 ```bash
 npm i @usdocker/usdocker @usdocker/mysql
@@ -424,7 +374,7 @@ docker run -it --rm \
     phpunit tests/MysqlDatabaseTest
 ```
 
-#### Postgresql
+### Postgresql
 
 ```bash
 npm i @usdocker/usdocker @usdocker/postgres
@@ -439,7 +389,7 @@ docker run -it --rm \
     phpunit tests/PostgresDatabaseTest
 ```
 
-#### Microsoft SqlServer
+### Microsoft SqlServer
 
 ```bash
 npm i @usdocker/usdocker @usdocker/mssql
@@ -454,7 +404,7 @@ docker run -it --rm \
     phpunit tests/SqlServerDatabaseTest
 ```
 
-## Related Projects
+# Related Projects
 
 - [Micro ORM](https://github.com/byjg/micro-orm)
 - [Anydataset](https://github.com/byjg/anydataset)
