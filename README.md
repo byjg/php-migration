@@ -388,7 +388,7 @@ docker run -it --rm \
 ### Microsoft SqlServer
 
 ```bash
-docker run --name mssql-container --rm -e ACCEPT_EULA=Y -e SA_PASSWORD=Pa55word -p 1433:1433 -d microsoft/mssql-server-linux
+docker run --name mssql-container --rm -e ACCEPT_EULA=Y -e SA_PASSWORD=Pa55word -p 1433:1433 -d mcr.microsoft.com/mssql/server
 
 docker run -it --rm \
     --link mssql-container \
