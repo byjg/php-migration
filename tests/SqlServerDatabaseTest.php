@@ -7,7 +7,7 @@ require_once 'BaseDatabase.php';
  */
 class SqlServerDatabaseTest extends BaseDatabase
 {
-    protected $uri = 'dblib://sa:Pa$$word!@mssql-container/migratedatabase';
+    protected $uri = 'dblib://sa:Pa55word@mssql-container/migratedatabase';
 
     /**
      * @var \ByJG\DbMigration\Migration

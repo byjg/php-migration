@@ -362,9 +362,7 @@ vendor/bin/phpunit tests/SqlServerDatabaseTest.php
 ### MySql
 
 ```bash
-npm i @usdocker/usdocker @usdocker/mysql
-./node_modules/.bin/usdocker --refresh --home /tmp
-./node_modules/.bin/usdocker mysql up --home /tmp
+docker run --name mysql-container --rm  -e MYSQL_ROOT_PASSWORD=password -p 3306:3306 -d mysql:5.7
 
 docker run -it --rm \
     --link mysql-container \
@@ -377,9 +375,7 @@ docker run -it --rm \
 ### Postgresql
 
 ```bash
-npm i @usdocker/usdocker @usdocker/postgres
-./node_modules/.bin/usdocker --refresh --home /tmp
-./node_modules/.bin/usdocker postgres up --home /tmp
+docker run --name postgres-container --rm -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres:9-alpine
 
 docker run -it --rm \
     --link postgres-container \
@@ -392,9 +388,7 @@ docker run -it --rm \
 ### Microsoft SqlServer
 
 ```bash
-npm i @usdocker/usdocker @usdocker/mssql
-./node_modules/.bin/usdocker --refresh --home /tmp
-./node_modules/.bin/usdocker mssql up --home /tmp
+docker run --name mssql-container --rm -e ACCEPT_EULA=Y -e SA_PASSWORD=Pa55word -p 1433:1433 -d microsoft/mssql-server-linux
 
 docker run -it --rm \
     --link mssql-container \
