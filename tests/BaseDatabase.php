@@ -168,4 +168,37 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
 
         $this->migrate->getDbDriver()->getIterator('select * from roles');
     }
+
+    /**
+     * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
+     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
+     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
+     * @expectedException \ByJG\DbMigration\Exception\DatabaseNotVersionedException
+     */
+    public function testGetCurrentVersionIsEmpty()
+    {
+        $this->migrate->getCurrentVersion();
+    }
+
+    public function testCreateVersion()
+    {
+        $this->migrate->createVersion();
+        $records = $this->migrate->getDbDriver()->getIterator("select * from " . $this->migrationTable)->toArray();
+        $this->assertEquals([
+            [
+                'version' => '0',
+                'status' => 'unknown'
+            ]
+        ], $records);
+
+        // Check Bug (cannot create twice)
+        $this->migrate->createVersion();
+        $records = $this->migrate->getDbDriver()->getIterator("select * from " . $this->migrationTable)->toArray();
+        $this->assertEquals([
+            [
+                'version' => '0',
+                'status' => 'unknown'
+            ]
+        ], $records);
+    }
 }

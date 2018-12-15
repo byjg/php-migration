@@ -10,6 +10,8 @@ use Psr\Http\Message\UriInterface;
 
 abstract class AbstractDatabase implements DatabaseInterface
 {
+    const INITIAL_STATE = "unknown";
+
     /**
      * @var DbDriverInterface
      */
@@ -101,8 +103,12 @@ abstract class AbstractDatabase implements DatabaseInterface
     {
         // Get the version to check if exists
         $versionInfo = $this->getVersion();
-        if (empty($versionInfo['version'])) {
-            $this->getDbDriver()->execute("insert into " . $this->getMigrationTable() . " values(0, 'unknow')");
+        if ($versionInfo['version'] === false) {
+            $this->getDbDriver()->execute(sprintf(
+                "insert into %s values(0, '%s')",
+                $this->getMigrationTable(),
+                static::INITIAL_STATE)
+            );
         }
     }
 
@@ -111,9 +117,9 @@ abstract class AbstractDatabase implements DatabaseInterface
      */
     public function updateVersionTable()
     {
-        $currentVersion = $this->getDbDriver()->getScalar('select version from ' . $this->getMigrationTable());
-        $this->getDbDriver()->execute('drop table ' . $this->getMigrationTable());
+        $currentVersion = $this->getDbDriver()->getScalar(sprintf('select version from %s', $this->getMigrationTable()));
+        $this->getDbDriver()->execute(sprintf('drop table %s', $this->getMigrationTable()));
         $this->createVersion();
-        $this->setVersion($currentVersion, 'unknow');
+        $this->setVersion($currentVersion, static::INITIAL_STATE);
     }
 }
