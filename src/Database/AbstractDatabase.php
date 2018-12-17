@@ -6,14 +6,11 @@ use ByJG\AnyDataset\Db\DbDriverInterface;
 use ByJG\AnyDataset\Db\Factory;
 use ByJG\DbMigration\Exception\DatabaseNotVersionedException;
 use ByJG\DbMigration\Exception\OldVersionSchemaException;
+use ByJG\DbMigration\Migration;
 use Psr\Http\Message\UriInterface;
 
 abstract class AbstractDatabase implements DatabaseInterface
 {
-    const VERSION_STATUS_UNKNOWN = "unknown";
-    const VERSION_STATUS_PARTIAL = "partial";
-    const VERSION_STATUS_COMPLETE = "complete";
-
     /**
      * @var DbDriverInterface
      */
@@ -109,7 +106,7 @@ abstract class AbstractDatabase implements DatabaseInterface
             $this->getDbDriver()->execute(sprintf(
                 "insert into %s values(0, '%s')",
                 $this->getMigrationTable(),
-                static::VERSION_STATUS_UNKNOWN)
+                Migration::VERSION_STATUS_UNKNOWN)
             );
         }
     }
@@ -122,6 +119,6 @@ abstract class AbstractDatabase implements DatabaseInterface
         $currentVersion = $this->getDbDriver()->getScalar(sprintf('select version from %s', $this->getMigrationTable()));
         $this->getDbDriver()->execute(sprintf('drop table %s', $this->getMigrationTable()));
         $this->createVersion();
-        $this->setVersion($currentVersion, static::VERSION_STATUS_UNKNOWN);
+        $this->setVersion($currentVersion, Migration::VERSION_STATUS_UNKNOWN);
     }
 }

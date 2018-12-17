@@ -1,18 +1,21 @@
 <?php
 
-use ByJG\DbMigration\Database\AbstractDatabase;
+use ByJG\DbMigration\Migration;
 
 abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
 {
     protected $uri = null;
 
     /**
-     * @var \ByJG\DbMigration\Migration
+     * @var Migration
      */
     protected $migrate = null;
 
     protected $migrationTable = "migration_version";
 
+    /**
+     * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
+     */
     public function setUp()
     {
         // create Migrate object in the parent!!!
@@ -20,17 +23,36 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
         $this->migrate->prepareEnvironment();
     }
 
+    /**
+     * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
+     */
     public function tearDown()
     {
         $this->migrate->getDbCommand()->dropDatabase();
     }
 
+    /**
+     * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
+     * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
+     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
+     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
+     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
+     * @throws \ByJG\Serializer\Exception\InvalidArgumentException
+     */
     public function testVersion0()
     {
         $this->migrate->reset(0);
         $this->assertVersion0();
     }
 
+    /**
+     * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
+     * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
+     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
+     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
+     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
+     * @throws \ByJG\Serializer\Exception\InvalidArgumentException
+     */
     public function testUpVersion1()
     {
         $this->migrate->reset(0);
@@ -39,6 +61,14 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
         $this->assertVersion1();
     }
 
+    /**
+     * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
+     * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
+     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
+     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
+     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
+     * @throws \ByJG\Serializer\Exception\InvalidArgumentException
+     */
     public function testUpVersion2()
     {
         $this->migrate->reset(0);
@@ -47,6 +77,14 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
         $this->assertVersion2();
     }
 
+    /**
+     * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
+     * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
+     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
+     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
+     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
+     * @throws \ByJG\Serializer\Exception\InvalidArgumentException
+     */
     public function testDownVersion1()
     {
         $this->migrate->reset();
@@ -55,6 +93,14 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
         $this->assertVersion1();
     }
 
+    /**
+     * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
+     * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
+     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
+     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
+     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
+     * @throws \ByJG\Serializer\Exception\InvalidArgumentException
+     */
     public function testDownVersion0()
     {
         $this->migrate->reset();
@@ -79,12 +125,16 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    /**
+     * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
+     * @throws \ByJG\Serializer\Exception\InvalidArgumentException
+     */
     protected function assertVersion0()
     {
         $version = $this->migrate->getDbDriver()->getScalar('select version from '. $this->migrationTable);
         $this->assertEquals(0, $version);
         $status = $this->migrate->getDbDriver()->getScalar('select status from '. $this->migrationTable);
-        $this->assertEquals(AbstractDatabase::VERSION_STATUS_COMPLETE, $status);
+        $this->assertEquals(Migration::VERSION_STATUS_COMPLETE, $status);
 
         $iterator = $this->migrate->getDbDriver()->getIterator('select * from users');
 
@@ -111,12 +161,16 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
         }
     }
 
+    /**
+     * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
+     * @throws \ByJG\Serializer\Exception\InvalidArgumentException
+     */
     protected function assertVersion1()
     {
         $version = $this->migrate->getDbDriver()->getScalar('select version from '. $this->migrationTable);
         $this->assertEquals(1, $version);
         $status = $this->migrate->getDbDriver()->getScalar('select status from '. $this->migrationTable);
-        $this->assertEquals(AbstractDatabase::VERSION_STATUS_COMPLETE, $status);
+        $this->assertEquals(Migration::VERSION_STATUS_COMPLETE, $status);
 
         $iterator = $this->migrate->getDbDriver()->getIterator('select * from users');
 
@@ -143,12 +197,16 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
         }
     }
 
+    /**
+     * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
+     * @throws \ByJG\Serializer\Exception\InvalidArgumentException
+     */
     protected function assertVersion2()
     {
         $version = $this->migrate->getDbDriver()->getScalar('select version from '. $this->migrationTable);
         $this->assertEquals(2, $version);
         $status = $this->migrate->getDbDriver()->getScalar('select status from '. $this->migrationTable);
-        $this->assertEquals(AbstractDatabase::VERSION_STATUS_COMPLETE, $status);
+        $this->assertEquals(Migration::VERSION_STATUS_COMPLETE, $status);
 
         $iterator = $this->migrate->getDbDriver()->getIterator('select * from users');
 
@@ -182,6 +240,10 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
         $this->migrate->getCurrentVersion();
     }
 
+    /**
+     * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
+     * @throws \ByJG\Serializer\Exception\InvalidArgumentException
+     */
     public function testCreateVersion()
     {
         $this->migrate->createVersion();
@@ -189,7 +251,7 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
         $this->assertEquals([
             [
                 'version' => '0',
-                'status' => AbstractDatabase::VERSION_STATUS_UNKNOWN
+                'status' => Migration::VERSION_STATUS_UNKNOWN
             ]
         ], $records);
 
@@ -199,7 +261,7 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
         $this->assertEquals([
             [
                 'version' => '0',
-                'status' => AbstractDatabase::VERSION_STATUS_UNKNOWN
+                'status' => Migration::VERSION_STATUS_UNKNOWN
             ]
         ], $records);
     }
