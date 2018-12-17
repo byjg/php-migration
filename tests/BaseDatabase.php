@@ -1,5 +1,7 @@
 <?php
 
+use ByJG\DbMigration\Database\AbstractDatabase;
+
 abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
 {
     protected $uri = null;
@@ -82,7 +84,7 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
         $version = $this->migrate->getDbDriver()->getScalar('select version from '. $this->migrationTable);
         $this->assertEquals(0, $version);
         $status = $this->migrate->getDbDriver()->getScalar('select status from '. $this->migrationTable);
-        $this->assertEquals('complete', $status);
+        $this->assertEquals(AbstractDatabase::VERSION_STATUS_COMPLETE, $status);
 
         $iterator = $this->migrate->getDbDriver()->getIterator('select * from users');
 
@@ -114,7 +116,7 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
         $version = $this->migrate->getDbDriver()->getScalar('select version from '. $this->migrationTable);
         $this->assertEquals(1, $version);
         $status = $this->migrate->getDbDriver()->getScalar('select status from '. $this->migrationTable);
-        $this->assertEquals('complete', $status);
+        $this->assertEquals(AbstractDatabase::VERSION_STATUS_COMPLETE, $status);
 
         $iterator = $this->migrate->getDbDriver()->getIterator('select * from users');
 
@@ -146,7 +148,7 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
         $version = $this->migrate->getDbDriver()->getScalar('select version from '. $this->migrationTable);
         $this->assertEquals(2, $version);
         $status = $this->migrate->getDbDriver()->getScalar('select status from '. $this->migrationTable);
-        $this->assertEquals('complete', $status);
+        $this->assertEquals(AbstractDatabase::VERSION_STATUS_COMPLETE, $status);
 
         $iterator = $this->migrate->getDbDriver()->getIterator('select * from users');
 
@@ -187,7 +189,7 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
         $this->assertEquals([
             [
                 'version' => '0',
-                'status' => 'unknown'
+                'status' => AbstractDatabase::VERSION_STATUS_UNKNOWN
             ]
         ], $records);
 
@@ -197,7 +199,7 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
         $this->assertEquals([
             [
                 'version' => '0',
-                'status' => 'unknown'
+                'status' => AbstractDatabase::VERSION_STATUS_UNKNOWN
             ]
         ], $records);
     }
