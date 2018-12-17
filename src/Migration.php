@@ -11,6 +11,10 @@ use Psr\Http\Message\UriInterface;
 
 class Migration
 {
+    const VERSION_STATUS_UNKNOWN = "unknown";
+    const VERSION_STATUS_PARTIAL = "partial";
+    const VERSION_STATUS_COMPLETE = "complete";
+
     /**
      * @var UriInterface
      */
@@ -196,7 +200,7 @@ class Migration
             $this->getDbCommand()->executeSql(file_get_contents($this->getBaseSql()));
         }
 
-        $this->getDbCommand()->setVersion(0, 'complete');
+        $this->getDbCommand()->setVersion(0, Migration::VERSION_STATUS_COMPLETE);
         $this->up($upVersion);
     }
 
@@ -263,7 +267,7 @@ class Migration
         $versionInfo = $this->getCurrentVersion();
         $currentVersion = intval($versionInfo['version']) + $increment;
 
-        if (strpos($versionInfo['status'], 'partial') !== false && !$force) {
+        if (strpos($versionInfo['status'], Migration::VERSION_STATUS_PARTIAL) !== false && !$force) {
             throw new DatabaseIsIncompleteException('Database was not fully updated. Use --force for migrate.');
         }
 
@@ -274,9 +278,9 @@ class Migration
                 call_user_func_array($this->callableProgress, ['migrate', $currentVersion]);
             }
 
-            $this->getDbCommand()->setVersion($currentVersion, 'partial ' . ($increment>0 ? 'up' : 'down'));
+            $this->getDbCommand()->setVersion($currentVersion, Migration::VERSION_STATUS_PARTIAL . ' ' . ($increment>0 ? 'up' : 'down'));
             $this->getDbCommand()->executeSql(file_get_contents($file));
-            $this->getDbCommand()->setVersion($currentVersion, 'complete');
+            $this->getDbCommand()->setVersion($currentVersion, Migration::VERSION_STATUS_COMPLETE);
             $currentVersion = $currentVersion + $increment;
         }
     }

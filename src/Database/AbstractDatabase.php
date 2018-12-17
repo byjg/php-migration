@@ -6,6 +6,7 @@ use ByJG\AnyDataset\Db\DbDriverInterface;
 use ByJG\AnyDataset\Db\Factory;
 use ByJG\DbMigration\Exception\DatabaseNotVersionedException;
 use ByJG\DbMigration\Exception\OldVersionSchemaException;
+use ByJG\DbMigration\Migration;
 use Psr\Http\Message\UriInterface;
 
 abstract class AbstractDatabase implements DatabaseInterface
@@ -101,8 +102,12 @@ abstract class AbstractDatabase implements DatabaseInterface
     {
         // Get the version to check if exists
         $versionInfo = $this->getVersion();
-        if (empty($versionInfo['version'])) {
-            $this->getDbDriver()->execute("insert into " . $this->getMigrationTable() . " values(0, 'unknow')");
+        if ($versionInfo['version'] === false) {
+            $this->getDbDriver()->execute(sprintf(
+                "insert into %s values(0, '%s')",
+                $this->getMigrationTable(),
+                Migration::VERSION_STATUS_UNKNOWN)
+            );
         }
     }
 
@@ -111,9 +116,9 @@ abstract class AbstractDatabase implements DatabaseInterface
      */
     public function updateVersionTable()
     {
-        $currentVersion = $this->getDbDriver()->getScalar('select version from ' . $this->getMigrationTable());
-        $this->getDbDriver()->execute('drop table ' . $this->getMigrationTable());
+        $currentVersion = $this->getDbDriver()->getScalar(sprintf('select version from %s', $this->getMigrationTable()));
+        $this->getDbDriver()->execute(sprintf('drop table %s', $this->getMigrationTable()));
         $this->createVersion();
-        $this->setVersion($currentVersion, 'unknow');
+        $this->setVersion($currentVersion, Migration::VERSION_STATUS_UNKNOWN);
     }
 }

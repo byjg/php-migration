@@ -12,14 +12,14 @@ class PgsqlDatabase extends AbstractDatabase
     public static function prepareEnvironment(UriInterface $uri)
     {
         $database = preg_replace('~^/~', '', $uri->getPath());
-        $dbDriver = self::getDbDriverWithoutDatabase($uri);
-        self::createDatabaseIfNotExists($dbDriver, $database);
+        $dbDriver = static::getDbDriverWithoutDatabase($uri);
+        static::createDatabaseIfNotExists($dbDriver, $database);
     }
 
     protected static function getDbDriverWithoutDatabase(UriInterface $uri)
     {
         $customUri = new Uri($uri->__toString());
-        return Factory::getDbRelationalInstance($customUri->withPath('/')->__toString());
+        return Factory::getDbRelationalInstance($customUri->withPath('/postgres')->__toString());
     }
 
     /**
@@ -41,13 +41,11 @@ class PgsqlDatabase extends AbstractDatabase
     public function createDatabase()
     {
         $database = preg_replace('~^/~', '', $this->getDbDriver()->getUri()->getPath());
-        self::createDatabaseIfNotExists($this->getDbDriver(), $database);
+        static::createDatabaseIfNotExists($this->getDbDriver(), $database);
     }
 
     public function dropDatabase()
     {
-        // $database = preg_replace('~^/~', '', $this->getDbDriver()->getUri()->getPath());
-
         $iterator = $this->getDbDriver()->getIterator(
             "select 'drop table if exists \"' || tablename || '\" cascade;' command from pg_tables where schemaname = 'public';"
         );
