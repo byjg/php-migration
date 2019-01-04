@@ -1,7 +1,7 @@
 name: migration
 
 project:
-  version: 4.0.0
+  version: 1.0.0
   download_url: https://github.com/byjg/migration/releases
 
 license:
@@ -41,13 +41,26 @@ social:
     hash: opensourcebyjg
     account: 
   facebook:
-    enabled: false
+    enabled: true
+    url: https://opensource.byjg.com/
     profileUrl:
+
+author:
+  twitter: byjg
+
+twitter:
+  card: summary
+  username: byjg
+
+logo: https://opensource.byjg.com/images/logo_byjg.png
 
 analytics:
   google: UA-130014324-1
 
+plugins:
+  - jekyll-seo-tag
+
 # Build settings
 markdown: kramdown
-remote_theme: allejo/jekyll-docs-theme
+remote_theme: byjg/jekyll-docs-theme
 
