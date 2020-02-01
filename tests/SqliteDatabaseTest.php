@@ -7,7 +7,7 @@ require_once 'BaseDatabase.php';
  */
 class SqliteDatabaseTest extends BaseDatabase
 {
-    protected $path = __DIR__ . '/../example/sqlite/test.sqlite';
+    protected $path = ':memory:';
 
     /**
      * @var \ByJG\DbMigration\Migration
@@ -17,7 +17,7 @@ class SqliteDatabaseTest extends BaseDatabase
     public function setUp()
     {
         # Dump SQLite database.
-        file_put_contents($this->path, '');
+        $this->prepareDatabase();
 
         $uri = new \ByJG\Util\Uri("sqlite://{$this->path}");
         $this->migrate = new \ByJG\DbMigration\Migration($uri, __DIR__ . '/../example/sqlite', true, $this->migrationTable);
@@ -29,7 +29,7 @@ class SqliteDatabaseTest extends BaseDatabase
     {
         $this->migrationTable = 'migration_table';
 
-        file_put_contents($this->path, '');
+        $this->prepareDatabase();
 
         $uri = new \ByJG\Util\Uri("sqlite://{$this->path}");
         $this->migrate = new \ByJG\DbMigration\Migration($uri, __DIR__ . '/../example/sqlite', true, $this->migrationTable);
@@ -38,4 +38,9 @@ class SqliteDatabaseTest extends BaseDatabase
         parent::testUpVersion1();
     }
 
+    protected function prepareDatabase() {
+        if ($this->path != ":memory:") {
+            file_put_contents($this->path, '');
+        }
+    }
 }
