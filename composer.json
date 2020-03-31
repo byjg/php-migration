@@ -11,7 +11,7 @@
   "prefer-stable": true,
   "require": {
     "byjg/anydataset-db": "4.0.*",
-    "byjg/uri": "^1.0",
+    "byjg/uri": "^1.0|^2.0",
     "ext-pdo": "*"
   },
   "require-dev": {
