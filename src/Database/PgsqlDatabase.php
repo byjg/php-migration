@@ -80,4 +80,9 @@ class PgsqlDatabase extends AbstractDatabase
         }
         $this->getDbDriver()->execute($sql);
     }
+
+    public function isDatabaseVersioned()
+    {
+        return $this->isDatabaseVersioned_Internal('public', $this->getMigrationTable());
+    }
 }

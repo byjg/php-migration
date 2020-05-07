@@ -122,18 +122,23 @@ abstract class AbstractDatabase implements DatabaseInterface
         $this->setVersion($currentVersion, Migration::VERSION_STATUS_UNKNOWN);
     }
 
-    public function isDatabaseVersioned()
+    protected function isDatabaseVersioned_Internal($schema, $table)
     {
         $count = $this->getDbDriver()->getScalar(
             'SELECT count(*) FROM information_schema.tables ' .
             ' WHERE table_schema = [[schema]] ' .
             '  AND table_name = [[table]] ',
             [
-                "schema" => ltrim($this->getDbDriver()->getUri()->getPath(), "/"),
-                "table" => $this->getMigrationTable()
+                "schema" => $schema,
+                "table" => $table
             ]
         );
 
-        return ($count !== 0);
+        return (intval($count) !== 0);
+    }
+
+    public function isDatabaseVersioned()
+    {
+        return $this->isDatabaseVersioned_Internal(ltrim($this->getDbDriver()->getUri()->getPath(), "/"), $this->getMigrationTable());
     }
 }

@@ -1,26 +1,6 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Test Postgres" type="docker-deploy" factoryName="docker-image" server-name="Docker">
-    <deployment type="docker-image">
-      <settings>
-        <option name="JSONFilePath" value="" />
-        <option name="command" value="vendor/bin/phpunit tests/PostgresDatabaseTest.php " />
-        <option name="commandLineOptions" value="-w /work --link postgres-container:postgres-container" />
-        <option name="containerName" value="migration7.1-test" />
-        <option name="entrypoint" value="" />
-        <option name="imageTag" value="byjg/php:7.1-cli" />
-        <option name="startBrowserSettings">
-          <browser url="http://127.0.0.1" />
-        </option>
-        <option name="volumeBindings">
-          <list>
-            <DockerVolumeBindingImpl>
-              <option name="containerPath" value="/work" />
-              <option name="hostPath" value="$PROJECT_DIR$" />
-            </DockerVolumeBindingImpl>
-          </list>
-        </option>
-      </settings>
-    </deployment>
+  <configuration default="false" name="Test Postgres" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+    <TestRunner class="PostgresDatabaseTest" configuration_file="$PROJECT_DIR$/phpunit.xml.dist" file="$PROJECT_DIR$/tests/PostgresDatabaseTest.php" scope="Class" use_alternative_configuration_file="true" />
     <method v="2" />
   </configuration>
 </component>
