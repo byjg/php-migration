@@ -83,6 +83,6 @@ class PgsqlDatabase extends AbstractDatabase
 
     public function isDatabaseVersioned()
     {
-        return $this->isDatabaseVersioned_Internal('public', $this->getMigrationTable());
+        return $this->isTableExists('public', $this->getMigrationTable());
     }
 }

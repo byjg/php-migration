@@ -54,15 +54,20 @@ class SqliteDatabase extends AbstractDatabase
         $this->getDbDriver()->execute($sql);
     }
 
-    public function isDatabaseVersioned()
+    protected function isTableExists($schema, $table)
     {
         $count = $this->getDbDriver()->getScalar(
             "SELECT count(*) FROM sqlite_master WHERE type='table' AND name=[[table]]",
             [
-                "table" => $this->getMigrationTable()
+                "table" => $table
             ]
         );
 
         return (intval($count) !== 0);
+    }
+
+    public function isDatabaseVersioned()
+    {
+        return $this->isTableExists(null, $this->getMigrationTable());
     }
 }

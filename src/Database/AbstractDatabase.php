@@ -122,7 +122,7 @@ abstract class AbstractDatabase implements DatabaseInterface
         $this->setVersion($currentVersion, Migration::VERSION_STATUS_UNKNOWN);
     }
 
-    protected function isDatabaseVersioned_Internal($schema, $table)
+    protected function isTableExists($schema, $table)
     {
         $count = $this->getDbDriver()->getScalar(
             'SELECT count(*) FROM information_schema.tables ' .
@@ -139,6 +139,6 @@ abstract class AbstractDatabase implements DatabaseInterface
 
     public function isDatabaseVersioned()
     {
-        return $this->isDatabaseVersioned_Internal(ltrim($this->getDbDriver()->getUri()->getPath(), "/"), $this->getMigrationTable());
+        return $this->isTableExists(ltrim($this->getDbDriver()->getUri()->getPath(), "/"), $this->getMigrationTable());
     }
 }
