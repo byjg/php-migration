@@ -45,6 +45,13 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
         $this->assertVersion0();
     }
 
+    public function testIsDatabaseVersioned()
+    {
+        $this->assertFalse($this->migrate->isDatabaseVersioned());
+        $this->migrate->reset();
+        $this->assertTrue($this->migrate->isDatabaseVersioned());
+    }
+
     /**
      * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
      * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException

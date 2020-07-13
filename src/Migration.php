@@ -101,6 +101,11 @@ class Migration
         return $this->dbCommand;
     }
 
+    public function getMigrationTable()
+    {
+        return $this->migrationTable;
+    }
+
     /**
      * @return mixed
      * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
@@ -345,5 +350,10 @@ class Migration
     public function addCallbackProgress(callable $callable)
     {
         $this->callableProgress = $callable;
+    }
+
+    public function isDatabaseVersioned()
+    {
+        return $this->getDbCommand()->isDatabaseVersioned();
     }
 }
