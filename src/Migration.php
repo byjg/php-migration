@@ -224,14 +224,16 @@ class Migration
      */
     public function reset($upVersion = null)
     {
+        $fileInfo = $this->getFileContent($this->getBaseSql());
+
         if ($this->callableProgress) {
-            call_user_func_array($this->callableProgress, ['reset', 0]);
+            call_user_func_array($this->callableProgress, ['reset', 0, $fileInfo]);
         }
         $this->getDbCommand()->dropDatabase();
         $this->getDbCommand()->createDatabase();
         $this->getDbCommand()->createVersion();
 
-        if (file_exists($this->getBaseSql())) {
+        if ($fileInfo["exists"]) {
             $this->getDbCommand()->executeSql(file_get_contents($this->getBaseSql()));
         }
 
@@ -307,14 +309,19 @@ class Migration
         }
 
         while ($this->canContinue($currentVersion, $upVersion, $increment)
-            && file_exists($file = $this->getMigrationSql($currentVersion, $increment))
         ) {
+            $fileInfo = $this->getFileContent($this->getMigrationSql($currentVersion, $increment));
+
+            if (!$fileInfo["exists"]) {
+                break;
+            }
+
             if ($this->callableProgress) {
-                call_user_func_array($this->callableProgress, ['migrate', $currentVersion]);
+                call_user_func_array($this->callableProgress, ['migrate', $currentVersion, $fileInfo]);
             }
 
             $this->getDbCommand()->setVersion($currentVersion, Migration::VERSION_STATUS_PARTIAL . ' ' . ($increment>0 ? 'up' : 'down'));
-            $this->getDbCommand()->executeSql(file_get_contents($file));
+            $this->getDbCommand()->executeSql($fileInfo["content"]);
             $this->getDbCommand()->setVersion($currentVersion, Migration::VERSION_STATUS_COMPLETE);
             $currentVersion = $currentVersion + $increment;
         }

@@ -143,7 +143,7 @@ $migration->registerDatabase('maria', \ByJG\DbMigration\Database\MySqlDatabase::
 
 // Add a callback progress function to receive info from the execution
 $migration->addCallbackProgress(function ($action, $currentVersion, $fileInfo) {
-    echo "$action, $currentVersion, ${fileInfo['description']}, ${fileInfo['exists']}, ${fileInfo['file']}, ${fileInfo['checksum']}\n";
+    echo "$action, $currentVersion, ${fileInfo['description']}\n";
 });
 
 // Restore the database using the "base.sql" script
@@ -184,8 +184,8 @@ $migration->getCurrentVersion();
 
 ```php
 <?php
-$migration->addCallbackProgress(function ($command, $version) {
-    echo "Doing Command: $command at version $version";
+$migration->addCallbackProgress(function ($command, $version, $fileInfo) {
+    echo "Doing Command: $command at version $version - ${fileInfo['description']}, ${fileInfo['exists']}, ${fileInfo['file']}, ${fileInfo['checksum']}\n";
 });
 ```
 
