@@ -141,6 +141,11 @@ $migration = new \ByJG\DbMigration\Migration($connectionUri, '.');
 $migration->registerDatabase('mysql', \ByJG\DbMigration\Database\MySqlDatabase::class);
 $migration->registerDatabase('maria', \ByJG\DbMigration\Database\MySqlDatabase::class);
 
+// Add a callback progress function to receive info from the execution
+$migration->addCallbackProgress(function ($action, $currentVersion, $fileInfo) {
+    echo "$action, $currentVersion, ${fileInfo['description']}, ${fileInfo['exists']}, ${fileInfo['file']}, ${fileInfo['checksum']}\n";
+});
+
 // Restore the database using the "base.sql" script
 // and run ALL existing scripts for up the database version to the latest version
 $migration->reset();
