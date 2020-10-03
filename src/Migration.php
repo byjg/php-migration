@@ -234,7 +234,7 @@ class Migration
         $this->getDbCommand()->createVersion();
 
         if ($fileInfo["exists"]) {
-            $this->getDbCommand()->executeSql(file_get_contents($this->getBaseSql()));
+            $this->getDbCommand()->executeSql($fileInfo["content"]);
         }
 
         $this->getDbCommand()->setVersion(0, Migration::VERSION_STATUS_COMPLETE);
