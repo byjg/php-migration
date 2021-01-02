@@ -6,4 +6,4 @@
 -- This is the reverse operation of the script up/00002
 -- --------------------------------------------------------
 
-drop table roles;
+drop table posts;

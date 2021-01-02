@@ -23,5 +23,5 @@ script:
   - vendor/bin/phpunit tests/SqliteDatabase*
   - ./wait-for-db.sh postgres && vendor/bin/phpunit tests/PostgresDatabase*
   - ./wait-for-db.sh mysql && vendor/bin/phpunit tests/MysqlDatabase*
-#  - ./wait-for-db.sh mssql && vendor/bin/phpunit tests/SqlServer
+#  - ./wait-for-db.sh mssql && vendor/bin/phpunit tests/SqlServer*
 
