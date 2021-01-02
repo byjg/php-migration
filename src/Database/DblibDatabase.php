@@ -75,4 +75,24 @@ class DblibDatabase extends AbstractDatabase
     {
         $this->getDbDriver()->execute($sql);
     }
+
+    /**
+     * @param $schema
+     * @param $table
+     * @return bool
+     */
+    protected function isTableExists($schema, $table)
+    {
+        $count = $this->getDbDriver()->getScalar(
+            'SELECT count(*) FROM information_schema.tables ' .
+            ' WHERE table_catalog = [[schema]] ' .
+            '  AND table_name = [[table]] ',
+            [
+                "schema" => $schema,
+                "table" => $table
+            ]
+        );
+
+        return (intval($count) !== 0);
+    }
 }
