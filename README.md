@@ -349,59 +349,46 @@ For security reasons, this feature is not available at command line, but you can
 We really recommend do not use this feature. The recommendation is one migration for one schema. 
 
 
-# Unit Tests
+# Running Unit tests
 
-This library has integrated tests and need to be setup for each database you want to test. 
-
-Basiclly you have the follow tests:
-
-```
-vendor/bin/phpunit tests/SqliteDatabaseTest.php
-vendor/bin/phpunit tests/MysqlDatabaseTest.php
-vendor/bin/phpunit tests/PostgresDatabaseTest.php
-vendor/bin/phpunit tests/SqlServerDatabaseTest.php 
-```
-
-## Using Docker for testing
-
-### MySql
+Basic unit tests can be running by:
 
 ```bash
-docker run --name mysql-container --rm  -e MYSQL_ROOT_PASSWORD=password -p 3306:3306 -d mysql:5.7
-
-docker run -it --rm \
-    --link mysql-container \
-    -v $PWD:/work \
-    -w /work \
-    byjg/php:7.2-cli \
-    phpunit tests/MysqlDatabaseTest
+vendor/bin/phpunit
 ```
 
-### Postgresql
+# Running database tests
+
+Run integration tests require you to have the databases up and running. We provided a basic `docker-compose.yml` and you
+can use to start the databases for test.
+
+**Running the databases**
 
 ```bash
-docker run --name postgres-container --rm -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres:9-alpine
-
-docker run -it --rm \
-    --link postgres-container \
-    -v $PWD:/work \
-    -w /work \
-    byjg/php:7.2-cli \
-    phpunit tests/PostgresDatabaseTest
+docker-compose up -d postgres mysql
 ```
 
-### Microsoft SqlServer
+**Run the tests**
+
+```
+vendor/bin/phpunit tests/SqliteDatabase*
+vendor/bin/phpunit tests/MysqlDatabase*
+vendor/bin/phpunit tests/PostgresDatabase*
+vendor/bin/phpunit tests/SqlServerDatabase* 
+```
+
+Optionally you can set the host and password used by the unit tests
 
 ```bash
-docker run --name mssql-container --rm -e ACCEPT_EULA=Y -e SA_PASSWORD=Pa55word -p 1433:1433 -d mcr.microsoft.com/mssql/server
-
-docker run -it --rm \
-    --link mssql-container \
-    -v $PWD:/work \
-    -w /work \
-    byjg/php:7.2-cli \
-    phpunit tests/SqlServerDatabaseTest
+export MYSQL_TEST_HOST=localhost     # defaults to localhost
+export MYSQL_PASSWORD=newpassword    # use '.' if want have a null password
+export PSQL_TEST_HOST=localhost      # defaults to localhost
+export PSQL_PASSWORD=newpassword     # use '.' if want have a null password
+export MSSQL_TEST_HOST=localhost     # defaults to localhost
+export MSSQL_PASSWORD=Pa55word            
+export SQLITE_TEST_HOST=/tmp/test.db      # defaults to /tmp/test.db
 ```
+
 
 # Related Projects
 

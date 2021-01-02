@@ -1,11 +1,5 @@
 language: php
 
-addons:
-  hosts:
-    - mysql-container
-    - postgres-container
-    - dblib-container
-
 php:
   - "7.3"
   - "7.2"
@@ -19,21 +13,15 @@ services:
 before_install:
   - sudo service mysql stop || echo "mysql not stopped"
   - sudo service postgresql stop || echo "postgresql not stopped"
-#  - docker run --name mssql-container --rm -e ACCEPT_EULA=Y -e SA_PASSWORD=Pa55word -p 1433:1433 -d mcr.microsoft.com/mssql/server
-  - docker run --name postgres-container --rm -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres:9-alpine
-  - docker run --name mysql-container --rm  -e MYSQL_ROOT_PASSWORD=password -p 3306:3306 -d mysql:5.7
+  - docker-compose up -d postgres mysql
 
 install:
   - composer install
 
 script: 
   - vendor/bin/phpunit
-  - vendor/bin/phpunit tests/PostgresDatabaseTest.php
-  - vendor/bin/phpunit tests/MysqlDatabaseTest.php
-  - vendor/bin/phpunit tests/SqlServerDatabaseTest.php
-
-  - vendor/bin/phpunit tests/SqliteDatabaseCustomTest.php
-  - vendor/bin/phpunit tests/PostgresDatabaseCustomTest.php
-  - vendor/bin/phpunit tests/MysqlDatabaseCustomTest.php
-  - vendor/bin/phpunit tests/SqlServerDatabaseCustomTest.php
+  - vendor/bin/phpunit tests/SqliteDatabase*
+  - ./wait-for-db.sh postgres && vendor/bin/phpunit tests/PostgresDatabase*
+  - ./wait-for-db.sh mysql && vendor/bin/phpunit tests/MysqlDatabase*
+#  - ./wait-for-db.sh mssql && vendor/bin/phpunit tests/SqlServer
 

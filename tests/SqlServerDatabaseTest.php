@@ -1,5 +1,9 @@
 <?php
 
+use ByJG\DbMigration\Database\DblibDatabase;
+use ByJG\DbMigration\Migration;
+use ByJG\Util\Uri;
+
 require_once 'BaseDatabase.php';
 
 /**
@@ -7,10 +11,8 @@ require_once 'BaseDatabase.php';
  */
 class SqlServerDatabaseTest extends BaseDatabase
 {
-    protected $uri = 'dblib://sa:Pa55word@mssql-container/migratedatabase';
-
     /**
-     * @var \ByJG\DbMigration\Migration
+     * @var Migration
      */
     protected $migrate = null;
 
@@ -24,8 +26,19 @@ class SqlServerDatabaseTest extends BaseDatabase
 
     public function setUp()
     {
-        $this->migrate = new \ByJG\DbMigration\Migration(new \ByJG\Util\Uri($this->uri), __DIR__ . '/../example/sql_server', true, $this->migrationTable);
-        $this->migrate->registerDatabase("dblib", \ByJG\DbMigration\Database\DblibDatabase::class);
+        $host = getenv('MSSQL_TEST_HOST');
+        if (empty($host)) {
+            $host = "127.0.0.1";
+        }
+        $password = getenv('MSSQL_PASSWORD');
+        if (empty($password)) {
+            $password = 'Pa55word';
+        }
+
+        $uri = "dblib://sa:${password}@${host}/migratedatabase";
+
+        $this->migrate = new Migration(new Uri($uri), __DIR__ . '/../example/sql_server', true, $this->migrationTable);
+        $this->migrate->registerDatabase("dblib", DblibDatabase::class);
         parent::setUp();
     }
 }
