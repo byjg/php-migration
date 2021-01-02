@@ -371,6 +371,7 @@ docker-compose up -d postgres mysql
 **Run the tests**
 
 ```
+vendor/bin/phpunit
 vendor/bin/phpunit tests/SqliteDatabase*
 vendor/bin/phpunit tests/MysqlDatabase*
 vendor/bin/phpunit tests/PostgresDatabase*
