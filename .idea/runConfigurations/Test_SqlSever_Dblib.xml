@@ -1,0 +1,6 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Test SqlSever Dblib" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+    <TestRunner class="SqlServerDblibDatabaseTest" configuration_file="$PROJECT_DIR$/phpunit.xml.dist" file="$PROJECT_DIR$/tests/SqlServerDblibDatabaseTest.php" scope="Class" use_alternative_configuration_file="true" />
+    <method v="2" />
+  </configuration>
+</component>
