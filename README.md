@@ -55,13 +55,13 @@ Please visit https://github.com/byjg/migration-cli to get more informations abou
 
 ## Supported databases:
 
-| Database            | Connection String                                        |
-| ------------------- | -------------------------------------------------------- |
-| Sqlite              | sqlite:///path/to/file                                   |
-| MySql/MariaDb       | mysql://username:password@hostname:port/database         |
-| Postgres            | psql://username:password@hostname:port/database          |
-| Sql Server (DbLib)  | dblib://username:password@hostname:port/database         |
-| Sql Server (Sqlsrv) | sqlsrv://username:password@hostname:port/database        |
+| Database      | Driver                                                                          | Connection String                                        |
+| --------------| ------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| Sqlite        | [pdo_sqlite](https://www.php.net/manual/en/ref.pdo-sqlite.php)                  |  sqlite:///path/to/file                                  |
+| MySql/MariaDb | [pdo_mysql](https://www.php.net/manual/en/ref.pdo-mysql.php)                    | mysql://username:password@hostname:port/database         |
+| Postgres      | [pdo_pgsql](https://www.php.net/manual/en/ref.pdo-pgsql.php)                    | psql://username:password@hostname:port/database          |
+| Sql Server    | [pdo_dblib, pdo_sysbase](https://www.php.net/manual/en/ref.pdo-dblib.php) Linux | dblib://username:password@hostname:port/database         |
+| Sql Server    | [pdo_sqlsrv](http://msdn.microsoft.com/en-us/sqlserver/ff657782.aspx) Windows   | sqlsrv://username:password@hostname:port/database        |
 
 
 ## How It Works?
