@@ -1,5 +1,9 @@
 <?php
 
+use ByJG\DbMigration\Database\MySqlDatabase;
+use ByJG\DbMigration\Migration;
+use ByJG\Util\Uri;
+
 require_once 'BaseDatabase.php';
 
 /**
@@ -7,17 +11,29 @@ require_once 'BaseDatabase.php';
  */
 class MysqlDatabaseTest extends BaseDatabase
 {
-    protected $uri = 'mysql://root:password@mysql-container/migratedatabase';
-
     /**
-     * @var \ByJG\DbMigration\Migration
+     * @var Migration
      */
     protected $migrate = null;
 
     public function setUp()
     {
-        $this->migrate = new \ByJG\DbMigration\Migration(new \ByJG\Util\Uri($this->uri), __DIR__ . '/../example/mysql', true, $this->migrationTable);
-        $this->migrate->registerDatabase("mysql", \ByJG\DbMigration\Database\MySqlDatabase::class);
+        $host = getenv('MYSQL_TEST_HOST');
+        if (empty($host)) {
+            $host = "127.0.0.1";
+        }
+        $password = getenv('MYSQL_PASSWORD');
+        if (empty($password)) {
+            $password = 'password';
+        }
+        if ($password == '.') {
+            $password = "";
+        }
+
+        $uri = "mysql://root:${password}@${host}/migratedatabase";
+
+        $this->migrate = new Migration(new Uri($uri), __DIR__ . '/../example/mysql', true, $this->migrationTable);
+        $this->migrate->registerDatabase("mysql", MySqlDatabase::class);
         parent::setUp();
     }
 }

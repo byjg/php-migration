@@ -9,20 +9,14 @@ require_once 'BaseDatabase.php';
 /**
  * @requires extension pdo_dblib
  */
-class SqlServerDatabaseTest extends BaseDatabase
+class SqlServerDblibDatabaseTest extends BaseDatabase
 {
     /**
      * @var Migration
      */
     protected $migrate = null;
 
-    public function getExpectedUsersVersion1()
-    {
-        return [
-            ["id" => 1, "name" => 'John Doe', 'createdate' => 'Jan 10 2016 12:00:00:AM'],
-            ["id" => 2, "name" => 'Jane Doe', 'createdate' => 'Dec 30 2015 12:00:00:AM']
-        ];
-    }
+    protected $scheme = "dblib";
 
     public function setUp()
     {
@@ -35,10 +29,10 @@ class SqlServerDatabaseTest extends BaseDatabase
             $password = 'Pa55word';
         }
 
-        $uri = "dblib://sa:${password}@${host}/migratedatabase";
+        $uri = $this->scheme . "://sa:${password}@${host}/migratedatabase";
 
         $this->migrate = new Migration(new Uri($uri), __DIR__ . '/../example/sql_server', true, $this->migrationTable);
-        $this->migrate->registerDatabase("dblib", DblibDatabase::class);
+        $this->migrate->registerDatabase($this->scheme, DblibDatabase::class);
         parent::setUp();
     }
 }

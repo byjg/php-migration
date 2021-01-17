@@ -1,5 +1,9 @@
 <?php
 
+use ByJG\DbMigration\Database\SqliteDatabase;
+use ByJG\DbMigration\Migration;
+use ByJG\Util\Uri;
+
 require_once 'BaseDatabase.php';
 
 /**
@@ -7,21 +11,27 @@ require_once 'BaseDatabase.php';
  */
 class SqliteDatabaseTest extends BaseDatabase
 {
-    protected $path = ':memory:';
+    protected $path = '';
 
     /**
-     * @var \ByJG\DbMigration\Migration
+     * @var Migration
      */
     protected $migrate = null;
 
     public function setUp()
     {
+        $this->path = getenv('SQLITE_TEST_HOST');
+        if (empty($this->path)) {
+            $this->path = ':memory:';
+        }
+
         # Dump SQLite database.
         $this->prepareDatabase();
 
-        $uri = new \ByJG\Util\Uri("sqlite://{$this->path}");
-        $this->migrate = new \ByJG\DbMigration\Migration($uri, __DIR__ . '/../example/sqlite', true, $this->migrationTable);
-        $this->migrate->registerDatabase("sqlite", \ByJG\DbMigration\Database\SqliteDatabase::class);
+        $uri = new Uri("sqlite://{$this->path}");
+
+        $this->migrate = new Migration($uri, __DIR__ . '/../example/sqlite', true, $this->migrationTable);
+        $this->migrate->registerDatabase("sqlite", SqliteDatabase::class);
         parent::setUp();
     }
 
@@ -31,9 +41,9 @@ class SqliteDatabaseTest extends BaseDatabase
 
         $this->prepareDatabase();
 
-        $uri = new \ByJG\Util\Uri("sqlite://{$this->path}");
-        $this->migrate = new \ByJG\DbMigration\Migration($uri, __DIR__ . '/../example/sqlite', true, $this->migrationTable);
-        $this->migrate->registerDatabase("sqlite", \ByJG\DbMigration\Database\SqliteDatabase::class);
+        $uri = new Uri("sqlite://{$this->path}");
+        $this->migrate = new Migration($uri, __DIR__ . '/../example/sqlite', true, $this->migrationTable);
+        $this->migrate->registerDatabase("sqlite", SqliteDatabase::class);
 
         parent::testUpVersion1();
     }

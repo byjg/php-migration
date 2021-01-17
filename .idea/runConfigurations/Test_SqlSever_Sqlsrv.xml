@@ -1,0 +1,6 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Test SqlSever Sqlsrv" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+    <TestRunner class="SqlServerSqlsrvDatabaseTest" configuration_file="$PROJECT_DIR$/phpunit.xml.dist" file="$PROJECT_DIR$/tests/SqlServerSqlsrvDatabaseTest.php" scope="Class" use_alternative_configuration_file="true" />
+    <method v="2" />
+  </configuration>
+</component>
