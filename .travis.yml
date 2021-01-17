@@ -25,3 +25,10 @@ script:
   - ./wait-for-db.sh mysql && vendor/bin/phpunit tests/MysqlDatabase*
 #  - ./wait-for-db.sh mssql && vendor/bin/phpunit tests/SqlServer*
 
+jobs:
+  include:
+    - stage: documentation
+      if: branch = master
+      install: skip
+      script: "curl https://opensource.byjg.com/add-doc.sh | bash /dev/stdin php migration"
+

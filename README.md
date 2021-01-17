@@ -39,7 +39,7 @@ Because of that this is an agnostic project (independent of framework and Progra
 If you want to use only the PHP Library in your project:
 
 ```
-composer require "byjg/migration":"4.0.*"
+composer require "byjg/migration":"4.2.*"
 ```
 ### Command Line Interface
 
@@ -48,7 +48,7 @@ The command line interface is standalone and does not require you install with y
 You can install global and create a symbolic lynk 
 
 ```
-composer require "byjg/migration-cli":"4.0.*"
+composer require "byjg/migration-cli":"4.1.*"
 ```
 
 Please visit https://github.com/byjg/migration-cli to get more informations about Migration CLI.
