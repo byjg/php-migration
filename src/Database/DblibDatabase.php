@@ -57,7 +57,7 @@ class DblibDatabase extends AbstractDatabase
     public function createVersion()
     {
         $database = preg_replace('~^/~', '', $this->getDbDriver()->getUri()->getPath());
-        $createTable = 'CREATE TABLE ' . $this->getMigrationTable() . ' (version int, status varchar(20))';
+        $createTable = 'CREATE TABLE ' . $this->getMigrationTable() . ' (version int, status varchar(20), PRIMARY KEY (version))';
         $this->createTableIfNotExists($database, $createTable);
         $this->checkExistsVersion();
     }
