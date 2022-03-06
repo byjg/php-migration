@@ -19,10 +19,15 @@ class SqliteDatabase extends AbstractDatabase
     {
         $iterator = $this->getDbDriver()->getIterator("
             select 
-                'drop table ' || name || ';' as command 
+                'drop ' || type || ' ' || name || ';' as command 
             from sqlite_master 
-            where type = 'table' 
-              and name <> 'sqlite_sequence';
+            where name <> 'sqlite_sequence'
+            order by CASE type
+                         WHEN 'index' THEN 0
+                         WHEN 'trigger' THEN 1
+                         WHEN 'view' THEN 2
+                         ELSE 99
+                    END;
         ");
 
         foreach ($iterator as $row) {
