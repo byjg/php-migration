@@ -184,7 +184,7 @@ class Migration
             "checksum" => null,
             "content" => null,
         ];
-        if (!file_exists($file)) {
+        if (empty($file) || !file_exists($file)) {
             return $data;
         }
 
