@@ -37,6 +37,6 @@ jobs:
       - run: composer install
       - run: ./vendor/bin/phpunit
       - run: ./vendor/bin/phpunit tests/SqliteDatabase*
-      - run: ./wait-for-db.sh postgres && ./vendor/bin/phpunit tests/PostgresDatabase*
       - run: ./wait-for-db.sh mysql && ./vendor/bin/phpunit tests/MysqlDatabase*
+      - run: ./wait-for-db.sh postgres && ./vendor/bin/phpunit tests/PostgresDatabase*
 #      - run: ./wait-for-db.sh mssql && ./vendor/bin/phpunit tests/SqlServer*
