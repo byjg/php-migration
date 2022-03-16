@@ -10,24 +10,29 @@ on:
       - master
 
 jobs:
+  Services:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - uses: actions/checkout@v2
+      - run: docker-compose up -d postgres mysql
+
   Build:
     runs-on: 'ubuntu-latest'
     container: 'byjg/php:${{ matrix.php-version }}-cli'
     strategy:
       matrix:
         php-version:
-          - "8.1"
-          - "8.0"
+#          - "8.1"
+#          - "8.0"
           - "7.4"
           - "7.3"
-          - "7.2"
-          - "7.1"
-          - "7.0"
-          - "5.6"
+#          - "7.2"
+#          - "7.1"
+#          - "7.0"
+#          - "5.6"
 
     steps:
       - uses: actions/checkout@v2
-      - run: docker-compose up -d postgres mysql
       - run: composer install
       - run: ./vendor/bin/phpunit
       - run: ./vendor/bin/phpunit tests/SqliteDatabase*
