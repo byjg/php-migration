@@ -1,6 +1,7 @@
 <?php
 namespace Test;
 
+use ByJG\DbMigration\Exception\InvalidMigrationFile;
 use ByJG\DbMigration\Migration;
 use ByJG\Util\Uri;
 
@@ -27,11 +28,9 @@ class MigrationTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(__DIR__ . '/dirstructure/base.sql', $base);
     }
 
-    /**
-     * @expectedException \ByJG\DbMigration\Exception\InvalidMigrationFile
-     */
     public function testGetBaseSqlNotFound()
     {
+        $this->expectException(InvalidMigrationFile::class);
         $this->object = new Migration(new Uri('mysql://localhost'), __DIR__ . '/invalid');
         $this->object->getBaseSql();
     }
@@ -61,12 +60,10 @@ class MigrationTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(__DIR__ . '/dirstructure/migrations/up/00012-dev.sql', $version);
     }
 
-    /**
-     * @expectedException \ByJG\DbMigration\Exception\InvalidMigrationFile
-     * @expectedExceptionMessage version number '13'
-     */
     public function testGetMigrationSql4()
     {
+        $this->expectException(InvalidMigrationFile::class);
+        $this->expectErrorMessage("version number '13'");
         $this->object->getMigrationSql(13, 1);
     }
 
@@ -88,12 +85,10 @@ class MigrationTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(__DIR__ . '/dirstructure/migrations/down/00012-dev.sql', $version);
     }
 
-    /**
-     * @expectedException \ByJG\DbMigration\Exception\InvalidMigrationFile
-     * @expectedExceptionMessage version number '13'
-     */
     public function testGetMigrationSqlDown4()
     {
+        $this->expectException(InvalidMigrationFile::class);
+        $this->expectErrorMessage("version number '13'");
         $this->object->getMigrationSql(13, -1);
     }
 

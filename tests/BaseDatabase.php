@@ -1,5 +1,6 @@
 <?php
 
+use ByJG\DbMigration\Exception\DatabaseNotVersionedException;
 use ByJG\DbMigration\Migration;
 
 abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
@@ -34,7 +35,7 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
     /**
      * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
      * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
-     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
+     * @throws DatabaseNotVersionedException
      * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
      * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
      * @throws \ByJG\Serializer\Exception\InvalidArgumentException
@@ -55,7 +56,7 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
     /**
      * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
      * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
-     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
+     * @throws DatabaseNotVersionedException
      * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
      * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
      * @throws \ByJG\Serializer\Exception\InvalidArgumentException
@@ -71,7 +72,7 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
     /**
      * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
      * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
-     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
+     * @throws DatabaseNotVersionedException
      * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
      * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
      * @throws \ByJG\Serializer\Exception\InvalidArgumentException
@@ -87,7 +88,7 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
     /**
      * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
      * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
-     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
+     * @throws DatabaseNotVersionedException
      * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
      * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
      * @throws \ByJG\Serializer\Exception\InvalidArgumentException
@@ -103,7 +104,7 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
     /**
      * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
      * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
-     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
+     * @throws DatabaseNotVersionedException
      * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
      * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
      * @throws \ByJG\Serializer\Exception\InvalidArgumentException
@@ -254,12 +255,11 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
 
     /**
      * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
-     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
      * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
-     * @expectedException \ByJG\DbMigration\Exception\DatabaseNotVersionedException
      */
     public function testGetCurrentVersionIsEmpty()
     {
+        $this->expectException(DatabaseNotVersionedException::class);
         $this->migrate->getCurrentVersion();
     }
 
