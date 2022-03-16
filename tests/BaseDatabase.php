@@ -16,7 +16,7 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
     /**
      * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
      */
-    public function setUp()
+    public function setUp(): void
     {
         // create Migrate object in the parent!!!
 
@@ -26,7 +26,7 @@ abstract class BaseDatabase extends \PHPUnit\Framework\TestCase
     /**
      * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->migrate->getDbCommand()->dropDatabase();
     }

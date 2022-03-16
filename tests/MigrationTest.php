@@ -11,12 +11,12 @@ class MigrationTest extends \PHPUnit\Framework\TestCase
      */
     protected $object;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->object = new Migration(new Uri('mysql://localhost'), __DIR__ . '/dirstructure');
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->object = null;
     }

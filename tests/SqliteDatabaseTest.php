@@ -18,7 +18,7 @@ class SqliteDatabaseTest extends BaseDatabase
      */
     protected $migrate = null;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->path = getenv('SQLITE_TEST_HOST');
         if (empty($this->path)) {

@@ -11,7 +11,7 @@ require_once 'SqlServerDblibDatabaseTest.php';
  */
 class SqlServerSqlsrvDatabaseTest extends SqlServerDblibDatabaseTest
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->scheme = "sqlsrv";
         parent::setUp();

@@ -24,7 +24,7 @@ class SqlServerDatabaseTest extends BaseDatabase
         ];
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $host = getenv('MSSQL_TEST_HOST');
         if (empty($host)) {
