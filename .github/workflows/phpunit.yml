@@ -92,4 +92,4 @@ jobs:
     env:
       DOC_GITHUB_TOKEN: '${{ secrets.DOC_TOKEN }}'
     steps:
-      - run: curl https://opensource.byjg.com/add-doc.sh | bash /dev/stdin php uri
+      - run: curl https://opensource.byjg.com/add-doc.sh | bash /dev/stdin php migration
