@@ -19,8 +19,8 @@ class SqlServerDatabaseTest extends BaseDatabase
     public function getExpectedUsersVersion1()
     {
         return [
-            ["id" => 1, "name" => 'John Doe', 'createdate' => 'Jan 10 2016 12:00:00:AM'],
-            ["id" => 2, "name" => 'Jane Doe', 'createdate' => 'Dec 30 2015 12:00:00:AM']
+            ["id" => 1, "name" => 'John Doe', 'createdate' => '2016-01-10'],
+            ["id" => 2, "name" => 'Jane Doe', 'createdate' => '2015-12-30']
         ];
     }
 
