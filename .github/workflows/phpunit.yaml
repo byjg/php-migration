@@ -56,7 +56,7 @@ jobs:
         ports:
           - "1433:1433"
         options: >-
-          --health-cmd "/opt/mssql-tools/bin/sqlcmd", -U sa -P Pa55word -Q 'SELECT 1'"
+          --health-cmd "/opt/mssql-tools/bin/sqlcmd -U sa -P Pa55word -Q 'SELECT 1'"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -64,6 +64,7 @@ jobs:
     env:
       MYSQL_TEST_HOST: mysql
       PSQL_TEST_HOST: postgres
+      MSSQL_TEST_HOST: sqlserver
 
     steps:
       - uses: actions/checkout@v2
