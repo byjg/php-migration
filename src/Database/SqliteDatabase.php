@@ -56,6 +56,9 @@ class SqliteDatabase extends AbstractDatabase
 
     protected function executeSqlInternal($sql)
     {
+        if (empty(trim($sql))) {
+            return;
+        }
         $this->getDbDriver()->execute($sql);
     }
 

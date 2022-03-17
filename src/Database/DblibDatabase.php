@@ -67,15 +67,15 @@ class DblibDatabase extends AbstractDatabase
         $statements = preg_split("/;(\r\n|\r|\n)/", $sql);
 
         foreach ($statements as $sql) {
-            if (empty(trim($sql))) {
-                continue;
-            }
             $this->executeSqlInternal($sql);
         }
     }
 
     protected function executeSqlInternal($sql)
     {
+        if (empty(trim($sql))) {
+            return;
+        }
         $this->getDbDriver()->execute($sql);
     }
 
