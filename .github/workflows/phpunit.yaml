@@ -27,12 +27,17 @@ jobs:
 
     services:
       mysql:
-        image: mysql:8
+        image: bitnami/mysql:8.0.20
         env:
           MYSQL_ROOT_PASSWORD: password
+          MYSQL_AUTHENTICATION_PLUGIN: mysql_native_password
         ports:
           - "3306:3306"
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=20s --health-retries=10
+        options: >-
+          --health-cmd="mysqladmin ping" 
+          --health-interval=10s 
+          --health-timeout=20s 
+          --health-retries=10
 
     env:
       MYSQL_TEST_HOST: mysql
