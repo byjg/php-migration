@@ -80,4 +80,5 @@ jobs:
       - run: ./vendor/bin/phpunit tests/SqliteDatabase*
       - run: ./vendor/bin/phpunit tests/MysqlDatabase*
       - run: ./vendor/bin/phpunit tests/PostgresDatabase*
-      - run: ./vendor/bin/phpunit tests/SqlServer*
+      - run: ./vendor/bin/phpunit tests/SqlServerSqlsrv*
+      - run: ./vendor/bin/phpunit tests/SqlServerDblib*

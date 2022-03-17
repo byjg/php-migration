@@ -35,4 +35,17 @@ class SqlServerDblibDatabaseTest extends BaseDatabase
         $this->migrate->registerDatabase($this->scheme, DblibDatabase::class);
         parent::setUp();
     }
+
+    public function getExpectedUsersVersion1()
+    {
+        if ($this->scheme == "sqlsrv") {
+            return parent::getExpectedUsersVersion1();
+        }
+
+        return [
+            ["id" => 1, "name" => 'John Doe', 'createdate' => '2016-01-10 00:00:00'],
+            ["id" => 2, "name" => 'Jane Doe', 'createdate' => '2015-12-30 00:00:00']
+        ];
+    }
+
 }
