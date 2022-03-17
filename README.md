@@ -5,8 +5,7 @@
 [![GitHub license](https://img.shields.io/github/license/byjg/migration.svg)](https://opensource.byjg.com/opensource/licensing.html)
 [![GitHub release](https://img.shields.io/github/release/byjg/migration.svg)](https://github.com/byjg/migration/releases/)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/byjg/migration/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/byjg/migration/?branch=master)
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/571cb412-7018-4938-a4e5-0f9ce44956d7/mini.png)](https://insight.sensiolabs.com/projects/571cb412-7018-4938-a4e5-0f9ce44956d7)
-[![Build Status](https://travis-ci.com/byjg/migration.svg?branch=master)](https://travis-ci.com/byjg/migration)
+[![Build Status](https://github.com/byjg/migration/actions/workflows/phpunit.yml/badge.svg?branch=master)](https://github.com/byjg/migration/actions/workflows/phpunit.yml)
 
 ## Features
 

@@ -4,10 +4,12 @@ on:
     branches:
       - master
     tags:
-      - v*.*.*
+      - "*.*.*"
   pull_request:
     branches:
       - master
+  schedule:
+    - cron: "0 9 * * 1"
 
 jobs:
   Build:
@@ -82,3 +84,12 @@ jobs:
       - run: ./vendor/bin/phpunit tests/PostgresDatabase*
 #      - run: ./vendor/bin/phpunit tests/SqlServerSqlsrv*
 #      - run: ./vendor/bin/phpunit tests/SqlServerDblib*
+
+  Documentation:
+    runs-on: 'ubuntu-latest'
+    needs: Build
+    if: github.ref == 'refs/heads/master'
+    env:
+      DOC_GITHUB_TOKEN: '${{ secrets.DOC_TOKEN }}'
+    steps:
+      - run: curl https://opensource.byjg.com/add-doc.sh | bash /dev/stdin php uri
