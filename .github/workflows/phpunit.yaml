@@ -38,9 +38,20 @@ jobs:
           --health-interval=10s 
           --health-timeout=20s 
           --health-retries=10
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     env:
       MYSQL_TEST_HOST: mysql
+      PSQL_TEST_HOST: postgres
 
     steps:
       - uses: actions/checkout@v2
