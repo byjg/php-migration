@@ -48,6 +48,18 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server
+        env:
+          ACCEPT_EULA: Y
+          SA_PASSWORD: Pa55word
+        ports:
+          - "1433:1433"
+        options: >-
+          --health-cmd "/opt/mssql-tools/bin/sqlcmd", -U sa -P Pa55word -Q 'SELECT 1'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     env:
       MYSQL_TEST_HOST: mysql
@@ -67,4 +79,4 @@ jobs:
       - run: ./vendor/bin/phpunit tests/SqliteDatabase*
       - run: ./vendor/bin/phpunit tests/MysqlDatabase*
       - run: ./vendor/bin/phpunit tests/PostgresDatabase*
-#      - run: ./wait-for-db.sh mssql && ./vendor/bin/phpunit tests/SqlServer*
+      - run: ./wait-for-db.sh mssql && ./vendor/bin/phpunit tests/SqlServer*
