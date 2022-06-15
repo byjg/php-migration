@@ -1,12 +1,6 @@
 {
   "name": "byjg/migration",
   "description": "Simple library in PHP for database version control. Supports Sqlite, MySql, Sql Server and Postgres.",
-  "authors": [
-    {
-      "name": "jg",
-      "email": "joao@byjg.com.br"
-    }
-  ],
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
