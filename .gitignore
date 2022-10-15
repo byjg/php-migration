@@ -51,3 +51,4 @@ fabric.properties
 node_modules
 package-lock.json
 .usdocker
+.phpunit.result.cache
