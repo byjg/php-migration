@@ -11,7 +11,14 @@ and open the template in the editor.
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
+         testdox="true"
          stopOnFailure="false">
+
+    <php>
+        <ini name="display_errors" value="On" />
+        <ini name="display_startup_errors" value="On" />
+        <ini name="error_reporting" value="E_ALL" />
+    </php>
 
     <filter>
         <whitelist>
