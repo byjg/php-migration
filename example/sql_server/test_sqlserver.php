@@ -1,5 +1,8 @@
 <?php
 
+use ByJG\DbMigration\Database\DblibDatabase;
+use ByJG\DbMigration\Migration;
+
 require __DIR__ . "/../../vendor/autoload.php";
 
 /**
@@ -10,8 +13,9 @@ require __DIR__ . "/../../vendor/autoload.php";
 
 $uri = new \ByJG\Util\Uri('dblib://sa:Pa55word@mssql-container/migratedatabase');
 
-$migration = new \ByJG\DbMigration\Migration($uri, __DIR__);
-$migration->registerDatabase('dblib', \ByJG\DbMigration\Database\DblibDatabase::class);
+Migration::registerDatabase(DblibDatabase::class);
+
+$migration = new Migration($uri, __DIR__);
 
 $migration->prepareEnvironment();
 

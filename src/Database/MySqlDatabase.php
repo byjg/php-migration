@@ -8,6 +8,10 @@ use Psr\Http\Message\UriInterface;
 
 class MySqlDatabase extends AbstractDatabase
 {
+    public static function schema()
+    {
+        return ['mysql', 'mariadb'];
+    }
 
     public static function prepareEnvironment(UriInterface $uri)
     {

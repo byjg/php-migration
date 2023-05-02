@@ -1,5 +1,8 @@
 <?php
 
+use ByJG\DbMigration\Database\MySqlDatabase;
+use ByJG\DbMigration\Migration;
+
 require __DIR__ . "/../../vendor/autoload.php";
 
 /**
@@ -10,8 +13,9 @@ require __DIR__ . "/../../vendor/autoload.php";
 
 $uri = new \ByJG\Util\Uri('mysql://root:password@mysql-container/migratedatabase');
 
-$migration = new \ByJG\DbMigration\Migration($uri, __DIR__);
-$migration->registerDatabase('mysql', \ByJG\DbMigration\Database\MySqlDatabase::class);
+Migration::registerDatabase(MySqlDatabase::class);
+
+$migration = new Migration($uri, __DIR__);
 
 $migration->prepareEnvironment();
 

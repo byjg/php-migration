@@ -29,10 +29,11 @@ class SqlServerDblibDatabaseTest extends BaseDatabase
             $password = 'Pa55word';
         }
 
-        $uri = $this->scheme . "://sa:${password}@${host}/migratedatabase";
+        $uri = $this->scheme . "://sa:{$password}@{$host}/migratedatabase";
+
+        Migration::registerDatabase(DblibDatabase::class);
 
         $this->migrate = new Migration(new Uri($uri), __DIR__ . '/../example/sql_server', true, $this->migrationTable);
-        $this->migrate->registerDatabase($this->scheme, DblibDatabase::class);
         parent::setUp();
     }
 

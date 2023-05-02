@@ -31,10 +31,11 @@ class PostgresDatabaseTest extends BaseDatabase
             $password = "";
         }
 
-        $uri = "pgsql://postgres:${password}@${host}/migratedatabase";
+        $uri = "pgsql://postgres:{$password}@{$host}/migratedatabase";
+
+        Migration::registerDatabase(PgsqlDatabase::class);
 
         $this->migrate = new Migration(new Uri($uri), __DIR__ . '/../example/postgres', true, $this->migrationTable);
-        $this->migrate->registerDatabase("pgsql", PgsqlDatabase::class);
         parent::setUp();
     }
 }

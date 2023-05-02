@@ -63,7 +63,7 @@ class MigrationTest extends \PHPUnit\Framework\TestCase
     public function testGetMigrationSql4()
     {
         $this->expectException(InvalidMigrationFile::class);
-        $this->expectErrorMessage("version number '13'");
+        $this->expectExceptionMessage("version number '13'");
         $this->object->getMigrationSql(13, 1);
     }
 
@@ -88,7 +88,7 @@ class MigrationTest extends \PHPUnit\Framework\TestCase
     public function testGetMigrationSqlDown4()
     {
         $this->expectException(InvalidMigrationFile::class);
-        $this->expectErrorMessage("version number '13'");
+        $this->expectExceptionMessage("version number '13'");
         $this->object->getMigrationSql(13, -1);
     }
 

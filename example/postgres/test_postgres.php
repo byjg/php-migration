@@ -1,5 +1,8 @@
 <?php
 
+use ByJG\DbMigration\Database\PgsqlDatabase;
+use ByJG\DbMigration\Migration;
+
 require __DIR__ . "/../../vendor/autoload.php";
 
 /**
@@ -10,8 +13,9 @@ require __DIR__ . "/../../vendor/autoload.php";
 
 $uri = new \ByJG\Util\Uri('pgsql://postgres:password@postgres-container/migratedatabase');
 
-$migration = new \ByJG\DbMigration\Migration($uri, __DIR__);
-$migration->registerDatabase('pgsql', \ByJG\DbMigration\Database\PgsqlDatabase::class);
+Migration::registerDatabase(PgsqlDatabase::class);
+
+$migration = new Migration($uri, __DIR__);
 
 $migration->prepareEnvironment();
 

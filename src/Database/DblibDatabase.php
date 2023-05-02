@@ -8,6 +8,10 @@ use Psr\Http\Message\UriInterface;
 
 class DblibDatabase extends AbstractDatabase
 {
+    public static function schema()
+    {
+        return ['dblib'];
+    }
 
     public static function prepareEnvironment(UriInterface $uri)
     {
@@ -39,9 +43,9 @@ class DblibDatabase extends AbstractDatabase
     {
         $this->getDbDriver()->execute("use $database");
 
-        $sql = "IF (NOT EXISTS (SELECT * 
-                 FROM INFORMATION_SCHEMA.TABLES 
-                 WHERE TABLE_SCHEMA = 'dbo' 
+        $sql = "IF (NOT EXISTS (SELECT *
+                 FROM INFORMATION_SCHEMA.TABLES
+                 WHERE TABLE_SCHEMA = 'dbo'
                  AND  TABLE_NAME = '" . $this->getMigrationTable() . "'))
             BEGIN
                 $createTable

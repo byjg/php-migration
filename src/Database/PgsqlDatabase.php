@@ -8,6 +8,10 @@ use Psr\Http\Message\UriInterface;
 
 class PgsqlDatabase extends AbstractDatabase
 {
+    public static function schema()
+    {
+        return 'pgsql';
+    }
 
     public static function prepareEnvironment(UriInterface $uri)
     {
