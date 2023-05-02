@@ -10,7 +10,7 @@ class DblibDatabase extends AbstractDatabase
 {
     public static function schema()
     {
-        return ['dblib'];
+        return ['dblib', 'sqlsrv'];
     }
 
     public static function prepareEnvironment(UriInterface $uri)
