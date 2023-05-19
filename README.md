@@ -40,7 +40,7 @@ Because of that this is an agnostic project (independent of framework and Progra
 If you want to use only the PHP Library in your project:
 
 ```bash
-composer require "byjg/migration":"4.2.*"
+composer require "byjg/migration":"5.0.*"
 ```
 
 ### Command Line Interface
