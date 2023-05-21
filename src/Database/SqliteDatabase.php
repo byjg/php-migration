@@ -6,6 +6,10 @@ use Psr\Http\Message\UriInterface;
 
 class SqliteDatabase extends AbstractDatabase
 {
+    public static function schema()
+    {
+        return 'sqlite';
+    }
 
     public static function prepareEnvironment(UriInterface $uri)
     {
@@ -18,9 +22,9 @@ class SqliteDatabase extends AbstractDatabase
     public function dropDatabase()
     {
         $iterator = $this->getDbDriver()->getIterator("
-            select 
-                'drop ' || type || ' ' || name || ';' as command 
-            from sqlite_master 
+            select
+                'drop ' || type || ' ' || name || ';' as command
+            from sqlite_master
             where name <> 'sqlite_sequence' and name not like 'sqlite_autoindex_%'
             order by CASE type
                          WHEN 'index' THEN 0

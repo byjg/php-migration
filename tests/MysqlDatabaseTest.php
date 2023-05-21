@@ -30,10 +30,11 @@ class MysqlDatabaseTest extends BaseDatabase
             $password = "";
         }
 
-        $uri = "mysql://root:${password}@${host}/migratedatabase";
+        $uri = "mysql://root:{$password}@{$host}/migratedatabase";
+
+        Migration::registerDatabase(MySqlDatabase::class);
 
         $this->migrate = new Migration(new Uri($uri), __DIR__ . '/../example/mysql', true, $this->migrationTable);
-        $this->migrate->registerDatabase("mysql", MySqlDatabase::class);
         parent::setUp();
     }
 }

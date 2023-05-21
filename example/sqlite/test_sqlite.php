@@ -1,11 +1,15 @@
 <?php
 
+use ByJG\DbMigration\Database\SqliteDatabase;
+use ByJG\DbMigration\Migration;
+
 require __DIR__ . "/../../vendor/autoload.php";
 
 $uri = new \ByJG\Util\Uri('sqlite:///tmp/teste.sqlite');
 
-$migration = new \ByJG\DbMigration\Migration($uri, __DIR__);
-$migration->registerDatabase('sqlite', \ByJG\DbMigration\Database\SqliteDatabase::class);
+Migration::registerDatabase(SqliteDatabase::class);
+
+$migration = new Migration($uri, __DIR__);
 
 $migration->reset();
 

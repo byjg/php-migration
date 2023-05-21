@@ -7,6 +7,7 @@ use ByJG\DbMigration\Database\DatabaseInterface;
 use ByJG\DbMigration\Exception\DatabaseDoesNotRegistered;
 use ByJG\DbMigration\Exception\DatabaseIsIncompleteException;
 use ByJG\DbMigration\Exception\InvalidMigrationFile;
+use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
 
 class Migration
@@ -43,7 +44,7 @@ class Migration
     /**
      * @var array
      */
-    protected $databases = [];
+    protected static $databases = [];
     /**
      * @var string
      */
@@ -73,10 +74,16 @@ class Migration
      * @param $className
      * @return $this
      */
-    public function registerDatabase($scheme, $className)
+    public static function registerDatabase($class)
     {
-        $this->databases[$scheme] = $className;
-        return $this;
+        if (!in_array(DatabaseInterface::class, class_implements($class))) {
+            throw new InvalidArgumentException('Class not implements DatabaseInterface!');
+        }
+
+        $protocolList = $class::schema();
+        foreach ((array)$protocolList as $item) {
+            self::$databases[$item] = $class;
+        }
     }
 
     /**
@@ -112,8 +119,8 @@ class Migration
      */
     protected function getDatabaseClassName()
     {
-        if (isset($this->databases[$this->uri->getScheme()])) {
-            return $this->databases[$this->uri->getScheme()];
+        if (isset(self::$databases[$this->uri->getScheme()])) {
+            return self::$databases[$this->uri->getScheme()];
         }
         throw new DatabaseDoesNotRegistered(
             'Scheme "' . $this->uri->getScheme() . '" does not found. Did you registered it?'

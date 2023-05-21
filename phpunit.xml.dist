@@ -8,10 +8,18 @@ and open the template in the editor.
 <!-- see http://www.phpunit.de/wiki/Documentation -->
 <phpunit bootstrap="./vendor/autoload.php"
          colors="true"
+         testdox="true"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
+         convertDeprecationsToExceptions="true"
          stopOnFailure="false">
+
+    <php>
+        <ini name="display_errors" value="On" />
+        <ini name="display_startup_errors" value="On" />
+        <ini name="error_reporting" value="E_ALL" />
+    </php>
 
     <filter>
         <whitelist>
