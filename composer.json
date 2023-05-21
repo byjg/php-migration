@@ -4,7 +4,7 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "byjg/anydataset-db": "4.1.3.x-dev",
+    "byjg/anydataset-db": "4.9.*",
     "ext-pdo": "*"
   },
   "require-dev": {
