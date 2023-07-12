@@ -63,7 +63,7 @@ class MigrationTest extends \PHPUnit\Framework\TestCase
     public function testGetMigrationSql4()
     {
         $this->expectException(InvalidMigrationFile::class);
-        $this->expectExceptionMessage("version number '13'");
+        $this->expectExceptionMessage("You have two files with the same version number '13'");
         $this->object->getMigrationSql(13, 1);
     }
 

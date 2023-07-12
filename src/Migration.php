@@ -161,7 +161,7 @@ class Migration
             . "/*.sql";
 
         $result = array_filter(glob($filePattern), function ($file) use ($version) {
-            return preg_match("/^0*$version(-dev)?\.sql$/", basename($file));
+            return preg_match("/^0*$version(-[\w\d-]*)?\.sql$/", basename($file));
         });
 
         // Valid values are 0 or 1
