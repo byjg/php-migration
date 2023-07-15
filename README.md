@@ -205,39 +205,23 @@ $migration->getDbDriver();
 
 To use it, please visit: <https://github.com/byjg/anydataset-db>
 
-## Tips on writing SQL migrations for Postgres
+### Avoiding Partial Migration
 
-### Rely on explicit transactions
+A partial migration is when the migration script is interrupted in the middle of the process due to an error or a manual interruption.
 
-```sql
--- DO
-BEGIN;
+The migration table will be with the status `partial up` or `partial down` and it needs to be fixed manually before be able to migrate again. 
 
-ALTER TABLE 1;
-UPDATE 1;
-UPDATE 2;
-UPDATE 3;
-ALTER TABLE 2;
+To avoid this situation you can specify the migration will be run in a transactional context. 
+If the migration script fails, the transaction will be rolled back and the migration table will be marked as `complete` and 
+the version will be the immediately previous version before the script that causes the error.
 
-COMMIT;
+To enable this feature you need to call the method `withTransactionEnabled` passing `true` as parameter:
 
-
--- DON'T
-ALTER TABLE 1;
-UPDATE 1;
-UPDATE 2;
-UPDATE 3;
-ALTER TABLE 2;
+```php
+<?php
+$migration->withTransactionEnabled(true);
 ```
-
-It is generally desirable to wrap migration scripts inside a `BEGIN; ... COMMIT;` block.
-This way, if _any_ of the inner statements fail, _none_ of them are committed and the
-database does not end up in an inconsistent state.
-
-Mind that in case of a failure `byjg/migration` will always mark the migration as `partial`
-and warn you when you attempt to run it again. The difference is that with explicit
-transactions you know that the database cannot be in an inconsistent state after an
-unexpected failure.
+## Tips on writing SQL migrations for Postgres
 
 ### On creating triggers and SQL functions
 

@@ -50,6 +50,8 @@ class Migration
      */
     private $migrationTable;
 
+    private $transaction = false;
+
     /**
      * Migration constructor.
      *
@@ -69,10 +71,14 @@ class Migration
         $this->migrationTable = $migrationTable;
     }
 
+    public function withTransactionEnabled($enabled = true)
+    {
+        $this->transaction = $enabled;
+        return $this;
+    }
+
     /**
-     * @param $scheme
-     * @param $className
-     * @return $this
+     * @param $class
      */
     public static function registerDatabase($class)
     {
@@ -327,9 +333,22 @@ class Migration
                 call_user_func_array($this->callableProgress, ['migrate', $currentVersion, $fileInfo]);
             }
 
-            $this->getDbCommand()->setVersion($currentVersion, Migration::VERSION_STATUS_PARTIAL . ' ' . ($increment>0 ? 'up' : 'down'));
-            $this->getDbCommand()->executeSql($fileInfo["content"]);
-            $this->getDbCommand()->setVersion($currentVersion, Migration::VERSION_STATUS_COMPLETE);
+            try {
+                if ($this->transaction) {
+                    $this->getDbDriver()->beginTransaction();
+                }
+                $this->getDbCommand()->setVersion($currentVersion, Migration::VERSION_STATUS_PARTIAL . ' ' . ($increment>0 ? 'up' : 'down'));
+                $this->getDbCommand()->executeSql($fileInfo["content"]);
+                $this->getDbCommand()->setVersion($currentVersion, Migration::VERSION_STATUS_COMPLETE);
+                if ($this->transaction) {
+                    $this->getDbDriver()->commitTransaction();
+                }
+            } catch (\Exception $e) {
+                if ($this->transaction) {
+                    $this->getDbDriver()->rollbackTransaction();
+                }
+                throw $e;
+            }
             $currentVersion = $currentVersion + $increment;
         }
     }
