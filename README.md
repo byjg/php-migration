@@ -205,7 +205,7 @@ $migration->getDbDriver();
 
 To use it, please visit: <https://github.com/byjg/anydataset-db>
 
-### Avoiding Partial Migration
+### Avoiding Partial Migration (not available for MySQL)
 
 A partial migration is when the migration script is interrupted in the middle of the process due to an error or a manual interruption.
 
@@ -221,6 +221,11 @@ To enable this feature you need to call the method `withTransactionEnabled` pass
 <?php
 $migration->withTransactionEnabled(true);
 ```
+
+**NOTE: This feature isn't available for MySQL as it doesn't support DDL commands inside a transaction.**
+If you use this method with MySQL the Migration will ignore it silently. 
+More info: [https://dev.mysql.com/doc/refman/8.0/en/cannot-roll-back.html](https://dev.mysql.com/doc/refman/8.0/en/cannot-roll-back.html)
+
 ## Tips on writing SQL migrations for Postgres
 
 ### On creating triggers and SQL functions

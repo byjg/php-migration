@@ -333,18 +333,20 @@ class Migration
                 call_user_func_array($this->callableProgress, ['migrate', $currentVersion, $fileInfo]);
             }
 
+            $useTransaction = $this->transaction && $this->getDbCommand()->supportsTransaction();
+
             try {
-                if ($this->transaction) {
+                if ($useTransaction) {
                     $this->getDbDriver()->beginTransaction();
                 }
                 $this->getDbCommand()->setVersion($currentVersion, Migration::VERSION_STATUS_PARTIAL . ' ' . ($increment>0 ? 'up' : 'down'));
                 $this->getDbCommand()->executeSql($fileInfo["content"]);
                 $this->getDbCommand()->setVersion($currentVersion, Migration::VERSION_STATUS_COMPLETE);
-                if ($this->transaction) {
+                if ($useTransaction) {
                     $this->getDbDriver()->commitTransaction();
                 }
             } catch (\Exception $e) {
-                if ($this->transaction) {
+                if ($useTransaction) {
                     $this->getDbDriver()->rollbackTransaction();
                 }
                 throw $e;
