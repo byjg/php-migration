@@ -391,5 +391,14 @@ export SQLITE_TEST_HOST=/tmp/test.db      # defaults to /tmp/test.db
 * [PHP Rest Template](https://github.com/byjg/php-rest-template)
 * [USDocker](https://github.com/usdocker/usdocker)
 
+## Dependencies
+
+```mermaid
+flowchart TD
+    byjg/migration --> byjg/anydataset-db
+    byjg/migration --> ext-pdo
+```
+
+
 ----
 [Open source ByJG](http://opensource.byjg.com)
