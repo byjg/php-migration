@@ -1,10 +1,10 @@
 # Database Migrations PHP
 
 [![Opensource ByJG](https://img.shields.io/badge/opensource-byjg-success.svg)](http://opensource.byjg.com)
-[![GitHub source](https://img.shields.io/badge/Github-source-informational?logo=github)](https://github.com/byjg/migration/)
-[![GitHub license](https://img.shields.io/github/license/byjg/migration.svg)](https://opensource.byjg.com/opensource/licensing.html)
-[![GitHub release](https://img.shields.io/github/release/byjg/migration.svg)](https://github.com/byjg/migration/releases/)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/byjg/migration/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/byjg/migration/?branch=master)
+[![GitHub source](https://img.shields.io/badge/Github-source-informational?logo=github)](https://github.com/byjg/php-migration/)
+[![GitHub license](https://img.shields.io/github/license/byjg/php-migration.svg)](https://opensource.byjg.com/opensource/licensing.html)
+[![GitHub release](https://img.shields.io/github/release/byjg/php-migration.svg)](https://github.com/byjg/php-migration/releases/)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/byjg/php-migration/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/byjg/php-migration/?branch=master)
 [![Build Status](https://github.com/byjg/migration/actions/workflows/phpunit.yml/badge.svg?branch=master)](https://github.com/byjg/migration/actions/workflows/phpunit.yml)
 
 ## Features
@@ -205,39 +205,28 @@ $migration->getDbDriver();
 
 To use it, please visit: <https://github.com/byjg/anydataset-db>
 
-## Tips on writing SQL migrations for Postgres
+### Avoiding Partial Migration (not available for MySQL)
 
-### Rely on explicit transactions
+A partial migration is when the migration script is interrupted in the middle of the process due to an error or a manual interruption.
 
-```sql
--- DO
-BEGIN;
+The migration table will be with the status `partial up` or `partial down` and it needs to be fixed manually before be able to migrate again. 
 
-ALTER TABLE 1;
-UPDATE 1;
-UPDATE 2;
-UPDATE 3;
-ALTER TABLE 2;
+To avoid this situation you can specify the migration will be run in a transactional context. 
+If the migration script fails, the transaction will be rolled back and the migration table will be marked as `complete` and 
+the version will be the immediately previous version before the script that causes the error.
 
-COMMIT;
+To enable this feature you need to call the method `withTransactionEnabled` passing `true` as parameter:
 
-
--- DON'T
-ALTER TABLE 1;
-UPDATE 1;
-UPDATE 2;
-UPDATE 3;
-ALTER TABLE 2;
+```php
+<?php
+$migration->withTransactionEnabled(true);
 ```
 
-It is generally desirable to wrap migration scripts inside a `BEGIN; ... COMMIT;` block.
-This way, if _any_ of the inner statements fail, _none_ of them are committed and the
-database does not end up in an inconsistent state.
+**NOTE: This feature isn't available for MySQL as it doesn't support DDL commands inside a transaction.**
+If you use this method with MySQL the Migration will ignore it silently. 
+More info: [https://dev.mysql.com/doc/refman/8.0/en/cannot-roll-back.html](https://dev.mysql.com/doc/refman/8.0/en/cannot-roll-back.html)
 
-Mind that in case of a failure `byjg/migration` will always mark the migration as `partial`
-and warn you when you attempt to run it again. The difference is that with explicit
-transactions you know that the database cannot be in an inconsistent state after an
-unexpected failure.
+## Tips on writing SQL migrations for Postgres
 
 ### On creating triggers and SQL functions
 
@@ -401,6 +390,15 @@ export SQLITE_TEST_HOST=/tmp/test.db      # defaults to /tmp/test.db
 * [Anydataset](https://github.com/byjg/anydataset)
 * [PHP Rest Template](https://github.com/byjg/php-rest-template)
 * [USDocker](https://github.com/usdocker/usdocker)
+
+## Dependencies
+
+```mermaid
+flowchart TD
+    byjg/migration --> byjg/anydataset-db
+    byjg/migration --> ext-pdo
+```
+
 
 ----
 [Open source ByJG](http://opensource.byjg.com)

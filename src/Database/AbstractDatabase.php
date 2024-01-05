@@ -141,4 +141,9 @@ abstract class AbstractDatabase implements DatabaseInterface
     {
         return $this->isTableExists(ltrim($this->getDbDriver()->getUri()->getPath(), "/"), $this->getMigrationTable());
     }
+
+    public function supportsTransaction()
+    {
+        return true;
+    }
 }
