@@ -4,7 +4,7 @@
 [![GitHub source](https://img.shields.io/badge/Github-source-informational?logo=github)](https://github.com/byjg/php-migration/)
 [![GitHub license](https://img.shields.io/github/license/byjg/php-migration.svg)](https://opensource.byjg.com/opensource/licensing.html)
 [![GitHub release](https://img.shields.io/github/release/byjg/php-migration.svg)](https://github.com/byjg/php-migration/releases/)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/byjg/php-migration/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/byjg/php-migration/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/byjg/migration/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/byjg/migration/?branch=master)
 [![Build Status](https://github.com/byjg/migration/actions/workflows/phpunit.yml/badge.svg?branch=master)](https://github.com/byjg/migration/actions/workflows/phpunit.yml)
 
 ## Features
@@ -40,7 +40,7 @@ Because of that this is an agnostic project (independent of framework and Progra
 If you want to use only the PHP Library in your project:
 
 ```bash
-composer require "byjg/migration":"4.2.*"
+composer require "byjg/migration"
 ```
 
 ### Command Line Interface
@@ -50,7 +50,7 @@ The command line interface is standalone and does not require you install with y
 You can install global and create a symbolic lynk
 
 ```bash
-composer require "byjg/migration-cli":"4.1.*"
+composer require "byjg/migration-cli"
 ```
 
 Please visit [byjg/migration-cli](https://github.com/byjg/migration-cli) to get more informations about Migration CLI.
