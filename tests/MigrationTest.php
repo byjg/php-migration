@@ -1,6 +1,7 @@
 <?php
 namespace Test;
 
+use ByJG\DbMigration\Database\SqliteDatabase;
 use ByJG\DbMigration\Exception\InvalidMigrationFile;
 use ByJG\DbMigration\Migration;
 use ByJG\Util\Uri;
@@ -63,7 +64,7 @@ class MigrationTest extends \PHPUnit\Framework\TestCase
     public function testGetMigrationSql4()
     {
         $this->expectException(InvalidMigrationFile::class);
-        $this->expectExceptionMessage("version number '13'");
+        $this->expectExceptionMessage("You have two files with the same version number '13'");
         $this->object->getMigrationSql(13, 1);
     }
 
@@ -113,8 +114,8 @@ class MigrationTest extends \PHPUnit\Framework\TestCase
                 "file" => __DIR__ . '/dirstructure/migrations/up/00001.sql',
                 "description" => "this is a test",
                 "exists" => true,
-                "checksum" => "b937afa57e363c9244fa30844dd11d312694f697",
-                "content" => "-- @description: this is a test\n\nselect * from mysql.users;\n",
+                "checksum" => "55249baf6b70c1d2e9c5362de133b2371d0dc989",
+                "content" => "-- @description: this is a test\n",
             ],
             $this->object->getFileContent(__DIR__ . '/dirstructure/migrations/up/00001.sql')
         );
@@ -127,8 +128,8 @@ class MigrationTest extends \PHPUnit\Framework\TestCase
                 "file" => __DIR__ . '/dirstructure/migrations/up/00002.sql',
                 "description" => "another test",
                 "exists" => true,
-                "checksum" => "fd8ab8176291c2dcbf0d91564405e0f98f0cd77e",
-                "content" => "--   @description:  another test\n\nselect * from dual;",
+                "checksum" => "f20c73a5eb4d29e2f8edae4409a2ccc2b02c6f67",
+                "content" => "--   @description:  another test\n",
             ],
             $this->object->getFileContent(__DIR__ . '/dirstructure/migrations/up/00002.sql')
         );
@@ -141,10 +142,41 @@ class MigrationTest extends \PHPUnit\Framework\TestCase
                 "file" => __DIR__ . '/dirstructure/migrations/up/00003.sql',
                 "description" => "no description provided. Pro tip: use `-- @description:` to define one.",
                 "exists" => true,
-                "checksum" => "73faaa68e2f60c11e75a9ccc18528e0ffa15127a",
-                "content" => "select something from sometable;",
+                "checksum" => "da39a3ee5e6b4b0d3255bfef95601890afd80709",
+                "content" => "",
             ],
             $this->object->getFileContent(__DIR__ . '/dirstructure/migrations/up/00003.sql')
         );
+    }
+
+    public function testReset()
+    {
+        $this->expectException(\PDOException::class);
+        Migration::registerDatabase(SqliteDatabase::class);
+        $this->object = new Migration(new Uri('sqlite:///tmp/test.db'), __DIR__ . '/dirstructure2');
+        $this->object->reset();
+    }
+
+    public function testResetWithoutTransactionCheck()
+    {
+        try {
+            Migration::registerDatabase(SqliteDatabase::class);
+            $this->object = new Migration(new Uri('sqlite:///tmp/test.db'), __DIR__ . '/dirstructure2');
+            $this->object->reset();
+        } catch (\PDOException $ex) {
+            $this->assertEquals(["version" => '2', "status" => "partial up"], $this->object->getCurrentVersion());
+        }
+    }
+
+    public function testResetWithTransactionCheck()
+    {
+        try {
+            Migration::registerDatabase(SqliteDatabase::class);
+            $this->object = new Migration(new Uri('sqlite:///tmp/test.db'), __DIR__ . '/dirstructure2');
+            $this->object->withTransactionEnabled();
+            $this->object->reset();
+        } catch (\PDOException $ex) {
+            $this->assertEquals(["version" => '1', "status" => "complete"], $this->object->getCurrentVersion());
+        }
     }
 }

@@ -50,6 +50,8 @@ class Migration
      */
     private $migrationTable;
 
+    private $transaction = false;
+
     /**
      * Migration constructor.
      *
@@ -69,10 +71,14 @@ class Migration
         $this->migrationTable = $migrationTable;
     }
 
+    public function withTransactionEnabled($enabled = true)
+    {
+        $this->transaction = $enabled;
+        return $this;
+    }
+
     /**
-     * @param $scheme
-     * @param $className
-     * @return $this
+     * @param $class
      */
     public static function registerDatabase($class)
     {
@@ -161,7 +167,7 @@ class Migration
             . "/*.sql";
 
         $result = array_filter(glob($filePattern), function ($file) use ($version) {
-            return preg_match("/^0*$version(-dev)?\.sql$/", basename($file));
+            return preg_match("/^0*$version(-[\w\d-]*)?\.sql$/", basename($file));
         });
 
         // Valid values are 0 or 1
@@ -327,9 +333,24 @@ class Migration
                 call_user_func_array($this->callableProgress, ['migrate', $currentVersion, $fileInfo]);
             }
 
-            $this->getDbCommand()->setVersion($currentVersion, Migration::VERSION_STATUS_PARTIAL . ' ' . ($increment>0 ? 'up' : 'down'));
-            $this->getDbCommand()->executeSql($fileInfo["content"]);
-            $this->getDbCommand()->setVersion($currentVersion, Migration::VERSION_STATUS_COMPLETE);
+            $useTransaction = $this->transaction && $this->getDbCommand()->supportsTransaction();
+
+            try {
+                if ($useTransaction) {
+                    $this->getDbDriver()->beginTransaction();
+                }
+                $this->getDbCommand()->setVersion($currentVersion, Migration::VERSION_STATUS_PARTIAL . ' ' . ($increment>0 ? 'up' : 'down'));
+                $this->getDbCommand()->executeSql($fileInfo["content"]);
+                $this->getDbCommand()->setVersion($currentVersion, Migration::VERSION_STATUS_COMPLETE);
+                if ($useTransaction) {
+                    $this->getDbDriver()->commitTransaction();
+                }
+            } catch (\Exception $e) {
+                if ($useTransaction) {
+                    $this->getDbDriver()->rollbackTransaction();
+                }
+                throw $e;
+            }
             $currentVersion = $currentVersion + $increment;
         }
     }

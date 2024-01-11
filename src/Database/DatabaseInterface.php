@@ -34,4 +34,6 @@ interface DatabaseInterface
     public function getDbDriver();
 
     public function getMigrationTable();
+
+    public function supportsTransaction();
 }

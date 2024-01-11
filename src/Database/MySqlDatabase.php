@@ -52,4 +52,11 @@ class MySqlDatabase extends AbstractDatabase
     {
         $this->getDbDriver()->execute($sql);
     }
+
+    public function supportsTransaction()
+    {
+        // MySQL doesn't support transaction for DDL commands
+        // https://dev.mysql.com/doc/refman/8.0/en/cannot-roll-back.html
+        return false;
+    }
 }
