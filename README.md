@@ -203,7 +203,7 @@ $migration->addCallbackProgress(function ($command, $version, $fileInfo) {
 $migration->getDbDriver();
 ```
 
-To use it, please visit: <https://github.com/byjg/anydataset-db>
+To use it, please visit: [https://github.com/byjg/anydataset-db](https://github.com/byjg/anydataset-db)
 
 ### Avoiding Partial Migration (not available for MySQL)
 
