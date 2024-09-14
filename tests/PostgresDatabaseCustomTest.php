@@ -1,6 +1,6 @@
 <?php
 
-require_once 'PostgresDatabaseTest.php';
+namespace Tests;
 
 /**
  * @requires extension pdo_pgsql

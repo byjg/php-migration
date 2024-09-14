@@ -1,11 +1,10 @@
 <?php
 
+namespace Tests;
+
 use ByJG\DbMigration\Database\PgsqlDatabase;
 use ByJG\DbMigration\Migration;
 use ByJG\Util\Uri;
-
-require_once 'BaseDatabase.php';
-
 
 /**
  * @requires extension pdo_pgsql

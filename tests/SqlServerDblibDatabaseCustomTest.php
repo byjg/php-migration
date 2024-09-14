@@ -1,6 +1,6 @@
 <?php
 
-require_once 'SqlServerDblibDatabaseTest.php';
+namespace Tests;
 
 /**
  * @requires extension pdo_dblib

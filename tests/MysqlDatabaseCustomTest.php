@@ -1,6 +1,6 @@
 <?php
 
-require_once 'MysqlDatabaseTest.php';
+namespace Tests;
 
 /**
  * @requires extension pdo_mysql

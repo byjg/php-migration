@@ -1,6 +1,6 @@
 <?php
 
-require_once 'SqliteDatabaseTest.php';
+namespace Tests;
 
 /**
  * @requires extension pdo_sqlite

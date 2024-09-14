@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests;
+
 use ByJG\DbMigration\Exception\DatabaseDoesNotRegistered;
 use ByJG\DbMigration\Exception\DatabaseIsIncompleteException;
 use ByJG\DbMigration\Exception\DatabaseNotVersionedException;
@@ -7,6 +9,7 @@ use ByJG\DbMigration\Exception\InvalidMigrationFile;
 use ByJG\DbMigration\Exception\OldVersionSchemaException;
 use ByJG\DbMigration\Migration;
 use ByJG\DbMigration\MigrationStatus;
+use ByJG\Serializer\Exception\InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
 
@@ -80,7 +83,7 @@ abstract class BaseDatabase extends TestCase
      * @throws DatabaseNotVersionedException
      * @throws InvalidMigrationFile
      * @throws OldVersionSchemaException
-     * @throws \ByJG\Serializer\Exception\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function testUpVersion2()
     {
@@ -96,7 +99,7 @@ abstract class BaseDatabase extends TestCase
      * @throws DatabaseNotVersionedException
      * @throws InvalidMigrationFile
      * @throws OldVersionSchemaException
-     * @throws \ByJG\Serializer\Exception\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function testDownVersion1()
     {
@@ -112,7 +115,7 @@ abstract class BaseDatabase extends TestCase
      * @throws DatabaseNotVersionedException
      * @throws InvalidMigrationFile
      * @throws OldVersionSchemaException
-     * @throws \ByJG\Serializer\Exception\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function testDownVersion0()
     {
@@ -175,7 +178,7 @@ abstract class BaseDatabase extends TestCase
 
         try {
             $this->migrate->getDbDriver()->getIterator('select * from roles');
-        } catch (PDOException $ex) {
+        } catch (\PDOException $ex) {
             $this->assertTrue(true);
         }
     }
@@ -210,14 +213,14 @@ abstract class BaseDatabase extends TestCase
 
         try {
             $this->migrate->getDbDriver()->getIterator('select * from roles');
-        } catch (PDOException $ex) {
+        } catch (\PDOException $ex) {
             $this->assertTrue(true);
         }
     }
 
     /**
      * @throws DatabaseDoesNotRegistered
-     * @throws \ByJG\Serializer\Exception\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function assertVersion2()
     {
