@@ -7,5 +7,5 @@ require_once 'PostgresDatabaseTest.php';
  */
 class PostgresDatabaseCustomTest extends PostgresDatabaseTest
 {
-    protected $migrationTable = "some_table_version";
+    protected string $migrationTable = "some_table_version";
 }

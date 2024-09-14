@@ -15,7 +15,7 @@ class PostgresDatabaseTest extends BaseDatabase
     /**
      * @var Migration
      */
-    protected $migrate = null;
+    protected ?Migration $migrate = null;
 
     public function setUp(): void
     {

@@ -14,7 +14,7 @@ class SqlServerDblibDatabaseTest extends BaseDatabase
     /**
      * @var Migration
      */
-    protected $migrate = null;
+    protected ?Migration $migrate = null;
 
     protected $scheme = "dblib";
 

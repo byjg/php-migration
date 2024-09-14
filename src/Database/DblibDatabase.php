@@ -3,27 +3,29 @@
 namespace ByJG\DbMigration\Database;
 
 use ByJG\AnyDataset\Db\Factory;
+use ByJG\DbMigration\Exception\DatabaseNotVersionedException;
+use ByJG\DbMigration\Exception\OldVersionSchemaException;
 use ByJG\Util\Uri;
 use Psr\Http\Message\UriInterface;
 
 class DblibDatabase extends AbstractDatabase
 {
-    public static function schema()
+    public static function schema(): array
     {
         return ['dblib', 'sqlsrv'];
     }
 
-    public static function prepareEnvironment(UriInterface $uri)
+    public static function prepareEnvironment(UriInterface $uri): void
     {
         $database = preg_replace('~^/~', '', $uri->getPath());
 
         $customUri = new Uri($uri->__toString());
 
-        $dbDriver = Factory::getDbRelationalInstance($customUri->withPath('/')->__toString());
+        $dbDriver = Factory::getDbInstance($customUri->withPath('/')->__toString());
         $dbDriver->execute("IF NOT EXISTS(select * from sys.databases where name='$database') CREATE DATABASE $database");
     }
 
-    public function createDatabase()
+    public function createDatabase(): void
     {
         $database = preg_replace('~^/~', '', $this->getDbDriver()->getUri()->getPath());
 
@@ -31,7 +33,7 @@ class DblibDatabase extends AbstractDatabase
         $this->getDbDriver()->execute("USE $database");
     }
 
-    public function dropDatabase()
+    public function dropDatabase(): void
     {
         $database = preg_replace('~^/~', '', $this->getDbDriver()->getUri()->getPath());
 
@@ -39,7 +41,7 @@ class DblibDatabase extends AbstractDatabase
         $this->getDbDriver()->execute("drop database $database");
     }
 
-    protected function createTableIfNotExists($database, $createTable)
+    protected function createTableIfNotExists(string $database, string $createTable): void
     {
         $this->getDbDriver()->execute("use $database");
 
@@ -55,10 +57,10 @@ class DblibDatabase extends AbstractDatabase
     }
 
     /**
-     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
-     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
+     * @throws DatabaseNotVersionedException
+     * @throws OldVersionSchemaException
      */
-    public function createVersion()
+    public function createVersion(): void
     {
         $database = preg_replace('~^/~', '', $this->getDbDriver()->getUri()->getPath());
         $createTable = 'CREATE TABLE ' . $this->getMigrationTable() . ' (version int, status varchar(20), PRIMARY KEY (version))';
@@ -66,7 +68,7 @@ class DblibDatabase extends AbstractDatabase
         $this->checkExistsVersion();
     }
 
-    public function executeSql($sql)
+    public function executeSql(string $sql): void
     {
         $statements = preg_split("/;(\r\n|\r|\n)/", $sql);
 
@@ -75,7 +77,7 @@ class DblibDatabase extends AbstractDatabase
         }
     }
 
-    protected function executeSqlInternal($sql)
+    protected function executeSqlInternal(string $sql): void
     {
         if (empty(trim($sql))) {
             return;
@@ -84,16 +86,16 @@ class DblibDatabase extends AbstractDatabase
     }
 
     /**
-     * @param $schema
-     * @param $table
+     * @param string|null $schema
+     * @param string $table
      * @return bool
      */
-    protected function isTableExists($schema, $table)
+    protected function isTableExists(?string $schema, string $table): bool
     {
         $count = $this->getDbDriver()->getScalar(
             'SELECT count(*) FROM information_schema.tables ' .
-            ' WHERE table_catalog = [[schema]] ' .
-            '  AND table_name = [[table]] ',
+            ' WHERE table_catalog = :schema ' .
+            '  AND table_name = :table ',
             [
                 "schema" => $schema,
                 "table" => $table

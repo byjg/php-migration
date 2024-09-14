@@ -7,5 +7,5 @@ require_once 'MysqlDatabaseTest.php';
  */
 class MysqlDatabaseCustomTest extends MysqlDatabaseTest
 {
-    protected $migrationTable = "some_table_version";
+    protected string $migrationTable = "some_table_version";
 }

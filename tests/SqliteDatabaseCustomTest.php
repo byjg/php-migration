@@ -7,5 +7,5 @@ require_once 'SqliteDatabaseTest.php';
  */
 class SqliteDatabaseCustomTest extends SqliteDatabaseTest
 {
-    protected $migrationTable = "some_table_version";
+    protected string $migrationTable = "some_table_version";
 }

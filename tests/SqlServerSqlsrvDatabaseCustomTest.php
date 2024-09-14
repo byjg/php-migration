@@ -7,5 +7,5 @@ require_once 'SqlServerSqlsrvDatabaseTest.php';
  */
 class SqlServerSqlsrvDatabaseCustomTest extends SqlServerSqlsrvDatabaseTest
 {
-    protected $migrationTable = "some_table_version";
+    protected string $migrationTable = "some_table_version";
 }
