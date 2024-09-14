@@ -6,7 +6,7 @@ use ByJG\AnyDataset\Db\DbDriverInterface;
 use ByJG\AnyDataset\Db\Factory;
 use ByJG\DbMigration\Exception\DatabaseNotVersionedException;
 use ByJG\DbMigration\Exception\OldVersionSchemaException;
-use ByJG\DbMigration\Migration;
+use ByJG\DbMigration\MigrationStatus;
 use Exception;
 use Psr\Http\Message\UriInterface;
 
@@ -81,16 +81,16 @@ abstract class AbstractDatabase implements DatabaseInterface
     }
 
     /**
-     * @param string $version
-     * @param string $status
+     * @param int $version
+     * @param MigrationStatus $status
      */
-    public function setVersion(string $version, string $status): void
+    public function setVersion(int $version, MigrationStatus $status): void
     {
         $this->getDbDriver()->execute(
             'UPDATE ' . $this->getMigrationTable() . ' SET version = :version, status = :status',
             [
                 'version' => $version,
-                'status' => $status,
+                'status' => $status->value,
             ]
         );
     }
@@ -107,7 +107,7 @@ abstract class AbstractDatabase implements DatabaseInterface
             $this->getDbDriver()->execute(sprintf(
                 "insert into %s values(0, '%s')",
                 $this->getMigrationTable(),
-                Migration::VERSION_STATUS_UNKNOWN)
+                MigrationStatus::unknown->value)
             );
         }
     }
@@ -120,7 +120,7 @@ abstract class AbstractDatabase implements DatabaseInterface
         $currentVersion = $this->getDbDriver()->getScalar(sprintf('select version from %s', $this->getMigrationTable()));
         $this->getDbDriver()->execute(sprintf('drop table %s', $this->getMigrationTable()));
         $this->createVersion();
-        $this->setVersion($currentVersion, Migration::VERSION_STATUS_UNKNOWN);
+        $this->setVersion($currentVersion, MigrationStatus::unknown);
     }
 
     protected function isTableExists(?string $schema, string $table): bool

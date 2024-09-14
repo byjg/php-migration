@@ -5,13 +5,14 @@ namespace ByJG\DbMigration\Database;
 use ByJG\AnyDataset\Db\DbDriverInterface;
 use ByJG\DbMigration\Exception\DatabaseNotVersionedException;
 use ByJG\DbMigration\Exception\OldVersionSchemaException;
+use ByJG\DbMigration\MigrationStatus;
 use Psr\Http\Message\UriInterface;
 
 interface DatabaseInterface
 {
     public static function schema();
 
-    public static function prepareEnvironment(UriInterface $dbDriver);
+    public static function prepareEnvironment(UriInterface $uri);
 
     public function createDatabase(): void;
 
@@ -28,7 +29,7 @@ interface DatabaseInterface
 
     public function executeSql(string $sql): void;
 
-    public function setVersion(string $version, string $status): void;
+    public function setVersion(int $version, MigrationStatus $status): void;
 
     public function createVersion(): void;
 

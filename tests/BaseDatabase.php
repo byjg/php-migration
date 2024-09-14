@@ -6,6 +6,7 @@ use ByJG\DbMigration\Exception\DatabaseNotVersionedException;
 use ByJG\DbMigration\Exception\InvalidMigrationFile;
 use ByJG\DbMigration\Exception\OldVersionSchemaException;
 use ByJG\DbMigration\Migration;
+use ByJG\DbMigration\MigrationStatus;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
 
@@ -14,7 +15,7 @@ abstract class BaseDatabase extends TestCase
     protected UriInterface|null $uri = null;
 
     /**
-     * @var Migration
+     * @var Migration|null
      */
     protected ?Migration $migrate = null;
 
@@ -44,7 +45,6 @@ abstract class BaseDatabase extends TestCase
      * @throws DatabaseNotVersionedException
      * @throws InvalidMigrationFile
      * @throws OldVersionSchemaException
-     * @throws \ByJG\Serializer\Exception\InvalidArgumentException
      */
     public function testVersion0()
     {
@@ -65,7 +65,6 @@ abstract class BaseDatabase extends TestCase
      * @throws DatabaseNotVersionedException
      * @throws InvalidMigrationFile
      * @throws OldVersionSchemaException
-     * @throws \ByJG\Serializer\Exception\InvalidArgumentException
      */
     public function testUpVersion1()
     {
@@ -148,14 +147,13 @@ abstract class BaseDatabase extends TestCase
 
     /**
      * @throws DatabaseDoesNotRegistered
-     * @throws \ByJG\Serializer\Exception\InvalidArgumentException
      */
     protected function assertVersion0(): void
     {
         $version = $this->migrate->getDbDriver()->getScalar('select version from '. $this->migrationTable);
         $this->assertEquals(0, $version);
         $status = $this->migrate->getDbDriver()->getScalar('select status from '. $this->migrationTable);
-        $this->assertEquals(Migration::VERSION_STATUS_COMPLETE, $status);
+        $this->assertEquals(MigrationStatus::complete->value, $status);
 
         $iterator = $this->migrate->getDbDriver()->getIterator('select * from users');
 
@@ -184,14 +182,13 @@ abstract class BaseDatabase extends TestCase
 
     /**
      * @throws DatabaseDoesNotRegistered
-     * @throws \ByJG\Serializer\Exception\InvalidArgumentException
      */
     protected function assertVersion1(): void
     {
         $version = $this->migrate->getDbDriver()->getScalar('select version from '. $this->migrationTable);
         $this->assertEquals(1, $version);
         $status = $this->migrate->getDbDriver()->getScalar('select status from '. $this->migrationTable);
-        $this->assertEquals(Migration::VERSION_STATUS_COMPLETE, $status);
+        $this->assertEquals(MigrationStatus::complete->value, $status);
 
         $iterator = $this->migrate->getDbDriver()->getIterator('select * from users');
 
@@ -227,7 +224,7 @@ abstract class BaseDatabase extends TestCase
         $version = $this->migrate->getDbDriver()->getScalar('select version from '. $this->migrationTable);
         $this->assertEquals(2, $version);
         $status = $this->migrate->getDbDriver()->getScalar('select status from '. $this->migrationTable);
-        $this->assertEquals(Migration::VERSION_STATUS_COMPLETE, $status);
+        $this->assertEquals(MigrationStatus::complete->value, $status);
 
         // Users
         $iterator = $this->migrate->getDbDriver()->getIterator('select * from users');
@@ -279,7 +276,7 @@ abstract class BaseDatabase extends TestCase
         $this->assertEquals([
             [
                 'version' => '0',
-                'status' => Migration::VERSION_STATUS_UNKNOWN
+                'status' => MigrationStatus::unknown->value
             ]
         ], $records);
 
@@ -289,7 +286,7 @@ abstract class BaseDatabase extends TestCase
         $this->assertEquals([
             [
                 'version' => '0',
-                'status' => Migration::VERSION_STATUS_UNKNOWN
+                'status' => MigrationStatus::unknown->value
             ]
         ], $records);
     }
