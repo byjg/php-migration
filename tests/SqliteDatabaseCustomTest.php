@@ -1,11 +1,11 @@
 <?php
 
-require_once 'SqliteDatabaseTest.php';
+namespace Tests;
 
 /**
  * @requires extension pdo_sqlite
  */
 class SqliteDatabaseCustomTest extends SqliteDatabaseTest
 {
-    protected $migrationTable = "some_table_version";
+    protected string $migrationTable = "some_table_version";
 }

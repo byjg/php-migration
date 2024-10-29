@@ -2,24 +2,28 @@
 
 namespace ByJG\DbMigration\Database;
 
+use ByJG\DbMigration\Exception\DatabaseNotVersionedException;
+use ByJG\DbMigration\Exception\OldVersionSchemaException;
 use Psr\Http\Message\UriInterface;
 
 class SqliteDatabase extends AbstractDatabase
 {
-    public static function schema()
+    public static function schema(): string
     {
         return 'sqlite';
     }
 
-    public static function prepareEnvironment(UriInterface $uri)
+    public static function prepareEnvironment(UriInterface $uri): void
     {
+        // There is no need to prepare the database
     }
 
-    public function createDatabase()
+    public function createDatabase(): void
     {
+        // There is no need to create a database in SQLite
     }
 
-    public function dropDatabase()
+    public function dropDatabase(): void
     {
         $iterator = $this->getDbDriver()->getIterator("
             select
@@ -40,16 +44,16 @@ class SqliteDatabase extends AbstractDatabase
     }
 
     /**
-     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
-     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
+     * @throws DatabaseNotVersionedException
+     * @throws OldVersionSchemaException
      */
-    public function createVersion()
+    public function createVersion(): void
     {
         $this->getDbDriver()->execute('CREATE TABLE IF NOT EXISTS ' . $this->getMigrationTable() . ' (version int, status varchar(20), PRIMARY KEY (version))');
         $this->checkExistsVersion();
     }
 
-    public function executeSql($sql)
+    public function executeSql(string $sql): void
     {
         $statements = preg_split("/;(\r\n|\r|\n)/", $sql);
 
@@ -58,7 +62,7 @@ class SqliteDatabase extends AbstractDatabase
         }
     }
 
-    protected function executeSqlInternal($sql)
+    protected function executeSqlInternal(string $sql): void
     {
         if (empty(trim($sql))) {
             return;
@@ -66,10 +70,10 @@ class SqliteDatabase extends AbstractDatabase
         $this->getDbDriver()->execute($sql);
     }
 
-    protected function isTableExists($schema, $table)
+    protected function isTableExists(?string $schema, string $table): bool
     {
         $count = $this->getDbDriver()->getScalar(
-            "SELECT count(*) FROM sqlite_master WHERE type='table' AND name=[[table]]",
+            "SELECT count(*) FROM sqlite_master WHERE type='table' AND name=:table",
             [
                 "table" => $table
             ]
@@ -78,7 +82,7 @@ class SqliteDatabase extends AbstractDatabase
         return (intval($count) !== 0);
     }
 
-    public function isDatabaseVersioned()
+    public function isDatabaseVersioned(): bool
     {
         return $this->isTableExists(null, $this->getMigrationTable());
     }

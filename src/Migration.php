@@ -6,51 +6,51 @@ use ByJG\AnyDataset\Db\DbDriverInterface;
 use ByJG\DbMigration\Database\DatabaseInterface;
 use ByJG\DbMigration\Exception\DatabaseDoesNotRegistered;
 use ByJG\DbMigration\Exception\DatabaseIsIncompleteException;
+use ByJG\DbMigration\Exception\DatabaseNotVersionedException;
 use ByJG\DbMigration\Exception\InvalidMigrationFile;
+use ByJG\DbMigration\Exception\OldVersionSchemaException;
+use Closure;
+use Exception;
 use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
 
 class Migration
 {
-    const VERSION_STATUS_UNKNOWN = "unknown";
-    const VERSION_STATUS_PARTIAL = "partial";
-    const VERSION_STATUS_COMPLETE = "complete";
-
     /**
      * @var UriInterface
      */
-    protected $uri;
+    protected UriInterface $uri;
 
     /**
      * @var string
      */
-    protected $folder;
+    protected string $folder;
 
     /**
      * @var DbDriverInterface
      */
-    protected $dbDriver;
+    protected DbDriverInterface $dbDriver;
 
     /**
-     * @var DatabaseInterface
+     * @var DatabaseInterface|null
      */
-    protected $dbCommand;
+    protected ?DatabaseInterface $dbCommand = null;
 
     /**
-     * @var Callable
+     * @var Closure|null
      */
-    protected $callableProgress;
+    protected ?Closure $callableProgress = null;
 
     /**
      * @var array
      */
-    protected static $databases = [];
+    protected static array $databases = [];
     /**
      * @var string
      */
-    private $migrationTable;
+    private string $migrationTable;
 
-    private $transaction = false;
+    private bool $transaction = false;
 
     /**
      * Migration constructor.
@@ -61,7 +61,7 @@ class Migration
      * @param string $migrationTable
      * @throws InvalidMigrationFile
      */
-    public function __construct(UriInterface $uri, $folder, $requiredBase = true, $migrationTable = 'migration_version')
+    public function __construct(UriInterface $uri, string $folder, bool $requiredBase = true, string $migrationTable = 'migration_version')
     {
         $this->uri = $uri;
         $this->folder = $folder;
@@ -71,21 +71,22 @@ class Migration
         $this->migrationTable = $migrationTable;
     }
 
-    public function withTransactionEnabled($enabled = true)
+    public function withTransactionEnabled($enabled = true): static
     {
         $this->transaction = $enabled;
         return $this;
     }
 
     /**
-     * @param $class
+     * @param string $class
      */
-    public static function registerDatabase($class)
+    public static function registerDatabase(string $class): void
     {
         if (!in_array(DatabaseInterface::class, class_implements($class))) {
             throw new InvalidArgumentException('Class not implements DatabaseInterface!');
         }
 
+        /** @var DatabaseInterface $class */
         $protocolList = $class::schema();
         foreach ((array)$protocolList as $item) {
             self::$databases[$item] = $class;
@@ -94,18 +95,18 @@ class Migration
 
     /**
      * @return DbDriverInterface
-     * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
+     * @throws DatabaseDoesNotRegistered
      */
-    public function getDbDriver()
+    public function getDbDriver(): DbDriverInterface
     {
         return $this->getDbCommand()->getDbDriver();
     }
 
     /**
      * @return DatabaseInterface
-     * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
+     * @throws DatabaseDoesNotRegistered
      */
-    public function getDbCommand()
+    public function getDbCommand(): DatabaseInterface
     {
         if (is_null($this->dbCommand)) {
             $class = $this->getDatabaseClassName();
@@ -114,16 +115,16 @@ class Migration
         return $this->dbCommand;
     }
 
-    public function getMigrationTable()
+    public function getMigrationTable(): string
     {
         return $this->migrationTable;
     }
 
     /**
      * @return mixed
-     * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
+     * @throws DatabaseDoesNotRegistered
      */
-    protected function getDatabaseClassName()
+    protected function getDatabaseClassName(): mixed
     {
         if (isset(self::$databases[$this->uri->getScheme()])) {
             return self::$databases[$this->uri->getScheme()];
@@ -138,7 +139,7 @@ class Migration
      *
      * @return string
      */
-    public function getBaseSql()
+    public function getBaseSql(): string
     {
         return $this->folder . "/base.sql";
     }
@@ -146,18 +147,18 @@ class Migration
     /**
      * Get the full path script based on the version
      *
-     * @param $version
-     * @param $increment
-     * @return string
-     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
+     * @param int $version
+     * @param int $increment
+     * @return string|null
+     * @throws InvalidMigrationFile
      */
-    public function getMigrationSql($version, $increment)
+    public function getMigrationSql(int $version, int $increment): ?string
     {
-        // I could use the GLOB_BRACE but it is not supported on ALPINE distros.
+        // I could use the GLOB_BRACE, but it is not supported on ALPINE distros.
         // So, I have to call multiple times to simulate the braces.
 
         if (intval($version) != $version) {
-            throw new \InvalidArgumentException("Version '$version' should be a integer number");
+            throw new InvalidArgumentException("Version '$version' should be a integer number");
         }
         $version = intval($version);
 
@@ -188,7 +189,7 @@ class Migration
      * @param $file
      * @return array
      */
-    public function getFileContent($file)
+    public function getFileContent($file): array
     {
         $data = [
             "file" => $file,
@@ -214,11 +215,11 @@ class Migration
     }
 
     /**
-     * Create the database it it does not exists. Does not use this methos in a production environment
+     * Create the database it is not exists. Does not use these methods in a production environment
      *
-     * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
+     * @throws DatabaseDoesNotRegistered
      */
-    public function prepareEnvironment()
+    public function prepareEnvironment(): void
     {
         $class = $this->getDatabaseClassName();
         $class::prepareEnvironment($this->uri);
@@ -226,16 +227,16 @@ class Migration
 
     /**
      * Restore the database using the "base.sql" script and run all migration scripts
-     * Note: the database must exists. If dont exist run the method prepareEnvironment
+     * Note: the database must exist. If it don't exist run the method prepareEnvironment
      *
-     * @param int $upVersion
-     * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
-     * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
-     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
-     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
-     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
+     * @param int|null $upVersion
+     * @throws DatabaseDoesNotRegistered
+     * @throws DatabaseIsIncompleteException
+     * @throws DatabaseNotVersionedException
+     * @throws InvalidMigrationFile
+     * @throws OldVersionSchemaException
      */
-    public function reset($upVersion = null)
+    public function reset(int $upVersion = null): void
     {
         $fileInfo = $this->getFileContent($this->getBaseSql());
 
@@ -250,22 +251,22 @@ class Migration
             $this->getDbCommand()->executeSql($fileInfo["content"]);
         }
 
-        $this->getDbCommand()->setVersion(0, Migration::VERSION_STATUS_COMPLETE);
+        $this->getDbCommand()->setVersion(0, MigrationStatus::complete);
         $this->up($upVersion);
     }
 
     /**
-     * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
+     * @throws DatabaseDoesNotRegistered
      */
-    public function createVersion()
+    public function createVersion(): void
     {
         $this->getDbCommand()->createVersion();
     }
 
     /**
-     * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
+     * @throws DatabaseDoesNotRegistered
      */
-    public function updateTableVersion()
+    public function updateTableVersion(): void
     {
         $this->getDbCommand()->updateVersionTable();
     }
@@ -274,11 +275,11 @@ class Migration
      * Get the current database version
      *
      * @return string[] The current 'version' and 'status' as an associative array
-     * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
-     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
-     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
+     * @throws DatabaseDoesNotRegistered
+     * @throws DatabaseNotVersionedException
+     * @throws OldVersionSchemaException
      */
-    public function getCurrentVersion()
+    public function getCurrentVersion(): array
     {
         return $this->getDbCommand()->getVersion();
     }
@@ -289,35 +290,35 @@ class Migration
      * @param $increment
      * @return bool
      */
-    protected function canContinue($currentVersion, $upVersion, $increment)
+    protected function canContinue(int $currentVersion, ?int $upVersion, int $increment): bool
     {
         $existsUpVersion = ($upVersion !== null);
         $compareVersion =
-            intval($currentVersion) < intval($upVersion)
+            $currentVersion < intval($upVersion)
                 ? -1
-                : (intval($currentVersion) > intval($upVersion) ? 1 : 0);
+                : ($currentVersion > intval($upVersion) ? 1 : 0);
 
-        return !($existsUpVersion && ($compareVersion === intval($increment)));
+        return !($existsUpVersion && ($compareVersion === $increment));
     }
 
     /**
      * Method for execute the migration.
      *
-     * @param int $upVersion
+     * @param int|null $upVersion
      * @param int $increment Can accept 1 for UP or -1 for down
      * @param bool $force
-     * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
-     * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
-     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
-     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
-     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
+     * @throws DatabaseDoesNotRegistered
+     * @throws DatabaseIsIncompleteException
+     * @throws DatabaseNotVersionedException
+     * @throws InvalidMigrationFile
+     * @throws OldVersionSchemaException
      */
-    protected function migrate($upVersion, $increment, $force)
+    protected function migrate(?int $upVersion, int $increment, bool $force): void
     {
         $versionInfo = $this->getCurrentVersion();
         $currentVersion = intval($versionInfo['version']) + $increment;
 
-        if (strpos($versionInfo['status'], Migration::VERSION_STATUS_PARTIAL) !== false && !$force) {
+        if (in_array($versionInfo['status'], [MigrationStatus::partialUp, MigrationStatus::partialDown]) && !$force) {
             throw new DatabaseIsIncompleteException('Database was not fully updated. Use --force for migrate.');
         }
 
@@ -339,13 +340,13 @@ class Migration
                 if ($useTransaction) {
                     $this->getDbDriver()->beginTransaction();
                 }
-                $this->getDbCommand()->setVersion($currentVersion, Migration::VERSION_STATUS_PARTIAL . ' ' . ($increment>0 ? 'up' : 'down'));
+                $this->getDbCommand()->setVersion($currentVersion, $increment>0 ? MigrationStatus::partialUp : MigrationStatus::partialDown);
                 $this->getDbCommand()->executeSql($fileInfo["content"]);
-                $this->getDbCommand()->setVersion($currentVersion, Migration::VERSION_STATUS_COMPLETE);
+                $this->getDbCommand()->setVersion($currentVersion, MigrationStatus::complete);
                 if ($useTransaction) {
                     $this->getDbDriver()->commitTransaction();
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 if ($useTransaction) {
                     $this->getDbDriver()->rollbackTransaction();
                 }
@@ -358,15 +359,15 @@ class Migration
     /**
      * Run all scripts to up the database version from current up to latest version or the specified version.
      *
-     * @param int $upVersion
+     * @param int|null $upVersion
      * @param bool $force
-     * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
-     * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
-     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
-     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
-     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
+     * @throws DatabaseDoesNotRegistered
+     * @throws DatabaseIsIncompleteException
+     * @throws DatabaseNotVersionedException
+     * @throws InvalidMigrationFile
+     * @throws OldVersionSchemaException
      */
-    public function up($upVersion = null, $force = false)
+    public function up(?int $upVersion = null, bool $force = false): void
     {
         $this->migrate($upVersion, 1, $force);
     }
@@ -374,15 +375,15 @@ class Migration
     /**
      * Run all scripts to up or down the database version from current up to latest version or the specified version.
      *
-     * @param int $upVersion
+     * @param int|null $upVersion
      * @param bool $force
-     * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
-     * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
-     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
-     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
-     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
+     * @throws DatabaseDoesNotRegistered
+     * @throws DatabaseIsIncompleteException
+     * @throws DatabaseNotVersionedException
+     * @throws InvalidMigrationFile
+     * @throws OldVersionSchemaException
      */
-    public function update($upVersion = null, $force = false)
+    public function update(?int $upVersion = null, bool $force = false): void
     {
         $versionInfo = $this->getCurrentVersion();
         $version = intval($versionInfo['version']);
@@ -398,13 +399,13 @@ class Migration
      *
      * @param int $upVersion
      * @param bool $force
-     * @throws \ByJG\DbMigration\Exception\DatabaseDoesNotRegistered
-     * @throws \ByJG\DbMigration\Exception\DatabaseIsIncompleteException
-     * @throws \ByJG\DbMigration\Exception\DatabaseNotVersionedException
-     * @throws \ByJG\DbMigration\Exception\InvalidMigrationFile
-     * @throws \ByJG\DbMigration\Exception\OldVersionSchemaException
+     * @throws DatabaseDoesNotRegistered
+     * @throws DatabaseIsIncompleteException
+     * @throws DatabaseNotVersionedException
+     * @throws InvalidMigrationFile
+     * @throws OldVersionSchemaException
      */
-    public function down($upVersion, $force = false)
+    public function down(int $upVersion, bool $force = false): void
     {
         $this->migrate($upVersion, -1, $force);
     }
@@ -412,12 +413,15 @@ class Migration
     /**
      * @param callable $callable
      */
-    public function addCallbackProgress(callable $callable)
+    public function addCallbackProgress(callable $callable): void
     {
         $this->callableProgress = $callable;
     }
 
-    public function isDatabaseVersioned()
+    /**
+     * @throws DatabaseDoesNotRegistered
+     */
+    public function isDatabaseVersioned(): bool
     {
         return $this->getDbCommand()->isDatabaseVersioned();
     }

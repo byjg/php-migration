@@ -4,15 +4,22 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "byjg/anydataset-db": "4.9.*",
-    "ext-pdo": "*"
+    "ext-pdo": "*",
+    "byjg/anydataset-db": "^5.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "^9.6"
+    "php": ">=8.1 <8.4",
+    "phpunit/phpunit": "^9.6",
+    "vimeo/psalm": "^5.9"
   },
   "autoload": {
     "psr-4": {
       "ByJG\\DbMigration\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
     }
   },
   "license": "MIT"

@@ -1,10 +1,10 @@
 <?php
 
+namespace Tests;
+
 use ByJG\DbMigration\Database\SqliteDatabase;
 use ByJG\DbMigration\Migration;
 use ByJG\Util\Uri;
-
-require_once 'BaseDatabase.php';
 
 /**
  * @requires extension pdo_sqlite
@@ -16,7 +16,7 @@ class SqliteDatabaseTest extends BaseDatabase
     /**
      * @var Migration
      */
-    protected $migrate = null;
+    protected ?Migration $migrate = null;
 
     public function setUp(): void
     {

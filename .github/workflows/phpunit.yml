@@ -73,6 +73,7 @@ jobs:
 #          apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community docker
 #          docker-compose up -d postgres mysql
       - run: composer install
+      - run: ./vendor/bin/psalm
       - run: ./vendor/bin/phpunit
       - run: ./vendor/bin/phpunit tests/SqliteDatabase*
       - run: ./vendor/bin/phpunit tests/MysqlDatabase*

@@ -1,11 +1,11 @@
 <?php
 
-require_once 'SqlServerDblibDatabaseTest.php';
+namespace Tests;
 
 /**
  * @requires extension pdo_dblib
  */
 class SqlServerDblibDatabaseCustomTest extends SqlServerDblibDatabaseTest
 {
-    protected $migrationTable = "some_table_version";
+    protected string $migrationTable = "some_table_version";
 }

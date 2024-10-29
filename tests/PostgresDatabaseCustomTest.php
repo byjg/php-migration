@@ -1,11 +1,11 @@
 <?php
 
-require_once 'PostgresDatabaseTest.php';
+namespace Tests;
 
 /**
  * @requires extension pdo_pgsql
  */
 class PostgresDatabaseCustomTest extends PostgresDatabaseTest
 {
-    protected $migrationTable = "some_table_version";
+    protected string $migrationTable = "some_table_version";
 }

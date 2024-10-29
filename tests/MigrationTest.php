@@ -1,5 +1,5 @@
 <?php
-namespace Test;
+namespace Tests;
 
 use ByJG\DbMigration\Database\SqliteDatabase;
 use ByJG\DbMigration\Exception\InvalidMigrationFile;

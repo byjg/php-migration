@@ -1,10 +1,10 @@
 <?php
 
+namespace Tests;
+
 use ByJG\DbMigration\Database\DblibDatabase;
 use ByJG\DbMigration\Migration;
 use ByJG\Util\Uri;
-
-require_once 'BaseDatabase.php';
 
 /**
  * @requires extension pdo_dblib
@@ -12,11 +12,11 @@ require_once 'BaseDatabase.php';
 class SqlServerDblibDatabaseTest extends BaseDatabase
 {
     /**
-     * @var Migration
+     * @var Migration|null
      */
-    protected $migrate = null;
+    protected ?Migration $migrate = null;
 
-    protected $scheme = "dblib";
+    protected string $scheme = "dblib";
 
     public function setUp(): void
     {
@@ -37,7 +37,7 @@ class SqlServerDblibDatabaseTest extends BaseDatabase
         parent::setUp();
     }
 
-    public function getExpectedUsersVersion1()
+    public function getExpectedUsersVersion1(): array
     {
         if ($this->scheme == "sqlsrv") {
             return parent::getExpectedUsersVersion1();

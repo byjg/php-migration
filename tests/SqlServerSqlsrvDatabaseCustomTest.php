@@ -1,11 +1,11 @@
 <?php
 
-require_once 'SqlServerSqlsrvDatabaseTest.php';
+namespace Tests;
 
 /**
  * @requires extension pdo_dblib
  */
 class SqlServerSqlsrvDatabaseCustomTest extends SqlServerSqlsrvDatabaseTest
 {
-    protected $migrationTable = "some_table_version";
+    protected string $migrationTable = "some_table_version";
 }

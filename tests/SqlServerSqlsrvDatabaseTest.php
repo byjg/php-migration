@@ -1,10 +1,10 @@
 <?php
 
+namespace Tests;
+
 use ByJG\DbMigration\Database\DblibDatabase;
 use ByJG\DbMigration\Migration;
 use ByJG\Util\Uri;
-
-require_once 'SqlServerDblibDatabaseTest.php';
 
 /**
  * @requires extension pdo_dblib
