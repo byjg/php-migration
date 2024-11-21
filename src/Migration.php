@@ -395,9 +395,9 @@ class Migration
     }
 
     /**
-     * Run all scripts to down the database version from current version up to the specified version.
+     * Run all scripts to down the database version from current version down to 0 or the specified version.
      *
-     * @param int $upVersion
+     * @param int|null $upVersion
      * @param bool $force
      * @throws DatabaseDoesNotRegistered
      * @throws DatabaseIsIncompleteException
@@ -405,7 +405,7 @@ class Migration
      * @throws InvalidMigrationFile
      * @throws OldVersionSchemaException
      */
-    public function down(int $upVersion, bool $force = false): void
+    public function down(?int $upVersion = null, bool $force = false): void
     {
         $this->migrate($upVersion, -1, $force);
     }
