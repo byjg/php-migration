@@ -38,8 +38,10 @@ class SqliteDatabase extends AbstractDatabase
                     END;
         ");
 
-        foreach ($iterator as $row) {
-            $this->getDbDriver()->execute($row->get('command'));
+        $list = $iterator->toArray();
+
+        foreach ($list as $row) {
+            $this->getDbDriver()->execute($row['command']);
         }
     }
 
