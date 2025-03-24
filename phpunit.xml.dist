@@ -6,14 +6,17 @@ and open the template in the editor.
 -->
 
 <!-- see http://www.phpunit.de/wiki/Documentation -->
-<phpunit bootstrap="./vendor/autoload.php"
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         bootstrap="./vendor/autoload.php"
          colors="true"
          testdox="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
-         convertDeprecationsToExceptions="true"
-         stopOnFailure="false">
+         displayDetailsOnTestsThatTriggerDeprecations="true"
+         displayDetailsOnTestsThatTriggerErrors="true"
+         displayDetailsOnTestsThatTriggerNotices="true"
+         displayDetailsOnTestsThatTriggerWarnings="true"
+         displayDetailsOnPhpunitDeprecations="true"
+         stopOnFailure="false"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd">
 
     <php>
         <ini name="display_errors" value="On" />
@@ -21,17 +24,15 @@ and open the template in the editor.
         <ini name="error_reporting" value="E_ALL" />
     </php>
 
-    <filter>
-        <whitelist>
-            <directory>./src</directory>
-        </whitelist>
-    </filter>
+    <source>
+        <include>
+            <directory>./src/</directory>
+        </include>
+    </source>
 
     <testsuites>
         <testsuite name="Test Suite">
-            <!--<directory>./tests/</directory>-->
-            <file>./tests/SqliteDatabaseTest.php</file>
-            <file>./tests/MigrationTest.php</file>
+            <directory>./tests/</directory>
         </testsuite>
     </testsuites>
 

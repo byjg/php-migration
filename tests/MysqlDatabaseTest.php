@@ -3,6 +3,8 @@
 namespace Tests;
 
 use ByJG\DbMigration\Database\MySqlDatabase;
+use ByJG\DbMigration\Exception\DatabaseDoesNotRegistered;
+use ByJG\DbMigration\Exception\InvalidMigrationFile;
 use ByJG\DbMigration\Migration;
 use ByJG\Util\Uri;
 
@@ -12,10 +14,14 @@ use ByJG\Util\Uri;
 class MysqlDatabaseTest extends BaseDatabase
 {
     /**
-     * @var Migration
+     * @var Migration|null
      */
     protected ?Migration $migrate = null;
 
+    /**
+     * @throws DatabaseDoesNotRegistered
+     * @throws InvalidMigrationFile
+     */
     public function setUp(): void
     {
         $host = getenv('MYSQL_TEST_HOST');

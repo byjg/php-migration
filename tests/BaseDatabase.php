@@ -12,6 +12,7 @@ use ByJG\DbMigration\MigrationStatus;
 use ByJG\Serializer\Exception\InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
+use PHPUnit\Framework\Attributes\Override;
 
 abstract class BaseDatabase extends TestCase
 {
@@ -27,6 +28,7 @@ abstract class BaseDatabase extends TestCase
     /**
      * @throws DatabaseDoesNotRegistered
      */
+    #[Override]
     public function setUp(): void
     {
         // create Migrate object in the parent!!!
@@ -37,6 +39,7 @@ abstract class BaseDatabase extends TestCase
     /**
      * @throws DatabaseDoesNotRegistered
      */
+    #[Override]
     public function tearDown(): void
     {
         $this->migrate->getDbCommand()->dropDatabase();
@@ -160,21 +163,23 @@ abstract class BaseDatabase extends TestCase
 
         $iterator = $this->migrate->getDbDriver()->getIterator('select * from users');
 
-        $this->assertTrue($iterator->hasNext());
-        $row = $iterator->moveNext();
+        $this->assertNotNull($iterator->current());
+        $row = $iterator->current();
         $this->assertEquals(
             $this->getExpectedUsersVersion0()[0],
             $row->toArray()
         );
 
-        $this->assertTrue($iterator->hasNext());
-        $row = $iterator->moveNext();
+        $iterator->next();
+        $this->assertNotNull($iterator->current());
+        $row = $iterator->current();
         $this->assertEquals(
             $this->getExpectedUsersVersion0()[1],
             $row->toArray()
         );
 
-        $this->assertFalse($iterator->hasNext());
+        $iterator->next();
+        $this->assertNull($iterator->current());
 
         try {
             $this->migrate->getDbDriver()->getIterator('select * from roles');
@@ -195,21 +200,23 @@ abstract class BaseDatabase extends TestCase
 
         $iterator = $this->migrate->getDbDriver()->getIterator('select * from users');
 
-        $this->assertTrue($iterator->hasNext());
-        $row = $iterator->moveNext();
+        $this->assertNotNull($iterator->current());
+        $row = $iterator->current();
         $this->assertEquals(
             $this->getExpectedUsersVersion1()[0],
             $row->toArray()
         );
 
-        $this->assertTrue($iterator->hasNext());
-        $row = $iterator->moveNext();
+        $iterator->next();
+        $this->assertNotNull($iterator->current());
+        $row = $iterator->current();
         $this->assertEquals(
             $this->getExpectedUsersVersion1()[1],
             $row->toArray()
         );
 
-        $this->assertFalse($iterator->hasNext());
+        $iterator->next();
+        $this->assertNull($iterator->current());
 
         try {
             $this->migrate->getDbDriver()->getIterator('select * from roles');
@@ -232,27 +239,29 @@ abstract class BaseDatabase extends TestCase
         // Users
         $iterator = $this->migrate->getDbDriver()->getIterator('select * from users');
 
-        $this->assertTrue($iterator->hasNext());
-        $row = $iterator->moveNext();
+        $this->assertNotNull($iterator->current());
+        $row = $iterator->current();
         $this->assertEquals(
             $this->getExpectedUsersVersion1()[0],
             $row->toArray()
         );
 
-        $this->assertTrue($iterator->hasNext());
-        $row = $iterator->moveNext();
+        $iterator->next();
+        $this->assertNotNull($iterator->current());
+        $row = $iterator->current();
         $this->assertEquals(
             $this->getExpectedUsersVersion1()[1],
             $row->toArray()
         );
 
-        $this->assertFalse($iterator->hasNext());
+        $iterator->next();
+        $this->assertNull($iterator->current());
 
         // Posts
         $iterator = $this->migrate->getDbDriver()->getIterator('select * from posts');
 
-        $this->assertTrue($iterator->hasNext());
-        $row = $iterator->moveNext();
+        $this->assertNotNull($iterator->current());
+        $row = $iterator->current();
         $this->assertEquals(
             $this->getExpectedPostsVersion2()[0],
             $row->toArray()

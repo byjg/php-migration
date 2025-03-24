@@ -5,19 +5,23 @@ use ByJG\DbMigration\Database\SqliteDatabase;
 use ByJG\DbMigration\Exception\InvalidMigrationFile;
 use ByJG\DbMigration\Migration;
 use ByJG\Util\Uri;
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\Override;
 
-class MigrationTest extends \PHPUnit\Framework\TestCase
+class MigrationTest extends TestCase
 {
     /**
      * @var Migration
      */
     protected $object;
 
+    #[Override]
     public function setUp(): void
     {
         $this->object = new Migration(new Uri('mysql://localhost'), __DIR__ . '/dirstructure');
     }
 
+    #[Override]
     public function tearDown(): void
     {
         $this->object = null;
