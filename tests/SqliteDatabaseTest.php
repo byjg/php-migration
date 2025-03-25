@@ -5,10 +5,13 @@ namespace Tests;
 use ByJG\DbMigration\Database\SqliteDatabase;
 use ByJG\DbMigration\Migration;
 use ByJG\Util\Uri;
+use PHPUnit\Framework\Attributes\RequiresPhpExtension;
+use PHPUnit\Framework\Attributes\Override;
 
 /**
  * @requires extension pdo_sqlite
  */
+#[RequiresPhpExtension('pdo_sqlite')]
 class SqliteDatabaseTest extends BaseDatabase
 {
     protected $path = '';

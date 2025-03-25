@@ -5,10 +5,12 @@ namespace Tests;
 use ByJG\DbMigration\Database\PgsqlDatabase;
 use ByJG\DbMigration\Migration;
 use ByJG\Util\Uri;
+use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 
 /**
  * @requires extension pdo_pgsql
  */
+#[RequiresPhpExtension('pdo_pgsql')]
 class PostgresDatabaseTest extends BaseDatabase
 {
     /**

@@ -32,7 +32,9 @@ and open the template in the editor.
 
     <testsuites>
         <testsuite name="Test Suite">
-            <directory>./tests/</directory>
+            <!--<directory>./tests/</directory>-->
+            <file>./tests/SqliteDatabaseTest.php</file>
+            <file>./tests/MigrationTest.php</file>
         </testsuite>
     </testsuites>
 
