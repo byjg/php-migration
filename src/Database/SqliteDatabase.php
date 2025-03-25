@@ -8,21 +8,25 @@ use Psr\Http\Message\UriInterface;
 
 class SqliteDatabase extends AbstractDatabase
 {
+    #[\Override]
     public static function schema(): string
     {
         return 'sqlite';
     }
 
+    #[\Override]
     public static function prepareEnvironment(UriInterface $uri): void
     {
         // There is no need to prepare the database
     }
 
+    #[\Override]
     public function createDatabase(): void
     {
         // There is no need to create a database in SQLite
     }
 
+    #[\Override]
     public function dropDatabase(): void
     {
         $iterator = $this->getDbDriver()->getIterator("
@@ -49,12 +53,14 @@ class SqliteDatabase extends AbstractDatabase
      * @throws DatabaseNotVersionedException
      * @throws OldVersionSchemaException
      */
+    #[\Override]
     public function createVersion(): void
     {
         $this->getDbDriver()->execute('CREATE TABLE IF NOT EXISTS ' . $this->getMigrationTable() . ' (version int, status varchar(20), PRIMARY KEY (version))');
         $this->checkExistsVersion();
     }
 
+    #[\Override]
     public function executeSql(string $sql): void
     {
         $statements = preg_split("/;(\r\n|\r|\n)/", $sql);
@@ -72,6 +78,7 @@ class SqliteDatabase extends AbstractDatabase
         $this->getDbDriver()->execute($sql);
     }
 
+    #[\Override]
     protected function isTableExists(?string $schema, string $table): bool
     {
         $count = $this->getDbDriver()->getScalar(
@@ -84,6 +91,7 @@ class SqliteDatabase extends AbstractDatabase
         return (intval($count) !== 0);
     }
 
+    #[\Override]
     public function isDatabaseVersioned(): bool
     {
         return $this->isTableExists(null, $this->getMigrationTable());

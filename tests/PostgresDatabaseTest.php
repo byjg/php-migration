@@ -16,6 +16,7 @@ class PostgresDatabaseTest extends BaseDatabase
      */
     protected ?Migration $migrate = null;
 
+    #[\Override]
     public function setUp(): void
     {
         $host = getenv('PSQL_TEST_HOST');

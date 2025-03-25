@@ -15,89 +15,89 @@ class MigrationTest extends TestCase
      */
     protected $object;
 
-    #[Override]
+    #[\Override]
     public function setUp(): void
     {
         $this->object = new Migration(new Uri('mysql://localhost'), __DIR__ . '/dirstructure');
     }
 
-    #[Override]
+    #[\Override]
     public function tearDown(): void
     {
         $this->object = null;
     }
 
-    public function testGetBaseSql()
+    public function testGetBaseSql(): void
     {
         $base = $this->object->getBaseSql();
         $this->assertEquals(__DIR__ . '/dirstructure/base.sql', $base);
     }
 
-    public function testGetBaseSqlNotFound()
+    public function testGetBaseSqlNotFound(): void
     {
         $this->expectException(InvalidMigrationFile::class);
         $this->object = new Migration(new Uri('mysql://localhost'), __DIR__ . '/invalid');
         $this->object->getBaseSql();
     }
 
-    public function testGetBaseSqlNotFoundAndNotRequired()
+    public function testGetBaseSqlNotFoundAndNotRequired(): void
     {
         $this->object = new Migration(new Uri('mysql://localhost'), __DIR__ . '/invalid', false);
         $this->object->getBaseSql();
         $this->assertTrue(true);
     }
 
-    public function testGetMigrationSql1()
+    public function testGetMigrationSql1(): void
     {
         $version = $this->object->getMigrationSql(1, 1);
         $this->assertEquals(__DIR__ . '/dirstructure/migrations/up/00001.sql', $version);
     }
 
-    public function testGetMigrationSql2()
+    public function testGetMigrationSql2(): void
     {
         $version = $this->object->getMigrationSql(2, 1);
         $this->assertEquals(__DIR__ . '/dirstructure/migrations/up/00002.sql', $version);
     }
 
-    public function testGetMigrationSql3()
+    public function testGetMigrationSql3(): void
     {
         $version = $this->object->getMigrationSql(12, 1);
         $this->assertEquals(__DIR__ . '/dirstructure/migrations/up/00012-dev.sql', $version);
     }
 
-    public function testGetMigrationSql4()
+    public function testGetMigrationSql4(): void
     {
         $this->expectException(InvalidMigrationFile::class);
         $this->expectExceptionMessage("You have two files with the same version number '13'");
         $this->object->getMigrationSql(13, 1);
     }
 
-    public function testGetMigrationSqlDown1()
+    public function testGetMigrationSqlDown1(): void
     {
         $version = $this->object->getMigrationSql(1, -1);
         $this->assertEquals(__DIR__ . '/dirstructure/migrations/down/00001.sql', $version);
     }
 
-    public function testGetMigrationSqlDown2()
+    public function testGetMigrationSqlDown2(): void
     {
         $version = $this->object->getMigrationSql(2, -1);
         $this->assertEquals(__DIR__ . '/dirstructure/migrations/down/00002.sql', $version);
     }
 
-    public function testGetMigrationSqlDown3()
+    public function testGetMigrationSqlDown3(): void
     {
         $version = $this->object->getMigrationSql(12, -1);
         $this->assertEquals(__DIR__ . '/dirstructure/migrations/down/00012-dev.sql', $version);
     }
 
-    public function testGetMigrationSqlDown4()
+    public function testGetMigrationSqlDown4(): void
     {
         $this->expectException(InvalidMigrationFile::class);
         $this->expectExceptionMessage("version number '13'");
         $this->object->getMigrationSql(13, -1);
     }
 
-    public function testGetFileContent_NonExists()
+    public function testGetFileContent_NonExists(): void
     {
         $this->assertEquals(
             [
@@ -111,7 +111,7 @@ class MigrationTest extends TestCase
         );
     }
 
-    public function testGetFileContent_1()
+    public function testGetFileContent_1(): void
     {
         $this->assertEquals(
             [
@@ -125,7 +125,7 @@ class MigrationTest extends TestCase
         );
     }
 
-    public function testGetFileContent_2()
+    public function testGetFileContent_2(): void
     {
         $this->assertEquals(
             [
@@ -139,7 +139,7 @@ class MigrationTest extends TestCase
         );
     }
 
-    public function testGetFileContent_3()
+    public function testGetFileContent_3(): void
     {
         $this->assertEquals(
             [
@@ -153,7 +153,7 @@ class MigrationTest extends TestCase
         );
     }
 
-    public function testReset()
+    public function testReset(): void
     {
         $this->expectException(\PDOException::class);
         Migration::registerDatabase(SqliteDatabase::class);
@@ -161,7 +161,7 @@ class MigrationTest extends TestCase
         $this->object->reset();
     }
 
-    public function testResetWithoutTransactionCheck()
+    public function testResetWithoutTransactionCheck(): void
     {
         try {
             Migration::registerDatabase(SqliteDatabase::class);
@@ -172,7 +172,7 @@ class MigrationTest extends TestCase
         }
     }
 
-    public function testResetWithTransactionCheck()
+    public function testResetWithTransactionCheck(): void
     {
         try {
             Migration::registerDatabase(SqliteDatabase::class);

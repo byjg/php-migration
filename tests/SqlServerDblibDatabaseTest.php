@@ -18,6 +18,7 @@ class SqlServerDblibDatabaseTest extends BaseDatabase
 
     protected string $scheme = "dblib";
 
+    #[\Override]
     public function setUp(): void
     {
         $host = getenv('MSSQL_TEST_HOST');
@@ -37,7 +38,11 @@ class SqlServerDblibDatabaseTest extends BaseDatabase
         parent::setUp();
     }
 
-    public function getSelectUsersVersion1()
+    #[\Override]
+    /**
+     * @return string
+     */
+    public function getSelectUsersVersion1(): string
     {
         return "select id, name, FORMAT(createdate, 'yyyy-MM-dd') as createdate from users";
     }

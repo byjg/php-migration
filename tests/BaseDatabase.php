@@ -52,13 +52,13 @@ abstract class BaseDatabase extends TestCase
      * @throws InvalidMigrationFile
      * @throws OldVersionSchemaException
      */
-    public function testVersion0()
+    public function testVersion0(): void
     {
         $this->migrate->reset(0);
         $this->assertVersion0();
     }
 
-    public function testIsDatabaseVersioned()
+    public function testIsDatabaseVersioned(): void
     {
         $this->assertFalse($this->migrate->isDatabaseVersioned());
         $this->migrate->reset();
@@ -72,7 +72,7 @@ abstract class BaseDatabase extends TestCase
      * @throws InvalidMigrationFile
      * @throws OldVersionSchemaException
      */
-    public function testUpVersion1()
+    public function testUpVersion1(): void
     {
         $this->migrate->reset(0);
         $this->assertVersion0();
@@ -88,7 +88,7 @@ abstract class BaseDatabase extends TestCase
      * @throws OldVersionSchemaException
      * @throws InvalidArgumentException
      */
-    public function testUpVersion2()
+    public function testUpVersion2(): void
     {
         $this->migrate->reset(0);
         $this->assertVersion0();
@@ -104,7 +104,7 @@ abstract class BaseDatabase extends TestCase
      * @throws OldVersionSchemaException
      * @throws InvalidArgumentException
      */
-    public function testDownVersion1()
+    public function testDownVersion1(): void
     {
         $this->migrate->reset();
         $this->assertVersion2();
@@ -120,7 +120,7 @@ abstract class BaseDatabase extends TestCase
      * @throws OldVersionSchemaException
      * @throws InvalidArgumentException
      */
-    public function testDownVersion0()
+    public function testDownVersion0(): void
     {
         $this->migrate->reset();
         $this->assertVersion2();
@@ -136,7 +136,10 @@ abstract class BaseDatabase extends TestCase
         ];
     }
 
-    protected function getSelectUsersVersion1()
+    /**
+     * @return string
+     */
+    protected function getSelectUsersVersion1(): string
     {
         return 'select * from users';
     }
@@ -234,7 +237,7 @@ abstract class BaseDatabase extends TestCase
      * @throws DatabaseDoesNotRegistered
      * @throws InvalidArgumentException
      */
-    protected function assertVersion2()
+    protected function assertVersion2(): void
     {
         $version = $this->migrate->getDbDriver()->getScalar('select version from '. $this->migrationTable);
         $this->assertEquals(2, $version);
@@ -277,7 +280,7 @@ abstract class BaseDatabase extends TestCase
      * @throws DatabaseDoesNotRegistered
      * @throws OldVersionSchemaException
      */
-    public function testGetCurrentVersionIsEmpty()
+    public function testGetCurrentVersionIsEmpty(): void
     {
         $this->expectException(DatabaseNotVersionedException::class);
         $this->migrate->getCurrentVersion();
@@ -286,7 +289,7 @@ abstract class BaseDatabase extends TestCase
     /**
      * @throws DatabaseDoesNotRegistered
      */
-    public function testCreateVersion()
+    public function testCreateVersion(): void
     {
         $this->migrate->createVersion();
         $records = $this->migrate->getDbDriver()->getIterator("select * from " . $this->migrationTable)->toArray();

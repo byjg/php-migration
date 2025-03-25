@@ -186,10 +186,12 @@ class Migration
 
     /**
      * Get the file contents and metainfo
-     * @param $file
+     *
+     * @param null|string $file
+     *
      * @return array
      */
-    public function getFileContent($file): array
+    public function getFileContent(string|null $file): array
     {
         $data = [
             "file" => $file,

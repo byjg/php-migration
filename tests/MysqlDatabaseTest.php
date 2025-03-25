@@ -22,6 +22,7 @@ class MysqlDatabaseTest extends BaseDatabase
      * @throws DatabaseDoesNotRegistered
      * @throws InvalidMigrationFile
      */
+    #[\Override]
     public function setUp(): void
     {
         $host = getenv('MYSQL_TEST_HOST');

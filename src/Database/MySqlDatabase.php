@@ -10,11 +10,13 @@ use Psr\Http\Message\UriInterface;
 
 class MySqlDatabase extends AbstractDatabase
 {
+    #[\Override]
     public static function schema(): array
     {
         return ['mysql', 'mariadb'];
     }
 
+    #[\Override]
     public static function prepareEnvironment(UriInterface|Uri $uri): void
     {
         $database = static::getDatabaseName($uri);
@@ -22,6 +24,7 @@ class MySqlDatabase extends AbstractDatabase
         $dbDriver->execute("CREATE SCHEMA IF NOT EXISTS `$database` DEFAULT CHARACTER SET utf8 ;");
     }
 
+    #[\Override]
     public function createDatabase(): void
     {
         $database = static::getDatabaseName($this->getDbDriver()->getUri());
@@ -30,6 +33,7 @@ class MySqlDatabase extends AbstractDatabase
         $this->getDbDriver()->execute("USE `$database`");
     }
 
+    #[\Override]
     public function dropDatabase(): void
     {
         $database = static::getDatabaseName($this->getDbDriver()->getUri());
@@ -41,17 +45,20 @@ class MySqlDatabase extends AbstractDatabase
      * @throws DatabaseNotVersionedException
      * @throws OldVersionSchemaException
      */
+    #[\Override]
     public function createVersion(): void
     {
         $this->getDbDriver()->execute('CREATE TABLE IF NOT EXISTS ' . $this->getMigrationTable() . ' (version int, status varchar(20), PRIMARY KEY (version))');
         $this->checkExistsVersion();
     }
 
+    #[\Override]
     public function executeSql(string $sql): void
     {
         $this->getDbDriver()->execute($sql);
     }
 
+    #[\Override]
     public function supportsTransaction(): bool
     {
         // MySQL doesn't support transaction for DDL commands

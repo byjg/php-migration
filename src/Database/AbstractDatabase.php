@@ -52,6 +52,7 @@ abstract class AbstractDatabase implements DatabaseInterface
     /**
      * @return string
      */
+    #[\Override]
     public function getMigrationTable(): string
     {
         return $this->migrationTable;
@@ -60,10 +61,11 @@ abstract class AbstractDatabase implements DatabaseInterface
     /**
      * @return DbDriverInterface
      */
+    #[\Override]
     public function getDbDriver(): DbDriverInterface
     {
         if (is_null($this->dbDriver)) {
-            $this->dbDriver = Factory::getDbInstance($this->uri);
+            $this->dbDriver = Factory::getDbInstance($this->uri->__toString());
         }
         return $this->dbDriver;
     }
@@ -73,6 +75,7 @@ abstract class AbstractDatabase implements DatabaseInterface
      * @throws DatabaseNotVersionedException
      * @throws OldVersionSchemaException
      */
+    #[\Override]
     public function getVersion(): array
     {
         $result = [];
@@ -95,6 +98,7 @@ abstract class AbstractDatabase implements DatabaseInterface
      * @param int $version
      * @param MigrationStatus $status
      */
+    #[\Override]
     public function setVersion(int $version, MigrationStatus $status): void
     {
         $this->getDbDriver()->execute(
@@ -126,6 +130,7 @@ abstract class AbstractDatabase implements DatabaseInterface
     /**
      *
      */
+    #[\Override]
     public function updateVersionTable(): void
     {
         $currentVersion = $this->getDbDriver()->getScalar(sprintf('select version from %s', $this->getMigrationTable()));
@@ -149,11 +154,13 @@ abstract class AbstractDatabase implements DatabaseInterface
         return (intval($count) !== 0);
     }
 
+    #[\Override]
     public function isDatabaseVersioned(): bool
     {
         return $this->isTableExists(static::getDatabaseName($this->getDbDriver()->getUri()), $this->getMigrationTable());
     }
 
+    #[\Override]
     public function supportsTransaction(): bool
     {
         return true;

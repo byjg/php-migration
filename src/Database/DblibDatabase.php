@@ -10,6 +10,7 @@ use Psr\Http\Message\UriInterface;
 
 class DblibDatabase extends AbstractDatabase
 {
+    #[\Override]
     public static function schema(): array
     {
         return ['dblib', 'sqlsrv'];
@@ -21,6 +22,7 @@ class DblibDatabase extends AbstractDatabase
         return $uri->getQueryPart('dbname') ?? $uri->getQueryPart('Database') ?? ltrim($uri->getPath(), '/');
     }
 
+    #[\Override]
     public static function prepareEnvironment(UriInterface|Uri $uri): void
     {
         $database = static::getDatabaseName($uri);
@@ -28,6 +30,7 @@ class DblibDatabase extends AbstractDatabase
         $dbDriver->execute("IF NOT EXISTS(select * from sys.databases where name='$database') CREATE DATABASE $database");
     }
 
+    #[\Override]
     public function createDatabase(): void
     {
         $database = static::getDatabaseName($this->getDbDriver()->getUri());
@@ -36,6 +39,7 @@ class DblibDatabase extends AbstractDatabase
         $this->getDbDriver()->execute("USE $database");
     }
 
+    #[\Override]
     public function dropDatabase(): void
     {
         $database = static::getDatabaseName($this->getDbDriver()->getUri());
@@ -63,6 +67,7 @@ class DblibDatabase extends AbstractDatabase
      * @throws DatabaseNotVersionedException
      * @throws OldVersionSchemaException
      */
+    #[\Override]
     public function createVersion(): void
     {
         $database = static::getDatabaseName($this->getDbDriver()->getUri());
@@ -72,6 +77,7 @@ class DblibDatabase extends AbstractDatabase
         $this->checkExistsVersion();
     }
 
+    #[\Override]
     public function executeSql(string $sql): void
     {
         $statements = preg_split("/;(\r\n|\r|\n)/", $sql);
@@ -94,6 +100,7 @@ class DblibDatabase extends AbstractDatabase
      * @param string $table
      * @return bool
      */
+    #[\Override]
     protected function isTableExists(?string $schema, string $table): bool
     {
         $count = $this->getDbDriver()->getScalar(

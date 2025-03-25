@@ -11,6 +11,7 @@ use ByJG\Util\Uri;
  */
 class SqlServerSqlsrvDatabaseTest extends SqlServerDblibDatabaseTest
 {
+    #[\Override]
     public function setUp(): void
     {
         $this->scheme = "sqlsrv";
