@@ -7,6 +7,7 @@ use ByJG\AnyDataset\Db\Factory;
 use ByJG\DbMigration\Exception\DatabaseNotVersionedException;
 use ByJG\DbMigration\Exception\OldVersionSchemaException;
 use ByJG\DbMigration\MigrationStatus;
+use ByJG\Util\Uri;
 use Exception;
 use Psr\Http\Message\UriInterface;
 
@@ -38,6 +39,16 @@ abstract class AbstractDatabase implements DatabaseInterface
         $this->migrationTable = $migrationTable;
     }
 
+    protected static function getDatabaseName(Uri $uri): string
+    {
+        return ltrim($uri->getPath(), '/');
+    }
+
+    protected static function getDbDriverWithoutDatabase(UriInterface $uri, string $database = ''): DbDriverInterface
+    {
+        return Factory::getDbInstance($uri->withPath("/$database")->__toString());
+    }
+
     /**
      * @return string
      */
@@ -52,7 +63,7 @@ abstract class AbstractDatabase implements DatabaseInterface
     public function getDbDriver(): DbDriverInterface
     {
         if (is_null($this->dbDriver)) {
-            $this->dbDriver = Factory::getDbInstance($this->uri->__toString());
+            $this->dbDriver = Factory::getDbInstance($this->uri);
         }
         return $this->dbDriver;
     }
@@ -140,7 +151,7 @@ abstract class AbstractDatabase implements DatabaseInterface
 
     public function isDatabaseVersioned(): bool
     {
-        return $this->isTableExists(ltrim($this->getDbDriver()->getUri()->getPath(), "/"), $this->getMigrationTable());
+        return $this->isTableExists(static::getDatabaseName($this->getDbDriver()->getUri()), $this->getMigrationTable());
     }
 
     public function supportsTransaction(): bool

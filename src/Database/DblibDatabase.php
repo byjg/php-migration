@@ -15,19 +15,22 @@ class DblibDatabase extends AbstractDatabase
         return ['dblib', 'sqlsrv'];
     }
 
-    public static function prepareEnvironment(UriInterface $uri): void
+    #[\Override]
+    protected static function getDatabaseName(Uri $uri): string
     {
-        $database = preg_replace('~^/~', '', $uri->getPath());
+        return $uri->getQueryPart('dbname') ?? $uri->getQueryPart('Database') ?? ltrim($uri->getPath(), '/');
+    }
 
-        $customUri = new Uri($uri->__toString());
-
-        $dbDriver = Factory::getDbInstance($customUri->withPath('/')->__toString());
+    public static function prepareEnvironment(UriInterface|Uri $uri): void
+    {
+        $database = static::getDatabaseName($uri);
+        $dbDriver = static::getDbDriverWithoutDatabase($uri);
         $dbDriver->execute("IF NOT EXISTS(select * from sys.databases where name='$database') CREATE DATABASE $database");
     }
 
     public function createDatabase(): void
     {
-        $database = preg_replace('~^/~', '', $this->getDbDriver()->getUri()->getPath());
+        $database = static::getDatabaseName($this->getDbDriver()->getUri());
 
         $this->getDbDriver()->execute("IF NOT EXISTS(select * from sys.databases where name='$database') CREATE DATABASE $database");
         $this->getDbDriver()->execute("USE $database");
@@ -35,7 +38,7 @@ class DblibDatabase extends AbstractDatabase
 
     public function dropDatabase(): void
     {
-        $database = preg_replace('~^/~', '', $this->getDbDriver()->getUri()->getPath());
+        $database = static::getDatabaseName($this->getDbDriver()->getUri());
 
         $this->getDbDriver()->execute("use master");
         $this->getDbDriver()->execute("drop database $database");
@@ -62,7 +65,8 @@ class DblibDatabase extends AbstractDatabase
      */
     public function createVersion(): void
     {
-        $database = preg_replace('~^/~', '', $this->getDbDriver()->getUri()->getPath());
+        $database = static::getDatabaseName($this->getDbDriver()->getUri());
+
         $createTable = 'CREATE TABLE ' . $this->getMigrationTable() . ' (version int, status varchar(20), PRIMARY KEY (version))';
         $this->createTableIfNotExists($database, $createTable);
         $this->checkExistsVersion();

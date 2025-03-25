@@ -37,16 +37,8 @@ class SqlServerDblibDatabaseTest extends BaseDatabase
         parent::setUp();
     }
 
-    public function getExpectedUsersVersion1(): array
+    public function getSelectUsersVersion1()
     {
-        if ($this->scheme == "sqlsrv") {
-            return parent::getExpectedUsersVersion1();
-        }
-
-        return [
-            ["id" => 1, "name" => 'John Doe', 'createdate' => '2016-01-10 00:00:00'],
-            ["id" => 2, "name" => 'Jane Doe', 'createdate' => '2015-12-30 00:00:00']
-        ];
+        return "select id, name, FORMAT(createdate, 'yyyy-MM-dd') as createdate from users";
     }
-
 }

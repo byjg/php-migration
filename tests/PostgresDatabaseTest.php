@@ -12,7 +12,7 @@ use ByJG\Util\Uri;
 class PostgresDatabaseTest extends BaseDatabase
 {
     /**
-     * @var Migration
+     * @var Migration|null
      */
     protected ?Migration $migrate = null;
 

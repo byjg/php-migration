@@ -12,7 +12,7 @@ use ByJG\DbMigration\MigrationStatus;
 use ByJG\Serializer\Exception\InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
-use PHPUnit\Framework\Attributes\Override;
+use Override;
 
 abstract class BaseDatabase extends TestCase
 {
@@ -136,6 +136,11 @@ abstract class BaseDatabase extends TestCase
         ];
     }
 
+    protected function getSelectUsersVersion1()
+    {
+        return 'select * from users';
+    }
+
     protected function getExpectedUsersVersion1(): array
     {
         return [
@@ -198,7 +203,7 @@ abstract class BaseDatabase extends TestCase
         $status = $this->migrate->getDbDriver()->getScalar('select status from '. $this->migrationTable);
         $this->assertEquals(MigrationStatus::complete->value, $status);
 
-        $iterator = $this->migrate->getDbDriver()->getIterator('select * from users');
+        $iterator = $this->migrate->getDbDriver()->getIterator($this->getSelectUsersVersion1());
 
         $this->assertNotNull($iterator->current());
         $row = $iterator->current();
@@ -237,7 +242,7 @@ abstract class BaseDatabase extends TestCase
         $this->assertEquals(MigrationStatus::complete->value, $status);
 
         // Users
-        $iterator = $this->migrate->getDbDriver()->getIterator('select * from users');
+        $iterator = $this->migrate->getDbDriver()->getIterator($this->getSelectUsersVersion1());
 
         $this->assertNotNull($iterator->current());
         $row = $iterator->current();

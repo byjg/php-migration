@@ -15,19 +15,16 @@ class MySqlDatabase extends AbstractDatabase
         return ['mysql', 'mariadb'];
     }
 
-    public static function prepareEnvironment(UriInterface $uri): void
+    public static function prepareEnvironment(UriInterface|Uri $uri): void
     {
-        $database = preg_replace('~^/~', '', $uri->getPath());
-
-        $customUri = new Uri($uri->__toString());
-
-        $dbDriver = Factory::getDbInstance($customUri->withPath('/')->__toString());
+        $database = static::getDatabaseName($uri);
+        $dbDriver = static::getDbDriverWithoutDatabase($uri);
         $dbDriver->execute("CREATE SCHEMA IF NOT EXISTS `$database` DEFAULT CHARACTER SET utf8 ;");
     }
 
     public function createDatabase(): void
     {
-        $database = preg_replace('~^/~', '', $this->getDbDriver()->getUri()->getPath());
+        $database = static::getDatabaseName($this->getDbDriver()->getUri());
 
         $this->getDbDriver()->execute("CREATE SCHEMA IF NOT EXISTS `$database` DEFAULT CHARACTER SET utf8 ;");
         $this->getDbDriver()->execute("USE `$database`");
@@ -35,7 +32,7 @@ class MySqlDatabase extends AbstractDatabase
 
     public function dropDatabase(): void
     {
-        $database = preg_replace('~^/~', '', $this->getDbDriver()->getUri()->getPath());
+        $database = static::getDatabaseName($this->getDbDriver()->getUri());
 
         $this->getDbDriver()->execute("drop database `$database`");
     }

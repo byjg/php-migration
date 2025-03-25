@@ -16,17 +16,11 @@ class PgsqlDatabase extends AbstractDatabase
         return 'pgsql';
     }
 
-    public static function prepareEnvironment(UriInterface $uri): void
+    public static function prepareEnvironment(UriInterface|Uri $uri): void
     {
-        $database = preg_replace('~^/~', '', $uri->getPath());
-        $dbDriver = static::getDbDriverWithoutDatabase($uri);
+        $database = static::getDatabaseName($uri);
+        $dbDriver = static::getDbDriverWithoutDatabase($uri, 'postgres');
         static::createDatabaseIfNotExists($dbDriver, $database);
-    }
-
-    protected static function getDbDriverWithoutDatabase(UriInterface $uri): DbDriverInterface
-    {
-        $customUri = new Uri($uri->__toString());
-        return Factory::getDbInstance($customUri->withPath('/postgres')->__toString());
     }
 
     /**
@@ -47,7 +41,7 @@ class PgsqlDatabase extends AbstractDatabase
 
     public function createDatabase(): void
     {
-        $database = preg_replace('~^/~', '', $this->getDbDriver()->getUri()->getPath());
+        $database = static::getDatabaseName($this->getDbDriver()->getUri());
         static::createDatabaseIfNotExists($this->getDbDriver(), $database);
     }
 
