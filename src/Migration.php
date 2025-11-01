@@ -238,7 +238,7 @@ class Migration
      * @throws InvalidMigrationFile
      * @throws OldVersionSchemaException
      */
-    public function reset(int $upVersion = null): void
+    public function reset(?int $upVersion = null): void
     {
         $fileInfo = $this->getFileContent($this->getBaseSql());
 

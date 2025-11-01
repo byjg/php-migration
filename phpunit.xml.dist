@@ -15,6 +15,10 @@ and open the template in the editor.
          displayDetailsOnTestsThatTriggerNotices="true"
          displayDetailsOnTestsThatTriggerWarnings="true"
          displayDetailsOnPhpunitDeprecations="true"
+         failOnWarning="true"
+         failOnNotice="true"
+         failOnDeprecation="true"
+         failOnPhpunitDeprecation="true"
          stopOnFailure="false"
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd">
 
@@ -32,10 +36,7 @@ and open the template in the editor.
 
     <testsuites>
         <testsuite name="Test Suite">
-            <!--<directory>./tests/</directory>-->
-            <file>./tests/SqliteDatabaseTest.php</file>
-            <file>./tests/MigrationTest.php</file>
+            <directory>./tests/</directory>
         </testsuite>
     </testsuites>
-
 </phpunit>
