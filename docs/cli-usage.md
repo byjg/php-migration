@@ -1,5 +1,7 @@
 ---
 sidebar_position: 4
+title: CLI Usage
+description: Command line interface guide for database migrations
 ---
 
 # Command Line Interface Usage
