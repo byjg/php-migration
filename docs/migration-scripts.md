@@ -1,5 +1,7 @@
 ---
 sidebar_position: 3
+title: Migration Scripts
+description: Learn how to write and organize database migration scripts
 ---
 
 # Writing Migration Scripts
@@ -22,6 +24,10 @@ Scripts in the `up` and `down` folders must follow the naming convention:
 The number represents the version that the script will migrate to (up) or from (down).
 
 ## Multi-Developer Workflow
+
+:::info Handling Multiple Developers
+When multiple developers work on different branches, use the `-dev` suffix to avoid version conflicts.
+:::
 
 When multiple developers work on different branches:
 
@@ -72,6 +78,10 @@ When multiple developers work on different branches:
    ```
 
 ### PostgreSQL-Specific Tips
+
+:::warning Important for PostgreSQL Functions
+Always add `--` comments after semicolons inside function definitions to prevent parsing errors.
+:::
 
 1. Use `--` after semicolons in functions:
    ```sql

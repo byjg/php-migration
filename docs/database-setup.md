@@ -1,5 +1,7 @@
 ---
 sidebar_position: 2
+title: Database Setup
+description: Configure database connections for MySQL, PostgreSQL, SQLite, and SQL Server
 ---
 
 # Database Setup and Configuration
@@ -37,8 +39,10 @@ The library supports the following databases:
    ```
 
 4. Transaction Limitations:
-   - DDL statements not supported in transactions
-   - Transaction settings ignored for DDL
+
+:::warning MySQL Transaction Limitations
+MySQL does not support DDL (Data Definition Language) statements within transactions. Any transaction settings will be ignored for DDL operations like CREATE TABLE, ALTER TABLE, etc.
+:::
 
 ### PostgreSQL
 

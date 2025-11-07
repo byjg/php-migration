@@ -1,5 +1,7 @@
 ---
 sidebar_position: 5
+title: API Reference
+description: Complete PHP API documentation for database migrations
 ---
 
 # API Reference
@@ -36,8 +38,9 @@ public function createVersion(): void
 // Check if database is versioned
 public function isDatabaseVersioned(): bool
 
-// Get current version
-public function getCurrentVersion(): int
+// Get current version and status
+// Returns: ['version' => int, 'status' => string]
+public function getCurrentVersion(): array
 
 // Update version table structure
 public function updateTableVersion(): void
@@ -124,9 +127,9 @@ interface DatabaseInterface
 ### Built-in Handlers
 
 - `MySqlDatabase`: MySQL/MariaDB
-- `PostgresDatabase`: PostgreSQL
+- `PgsqlDatabase`: PostgreSQL
 - `SqliteDatabase`: SQLite
-- `SqlServerDatabase`: Microsoft SQL Server
+- `DblibDatabase`: Microsoft SQL Server (both dblib and sqlsrv)
 
 ## Examples
 
@@ -154,6 +157,10 @@ $migration->addCallbackProgress(function ($action, $version, $fileInfo) {
 ```
 
 ### With Transaction Support
+
+:::note Transaction Support
+Transaction support is not available for MySQL as it doesn't support DDL commands inside transactions. The setting will be silently ignored for MySQL databases.
+:::
 
 ```php
 $migration

@@ -1,5 +1,7 @@
 ---
 sidebar_position: 1
+title: Getting Started
+description: Get started with PHP Database Migration - a framework-agnostic database versioning tool using pure SQL
 ---
 
 # Getting Started with PHP Database Migration
@@ -28,7 +30,9 @@ composer require "byjg/migration"
 composer require "byjg/migration-cli"
 ```
 
-For CLI usage, see [CLI documentation](cli-usage.md).
+:::tip
+For CLI usage, see the [CLI documentation](cli-usage.md) for detailed commands and options.
+:::
 
 ## Basic Usage
 
