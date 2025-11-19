@@ -17,6 +17,10 @@ class SqlServerSqlsrvDatabaseTest extends SqlServerDblibDatabaseTest
     #[\Override]
     public function setUp(): void
     {
+        if (!extension_loaded('pdo_sqlsrv')) {
+            $this->skipTest = "pdo_sqlsrv extension not loaded";
+            return;
+        }
         $this->scheme = "sqlsrv";
         parent::setUp();
     }

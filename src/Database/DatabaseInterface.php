@@ -2,7 +2,7 @@
 
 namespace ByJG\DbMigration\Database;
 
-use ByJG\AnyDataset\Db\DbDriverInterface;
+use ByJG\AnyDataset\Db\Interfaces\DbDriverInterface;
 use ByJG\DbMigration\Exception\DatabaseNotVersionedException;
 use ByJG\DbMigration\Exception\OldVersionSchemaException;
 use ByJG\DbMigration\MigrationStatus;

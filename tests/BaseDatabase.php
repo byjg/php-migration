@@ -25,6 +25,8 @@ abstract class BaseDatabase extends TestCase
 
     protected string $migrationTable = "migration_version";
 
+    protected string $skipTest = "";
+
     /**
      * @throws DatabaseDoesNotRegistered
      */
@@ -32,7 +34,6 @@ abstract class BaseDatabase extends TestCase
     public function setUp(): void
     {
         // create Migrate object in the parent!!!
-
         $this->migrate->prepareEnvironment();
     }
 
@@ -42,6 +43,9 @@ abstract class BaseDatabase extends TestCase
     #[Override]
     public function tearDown(): void
     {
+        if (!empty($this->skipTest)) {
+            return;
+        }
         $this->migrate->getDbCommand()->dropDatabase();
     }
 
@@ -54,12 +58,18 @@ abstract class BaseDatabase extends TestCase
      */
     public function testVersion0(): void
     {
+        if (!empty($this->skipTest)) {
+            $this->markTestSkipped($this->skipTest);
+        }
         $this->migrate->reset(0);
         $this->assertVersion0();
     }
 
     public function testIsDatabaseVersioned(): void
     {
+        if (!empty($this->skipTest)) {
+            $this->markTestSkipped($this->skipTest);
+        }
         $this->assertFalse($this->migrate->isDatabaseVersioned());
         $this->migrate->reset();
         $this->assertTrue($this->migrate->isDatabaseVersioned());
@@ -74,6 +84,9 @@ abstract class BaseDatabase extends TestCase
      */
     public function testUpVersion1(): void
     {
+        if (!empty($this->skipTest)) {
+            $this->markTestSkipped($this->skipTest);
+        }
         $this->migrate->reset(0);
         $this->assertVersion0();
         $this->migrate->up(1);
@@ -90,6 +103,9 @@ abstract class BaseDatabase extends TestCase
      */
     public function testUpVersion2(): void
     {
+        if (!empty($this->skipTest)) {
+            $this->markTestSkipped($this->skipTest);
+        }
         $this->migrate->reset(0);
         $this->assertVersion0();
         $this->migrate->up(2);
@@ -106,6 +122,9 @@ abstract class BaseDatabase extends TestCase
      */
     public function testDownVersion1(): void
     {
+        if (!empty($this->skipTest)) {
+            $this->markTestSkipped($this->skipTest);
+        }
         $this->migrate->reset();
         $this->assertVersion2();
         $this->migrate->down(1);
@@ -122,6 +141,9 @@ abstract class BaseDatabase extends TestCase
      */
     public function testDownVersion0(): void
     {
+        if (!empty($this->skipTest)) {
+            $this->markTestSkipped($this->skipTest);
+        }
         $this->migrate->reset();
         $this->assertVersion2();
         $this->migrate->down(0);
@@ -282,6 +304,9 @@ abstract class BaseDatabase extends TestCase
      */
     public function testGetCurrentVersionIsEmpty(): void
     {
+        if (!empty($this->skipTest)) {
+            $this->markTestSkipped($this->skipTest);
+        }
         $this->expectException(DatabaseNotVersionedException::class);
         $this->migrate->getCurrentVersion();
     }
@@ -291,6 +316,9 @@ abstract class BaseDatabase extends TestCase
      */
     public function testCreateVersion(): void
     {
+        if (!empty($this->skipTest)) {
+            $this->markTestSkipped($this->skipTest);
+        }
         $this->migrate->createVersion();
         $records = $this->migrate->getDbDriver()->getIterator("select * from " . $this->migrationTable)->toArray();
         $this->assertEquals([
