@@ -22,6 +22,9 @@
       "Tests\\": "tests/"
     }
   },
+  "bin": [
+    "bin/migrate"
+  ],
   "scripts": {
     "test": "vendor/bin/phpunit",
     "psalm": "vendor/bin/psalm"

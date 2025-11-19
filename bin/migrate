@@ -1,0 +1,36 @@
+#!/usr/bin/env php
+<?php
+
+// Find the autoloader
+$autoloadPaths = [
+    __DIR__ . '/../vendor/autoload.php',
+    __DIR__ . '/../../../autoload.php',
+];
+
+$autoloadPath = null;
+foreach ($autoloadPaths as $path) {
+    if (file_exists($path)) {
+        $autoloadPath = $path;
+        break;
+    }
+}
+
+if (!$autoloadPath) {
+    fwrite(STDERR, "Error: Could not find autoload.php\n");
+    exit(1);
+}
+
+require_once $autoloadPath;
+
+use ByJG\DbMigration\Console\MigrateCommand;
+
+try {
+    $command = new MigrateCommand($argv);
+    exit($command->run());
+} catch (Exception $e) {
+    fwrite(STDERR, "Error: " . $e->getMessage() . "\n");
+    if (getenv('DEBUG') === 'true') {
+        fwrite(STDERR, $e->getTraceAsString() . "\n");
+    }
+    exit(1);
+}

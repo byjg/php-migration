@@ -21,17 +21,28 @@ A simple, framework-agnostic database migration tool that uses pure SQL commands
 
 ### Installation
 
-As a library in your project:
 ```bash
 composer require "byjg/migration"
 ```
 
-As a command-line tool:
+### CLI Usage
+
+The package includes a built-in CLI tool:
+
 ```bash
-composer require "byjg/migration-cli"
+# Show current database version
+vendor/bin/migrate version --connection mysql://user:pass@localhost/database
+
+# Update database to latest version
+vendor/bin/migrate update --connection mysql://user:pass@localhost/database --path ./migrations
+
+# Reset database and run all migrations
+vendor/bin/migrate reset -c mysql://user:pass@localhost/database -p ./migrations
 ```
 
-### Basic Usage
+See [CLI Usage](docs/cli-usage.md) for complete documentation.
+
+### Library Usage
 
 ```php
 <?php

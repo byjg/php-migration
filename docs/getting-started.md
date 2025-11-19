@@ -18,20 +18,14 @@ However, in real-world projects, developers often use tools like MySQL Workbench
 
 ## Installation
 
-### As a Library
-
 ```bash
 composer require "byjg/migration"
 ```
 
-### As a CLI Tool
-
-```bash
-composer require "byjg/migration-cli"
-```
+The package includes both the library and a built-in CLI tool (no additional packages needed).
 
 :::tip
-For CLI usage, see the [CLI documentation](cli-usage.md) for detailed commands and options.
+The CLI is automatically available at `vendor/bin/migrate`. See the [CLI documentation](cli-usage.md) for detailed commands and options.
 :::
 
 ## Basic Usage
@@ -79,6 +73,28 @@ $migration->createVersion();
 // Run migrations
 $migration->update();
 ```
+
+## CLI Usage
+
+Alternatively, you can use the built-in command-line tool:
+
+```bash
+# Create version table
+vendor/bin/migrate create \
+  --connection mysql://user:pass@localhost/database \
+  --path /path/to/migrations
+
+# Run migrations to latest version
+vendor/bin/migrate update \
+  --connection mysql://user:pass@localhost/database \
+  --path /path/to/migrations
+
+# Check current version
+vendor/bin/migrate version \
+  --connection mysql://user:pass@localhost/database
+```
+
+For complete CLI documentation, see [CLI Usage](cli-usage.md).
 
 ## Next Steps
 
