@@ -20,7 +20,8 @@ class PgsqlDatabase extends AbstractDatabase
     #[\Override]
     public static function prepareEnvironment(UriInterface|Uri $uri): void
     {
-        $database = static::getDatabaseName($uri);
+        $uriInstance = $uri instanceof Uri ? $uri : new Uri($uri->__toString());
+        $database = static::getDatabaseName($uriInstance);
         $dbDriver = static::getDbDriverWithoutDatabase($uri, 'postgres');
         static::createDatabaseIfNotExists($dbDriver, $database);
     }
@@ -74,6 +75,10 @@ class PgsqlDatabase extends AbstractDatabase
     public function executeSql(string $sql): void
     {
         $statements = preg_split("/;(\r\n|\r|\n)/", $sql);
+
+        if ($statements === false) {
+            $statements = [$sql];
+        }
 
         foreach ($statements as $sql) {
             $this->executeSqlInternal($sql);

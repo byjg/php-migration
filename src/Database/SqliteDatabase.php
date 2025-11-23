@@ -65,6 +65,10 @@ class SqliteDatabase extends AbstractDatabase
     {
         $statements = preg_split("/;(\r\n|\r|\n)/", $sql);
 
+        if ($statements === false) {
+            $statements = [$sql];
+        }
+
         foreach ($statements as $sql) {
             $this->executeSqlInternal($sql);
         }

@@ -25,7 +25,8 @@ class DblibDatabase extends AbstractDatabase
     #[\Override]
     public static function prepareEnvironment(UriInterface|Uri $uri): void
     {
-        $database = static::getDatabaseName($uri);
+        $uriInstance = $uri instanceof Uri ? $uri : new Uri($uri->__toString());
+        $database = static::getDatabaseName($uriInstance);
         $dbDriver = static::getDbDriverWithoutDatabase($uri);
         $dbDriver->execute("IF NOT EXISTS(select * from sys.databases where name='$database') CREATE DATABASE $database");
     }
@@ -81,6 +82,10 @@ class DblibDatabase extends AbstractDatabase
     public function executeSql(string $sql): void
     {
         $statements = preg_split("/;(\r\n|\r|\n)/", $sql);
+
+        if ($statements === false) {
+            $statements = [$sql];
+        }
 
         foreach ($statements as $sql) {
             $this->executeSqlInternal($sql);

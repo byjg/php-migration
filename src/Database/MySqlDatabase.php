@@ -19,7 +19,8 @@ class MySqlDatabase extends AbstractDatabase
     #[\Override]
     public static function prepareEnvironment(UriInterface|Uri $uri): void
     {
-        $database = static::getDatabaseName($uri);
+        $uriInstance = $uri instanceof Uri ? $uri : new Uri($uri->__toString());
+        $database = static::getDatabaseName($uriInstance);
         $dbDriver = static::getDbDriverWithoutDatabase($uri);
         $dbDriver->execute("CREATE SCHEMA IF NOT EXISTS `$database` DEFAULT CHARACTER SET utf8 ;");
     }

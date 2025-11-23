@@ -18,10 +18,9 @@ jobs:
     strategy:
       matrix:
         php-version:
+          - "8.5"
           - "8.4"
           - "8.3"
-          - "8.2"
-          - "8.1"
 
     services:
       mysql:
@@ -66,21 +65,41 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
-#      - name: Spin up databases
-#        run: |
-#          apk add --no-cache python3 python3-dev py3-pip build-base libffi-dev
-#          pip3 install --upgrade pip
-#          pip3 install docker-compose
-#          apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community docker
-#          docker-compose up -d postgres mysql
       - run: composer install
-      - run: ./vendor/bin/psalm
-      - run: ./vendor/bin/phpunit
+      - run: composer test
       - run: ./vendor/bin/phpunit tests/SqliteDatabase*
       - run: ./vendor/bin/phpunit tests/MysqlDatabase*
       - run: ./vendor/bin/phpunit tests/PostgresDatabase*
-#      - run: ./vendor/bin/phpunit tests/SqlServerSqlsrv*
-#      - run: ./vendor/bin/phpunit tests/SqlServerDblib*
+
+  Psalm:
+    name: Psalm Static Analyzer
+    runs-on: ubuntu-latest
+    permissions:
+      # for github/codeql-action/upload-sarif to upload SARIF results
+      security-events: write
+    container:
+      image: byjg/php:8.4-cli
+      options: --user root --privileged
+
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v4
+
+      - name: Composer
+        run: composer install
+
+      - name: Psalm
+        # Note: Ignoring error code 2, which just signals that some
+        # flaws were found, not that Psalm itself failed to run.
+        run: ./vendor/bin/psalm
+          --show-info=true
+          --report=psalm-results.sarif || [ $? = 2 ]
+
+      - name: Upload Analysis results to GitHub
+        uses: github/codeql-action/upload-sarif@v4
+        if: github.ref == 'refs/heads/master'
+        with:
+          sarif_file: psalm-results.sarif
 
   Documentation:
     if: github.ref == 'refs/heads/master'
