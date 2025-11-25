@@ -46,17 +46,18 @@ jobs:
           --health-timeout 5s
           --health-retries 5
       sqlserver:
-        image: mcr.microsoft.com/mssql/server
+        image: mcr.microsoft.com/mssql/server:2022-latest
         env:
           ACCEPT_EULA: Y
           SA_PASSWORD: Pa55word
+          MSSQL_PID: Developer
         ports:
           - "1433:1433"
         options: >-
-          --health-cmd "/opt/mssql-tools/bin/sqlcmd -U sa -P Pa55word -Q 'SELECT 1'"
+          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -U sa -P Pa55word -Q 'SELECT 1' -C -No"
           --health-interval 10s
           --health-timeout 5s
-          --health-retries 5
+          --health-retries 10
 
     env:
       MYSQL_TEST_HOST: mysql
