@@ -2,7 +2,7 @@
 
 namespace ByJG\DbMigration;
 
-use ByJG\AnyDataset\Db\DbDriverInterface;
+use ByJG\AnyDataset\Db\Interfaces\DbDriverInterface;
 use ByJG\DbMigration\Database\DatabaseInterface;
 use ByJG\DbMigration\Exception\DatabaseDoesNotRegistered;
 use ByJG\DbMigration\Exception\DatabaseIsIncompleteException;
@@ -82,7 +82,8 @@ class Migration
      */
     public static function registerDatabase(string $class): void
     {
-        if (!in_array(DatabaseInterface::class, class_implements($class))) {
+        $implements = class_implements($class);
+        if ($implements === false || !in_array(DatabaseInterface::class, $implements)) {
             throw new InvalidArgumentException('Class not implements DatabaseInterface!');
         }
 
@@ -110,7 +111,9 @@ class Migration
     {
         if (is_null($this->dbCommand)) {
             $class = $this->getDatabaseClassName();
-            $this->dbCommand = new $class($this->uri, $this->migrationTable);
+            /** @var DatabaseInterface $instance */
+            $instance = new $class($this->uri, $this->migrationTable);
+            $this->dbCommand = $instance;
         }
         return $this->dbCommand;
     }
@@ -167,7 +170,12 @@ class Migration
             . "/" . ($increment < 0 ? "down" : "up")
             . "/*.sql";
 
-        $result = array_filter(glob($filePattern), function ($file) use ($version) {
+        $files = glob($filePattern);
+        if ($files === false) {
+            $files = [];
+        }
+
+        $result = array_filter($files, function ($file) use ($version) {
             return preg_match("/^0*$version(-[\w\d-]*)?\.sql$/", basename($file));
         });
 
@@ -186,10 +194,12 @@ class Migration
 
     /**
      * Get the file contents and metainfo
-     * @param $file
+     *
+     * @param null|string $file
+     *
      * @return array
      */
-    public function getFileContent($file): array
+    public function getFileContent(string|null $file): array
     {
         $data = [
             "file" => $file,
@@ -202,14 +212,20 @@ class Migration
             return $data;
         }
 
-        $data["content"] = file_get_contents($file);
+        $content = file_get_contents($file);
 
-        if (preg_match("/--\s*@description:\s*(?<name>.*)/", $data["content"], $description)) {
+        if ($content === false) {
+            return $data;
+        }
+
+        $data["content"] = $content;
+
+        if (preg_match("/--\s*@description:\s*(?<name>.*)/", $content, $description)) {
             $data["description"] = $description["name"];
         }
 
         $data["exists"] = true;
-        $data["checksum"] = sha1($data["content"]);
+        $data["checksum"] = sha1($content);
 
         return $data;
     }
@@ -236,7 +252,7 @@ class Migration
      * @throws InvalidMigrationFile
      * @throws OldVersionSchemaException
      */
-    public function reset(int $upVersion = null): void
+    public function reset(?int $upVersion = null): void
     {
         $fileInfo = $this->getFileContent($this->getBaseSql());
 
@@ -415,7 +431,7 @@ class Migration
      */
     public function addCallbackProgress(callable $callable): void
     {
-        $this->callableProgress = $callable;
+        $this->callableProgress = $callable instanceof Closure ? $callable : Closure::fromCallable($callable);
     }
 
     /**

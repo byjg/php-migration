@@ -10,32 +10,40 @@ use Psr\Http\Message\UriInterface;
 
 class DblibDatabase extends AbstractDatabase
 {
+    #[\Override]
     public static function schema(): array
     {
         return ['dblib', 'sqlsrv'];
     }
 
-    public static function prepareEnvironment(UriInterface $uri): void
+    #[\Override]
+    protected static function getDatabaseName(Uri $uri): string
     {
-        $database = preg_replace('~^/~', '', $uri->getPath());
+        return $uri->getQueryPart('dbname') ?? $uri->getQueryPart('Database') ?? ltrim($uri->getPath(), '/');
+    }
 
-        $customUri = new Uri($uri->__toString());
-
-        $dbDriver = Factory::getDbInstance($customUri->withPath('/')->__toString());
+    #[\Override]
+    public static function prepareEnvironment(UriInterface|Uri $uri): void
+    {
+        $uriInstance = $uri instanceof Uri ? $uri : new Uri($uri->__toString());
+        $database = static::getDatabaseName($uriInstance);
+        $dbDriver = static::getDbDriverWithoutDatabase($uri);
         $dbDriver->execute("IF NOT EXISTS(select * from sys.databases where name='$database') CREATE DATABASE $database");
     }
 
+    #[\Override]
     public function createDatabase(): void
     {
-        $database = preg_replace('~^/~', '', $this->getDbDriver()->getUri()->getPath());
+        $database = static::getDatabaseName($this->getDbDriver()->getUri());
 
         $this->getDbDriver()->execute("IF NOT EXISTS(select * from sys.databases where name='$database') CREATE DATABASE $database");
         $this->getDbDriver()->execute("USE $database");
     }
 
+    #[\Override]
     public function dropDatabase(): void
     {
-        $database = preg_replace('~^/~', '', $this->getDbDriver()->getUri()->getPath());
+        $database = static::getDatabaseName($this->getDbDriver()->getUri());
 
         $this->getDbDriver()->execute("use master");
         $this->getDbDriver()->execute("drop database $database");
@@ -60,17 +68,24 @@ class DblibDatabase extends AbstractDatabase
      * @throws DatabaseNotVersionedException
      * @throws OldVersionSchemaException
      */
+    #[\Override]
     public function createVersion(): void
     {
-        $database = preg_replace('~^/~', '', $this->getDbDriver()->getUri()->getPath());
+        $database = static::getDatabaseName($this->getDbDriver()->getUri());
+
         $createTable = 'CREATE TABLE ' . $this->getMigrationTable() . ' (version int, status varchar(20), PRIMARY KEY (version))';
         $this->createTableIfNotExists($database, $createTable);
         $this->checkExistsVersion();
     }
 
+    #[\Override]
     public function executeSql(string $sql): void
     {
         $statements = preg_split("/;(\r\n|\r|\n)/", $sql);
+
+        if ($statements === false) {
+            $statements = [$sql];
+        }
 
         foreach ($statements as $sql) {
             $this->executeSqlInternal($sql);
@@ -90,6 +105,7 @@ class DblibDatabase extends AbstractDatabase
      * @param string $table
      * @return bool
      */
+    #[\Override]
     protected function isTableExists(?string $schema, string $table): bool
     {
         $count = $this->getDbDriver()->getScalar(

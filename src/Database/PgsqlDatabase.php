@@ -2,7 +2,7 @@
 
 namespace ByJG\DbMigration\Database;
 
-use ByJG\AnyDataset\Db\DbDriverInterface;
+use ByJG\AnyDataset\Db\Interfaces\DbDriverInterface;
 use ByJG\AnyDataset\Db\Factory;
 use ByJG\DbMigration\Exception\DatabaseNotVersionedException;
 use ByJG\DbMigration\Exception\OldVersionSchemaException;
@@ -11,22 +11,19 @@ use Psr\Http\Message\UriInterface;
 
 class PgsqlDatabase extends AbstractDatabase
 {
+    #[\Override]
     public static function schema(): string
     {
         return 'pgsql';
     }
 
-    public static function prepareEnvironment(UriInterface $uri): void
+    #[\Override]
+    public static function prepareEnvironment(UriInterface|Uri $uri): void
     {
-        $database = preg_replace('~^/~', '', $uri->getPath());
-        $dbDriver = static::getDbDriverWithoutDatabase($uri);
+        $uriInstance = $uri instanceof Uri ? $uri : new Uri($uri->__toString());
+        $database = static::getDatabaseName($uriInstance);
+        $dbDriver = static::getDbDriverWithoutDatabase($uri, 'postgres');
         static::createDatabaseIfNotExists($dbDriver, $database);
-    }
-
-    protected static function getDbDriverWithoutDatabase(UriInterface $uri): DbDriverInterface
-    {
-        $customUri = new Uri($uri->__toString());
-        return Factory::getDbInstance($customUri->withPath('/postgres')->__toString());
     }
 
     /**
@@ -45,12 +42,14 @@ class PgsqlDatabase extends AbstractDatabase
         }
     }
 
+    #[\Override]
     public function createDatabase(): void
     {
-        $database = preg_replace('~^/~', '', $this->getDbDriver()->getUri()->getPath());
+        $database = static::getDatabaseName($this->getDbDriver()->getUri());
         static::createDatabaseIfNotExists($this->getDbDriver(), $database);
     }
 
+    #[\Override]
     public function dropDatabase(): void
     {
         $iterator = $this->getDbDriver()->getIterator(
@@ -65,15 +64,21 @@ class PgsqlDatabase extends AbstractDatabase
      * @throws DatabaseNotVersionedException
      * @throws OldVersionSchemaException
      */
+    #[\Override]
     public function createVersion(): void
     {
         $this->getDbDriver()->execute('CREATE TABLE IF NOT EXISTS ' . $this->getMigrationTable() . ' (version int, status varchar(20), PRIMARY KEY (version))');
         $this->checkExistsVersion();
     }
 
+    #[\Override]
     public function executeSql(string $sql): void
     {
         $statements = preg_split("/;(\r\n|\r|\n)/", $sql);
+
+        if ($statements === false) {
+            $statements = [$sql];
+        }
 
         foreach ($statements as $sql) {
             $this->executeSqlInternal($sql);
@@ -88,6 +93,7 @@ class PgsqlDatabase extends AbstractDatabase
         $this->getDbDriver()->execute($sql);
     }
 
+    #[\Override]
     public function isDatabaseVersioned(): bool
     {
         return $this->isTableExists('public', $this->getMigrationTable());

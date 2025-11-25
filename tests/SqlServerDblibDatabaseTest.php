@@ -5,10 +5,13 @@ namespace Tests;
 use ByJG\DbMigration\Database\DblibDatabase;
 use ByJG\DbMigration\Migration;
 use ByJG\Util\Uri;
+use PHPUnit\Framework\Attributes\RequiresPhpExtension;
+use PHPUnit\Framework\Attributes\Override;
 
 /**
  * @requires extension pdo_dblib
  */
+#[RequiresPhpExtension('pdo_dblib')]
 class SqlServerDblibDatabaseTest extends BaseDatabase
 {
     /**
@@ -18,6 +21,7 @@ class SqlServerDblibDatabaseTest extends BaseDatabase
 
     protected string $scheme = "dblib";
 
+    #[\Override]
     public function setUp(): void
     {
         $host = getenv('MSSQL_TEST_HOST');
@@ -37,16 +41,12 @@ class SqlServerDblibDatabaseTest extends BaseDatabase
         parent::setUp();
     }
 
-    public function getExpectedUsersVersion1(): array
+    #[\Override]
+    /**
+     * @return string
+     */
+    public function getSelectUsersVersion1(): string
     {
-        if ($this->scheme == "sqlsrv") {
-            return parent::getExpectedUsersVersion1();
-        }
-
-        return [
-            ["id" => 1, "name" => 'John Doe', 'createdate' => '2016-01-10 00:00:00'],
-            ["id" => 2, "name" => 'Jane Doe', 'createdate' => '2015-12-30 00:00:00']
-        ];
+        return "select id, name, FORMAT(createdate, 'yyyy-MM-dd') as createdate from users";
     }
-
 }

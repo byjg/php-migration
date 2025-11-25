@@ -5,10 +5,13 @@ namespace Tests;
 use ByJG\DbMigration\Database\SqliteDatabase;
 use ByJG\DbMigration\Migration;
 use ByJG\Util\Uri;
+use PHPUnit\Framework\Attributes\RequiresPhpExtension;
+use PHPUnit\Framework\Attributes\Override;
 
 /**
  * @requires extension pdo_sqlite
  */
+#[RequiresPhpExtension('pdo_sqlite')]
 class SqliteDatabaseTest extends BaseDatabase
 {
     protected $path = '';
@@ -18,6 +21,7 @@ class SqliteDatabaseTest extends BaseDatabase
      */
     protected ?Migration $migrate = null;
 
+    #[\Override]
     public function setUp(): void
     {
         $this->path = getenv('SQLITE_TEST_HOST');
@@ -36,7 +40,7 @@ class SqliteDatabaseTest extends BaseDatabase
         parent::setUp();
     }
 
-    public function testUsingCustomTable()
+    public function testUsingCustomTable(): void
     {
         $this->migrationTable = 'migration_table';
 
@@ -50,7 +54,7 @@ class SqliteDatabaseTest extends BaseDatabase
         parent::testUpVersion1();
     }
 
-    protected function prepareDatabase() {
+    protected function prepareDatabase(): void {
         if ($this->path != ":memory:") {
             file_put_contents($this->path, '');
         }

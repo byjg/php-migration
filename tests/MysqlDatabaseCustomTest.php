@@ -2,9 +2,9 @@
 
 namespace Tests;
 
-/**
- * @requires extension pdo_mysql
- */
+use PHPUnit\Framework\Attributes\RequiresPhpExtension;
+
+#[RequiresPhpExtension('pdo_mysql')]
 class MysqlDatabaseCustomTest extends MysqlDatabaseTest
 {
     protected string $migrationTable = "some_table_version";

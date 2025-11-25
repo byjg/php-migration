@@ -12,6 +12,7 @@ use ByJG\DbMigration\MigrationStatus;
 use ByJG\Serializer\Exception\InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
+use Override;
 
 abstract class BaseDatabase extends TestCase
 {
@@ -24,21 +25,27 @@ abstract class BaseDatabase extends TestCase
 
     protected string $migrationTable = "migration_version";
 
+    protected string $skipTest = "";
+
     /**
      * @throws DatabaseDoesNotRegistered
      */
+    #[Override]
     public function setUp(): void
     {
         // create Migrate object in the parent!!!
-
         $this->migrate->prepareEnvironment();
     }
 
     /**
      * @throws DatabaseDoesNotRegistered
      */
+    #[Override]
     public function tearDown(): void
     {
+        if (!empty($this->skipTest)) {
+            return;
+        }
         $this->migrate->getDbCommand()->dropDatabase();
     }
 
@@ -49,14 +56,20 @@ abstract class BaseDatabase extends TestCase
      * @throws InvalidMigrationFile
      * @throws OldVersionSchemaException
      */
-    public function testVersion0()
+    public function testVersion0(): void
     {
+        if (!empty($this->skipTest)) {
+            $this->markTestSkipped($this->skipTest);
+        }
         $this->migrate->reset(0);
         $this->assertVersion0();
     }
 
-    public function testIsDatabaseVersioned()
+    public function testIsDatabaseVersioned(): void
     {
+        if (!empty($this->skipTest)) {
+            $this->markTestSkipped($this->skipTest);
+        }
         $this->assertFalse($this->migrate->isDatabaseVersioned());
         $this->migrate->reset();
         $this->assertTrue($this->migrate->isDatabaseVersioned());
@@ -69,8 +82,11 @@ abstract class BaseDatabase extends TestCase
      * @throws InvalidMigrationFile
      * @throws OldVersionSchemaException
      */
-    public function testUpVersion1()
+    public function testUpVersion1(): void
     {
+        if (!empty($this->skipTest)) {
+            $this->markTestSkipped($this->skipTest);
+        }
         $this->migrate->reset(0);
         $this->assertVersion0();
         $this->migrate->up(1);
@@ -85,8 +101,11 @@ abstract class BaseDatabase extends TestCase
      * @throws OldVersionSchemaException
      * @throws InvalidArgumentException
      */
-    public function testUpVersion2()
+    public function testUpVersion2(): void
     {
+        if (!empty($this->skipTest)) {
+            $this->markTestSkipped($this->skipTest);
+        }
         $this->migrate->reset(0);
         $this->assertVersion0();
         $this->migrate->up(2);
@@ -101,8 +120,11 @@ abstract class BaseDatabase extends TestCase
      * @throws OldVersionSchemaException
      * @throws InvalidArgumentException
      */
-    public function testDownVersion1()
+    public function testDownVersion1(): void
     {
+        if (!empty($this->skipTest)) {
+            $this->markTestSkipped($this->skipTest);
+        }
         $this->migrate->reset();
         $this->assertVersion2();
         $this->migrate->down(1);
@@ -117,8 +139,11 @@ abstract class BaseDatabase extends TestCase
      * @throws OldVersionSchemaException
      * @throws InvalidArgumentException
      */
-    public function testDownVersion0()
+    public function testDownVersion0(): void
     {
+        if (!empty($this->skipTest)) {
+            $this->markTestSkipped($this->skipTest);
+        }
         $this->migrate->reset();
         $this->assertVersion2();
         $this->migrate->down(0);
@@ -131,6 +156,14 @@ abstract class BaseDatabase extends TestCase
             ["id" => 1, "name" => 'John Doe', 'createdate' => '20160110'],
             ["id" => 2, "name" => 'Jane Doe', 'createdate' => '20151230']
         ];
+    }
+
+    /**
+     * @return string
+     */
+    protected function getSelectUsersVersion1(): string
+    {
+        return 'select * from users';
     }
 
     protected function getExpectedUsersVersion1(): array
@@ -160,21 +193,23 @@ abstract class BaseDatabase extends TestCase
 
         $iterator = $this->migrate->getDbDriver()->getIterator('select * from users');
 
-        $this->assertTrue($iterator->hasNext());
-        $row = $iterator->moveNext();
+        $this->assertNotNull($iterator->current());
+        $row = $iterator->current();
         $this->assertEquals(
             $this->getExpectedUsersVersion0()[0],
             $row->toArray()
         );
 
-        $this->assertTrue($iterator->hasNext());
-        $row = $iterator->moveNext();
+        $iterator->next();
+        $this->assertNotNull($iterator->current());
+        $row = $iterator->current();
         $this->assertEquals(
             $this->getExpectedUsersVersion0()[1],
             $row->toArray()
         );
 
-        $this->assertFalse($iterator->hasNext());
+        $iterator->next();
+        $this->assertNull($iterator->current());
 
         try {
             $this->migrate->getDbDriver()->getIterator('select * from roles');
@@ -193,23 +228,25 @@ abstract class BaseDatabase extends TestCase
         $status = $this->migrate->getDbDriver()->getScalar('select status from '. $this->migrationTable);
         $this->assertEquals(MigrationStatus::complete->value, $status);
 
-        $iterator = $this->migrate->getDbDriver()->getIterator('select * from users');
+        $iterator = $this->migrate->getDbDriver()->getIterator($this->getSelectUsersVersion1());
 
-        $this->assertTrue($iterator->hasNext());
-        $row = $iterator->moveNext();
+        $this->assertNotNull($iterator->current());
+        $row = $iterator->current();
         $this->assertEquals(
             $this->getExpectedUsersVersion1()[0],
             $row->toArray()
         );
 
-        $this->assertTrue($iterator->hasNext());
-        $row = $iterator->moveNext();
+        $iterator->next();
+        $this->assertNotNull($iterator->current());
+        $row = $iterator->current();
         $this->assertEquals(
             $this->getExpectedUsersVersion1()[1],
             $row->toArray()
         );
 
-        $this->assertFalse($iterator->hasNext());
+        $iterator->next();
+        $this->assertNull($iterator->current());
 
         try {
             $this->migrate->getDbDriver()->getIterator('select * from roles');
@@ -222,7 +259,7 @@ abstract class BaseDatabase extends TestCase
      * @throws DatabaseDoesNotRegistered
      * @throws InvalidArgumentException
      */
-    protected function assertVersion2()
+    protected function assertVersion2(): void
     {
         $version = $this->migrate->getDbDriver()->getScalar('select version from '. $this->migrationTable);
         $this->assertEquals(2, $version);
@@ -230,29 +267,31 @@ abstract class BaseDatabase extends TestCase
         $this->assertEquals(MigrationStatus::complete->value, $status);
 
         // Users
-        $iterator = $this->migrate->getDbDriver()->getIterator('select * from users');
+        $iterator = $this->migrate->getDbDriver()->getIterator($this->getSelectUsersVersion1());
 
-        $this->assertTrue($iterator->hasNext());
-        $row = $iterator->moveNext();
+        $this->assertNotNull($iterator->current());
+        $row = $iterator->current();
         $this->assertEquals(
             $this->getExpectedUsersVersion1()[0],
             $row->toArray()
         );
 
-        $this->assertTrue($iterator->hasNext());
-        $row = $iterator->moveNext();
+        $iterator->next();
+        $this->assertNotNull($iterator->current());
+        $row = $iterator->current();
         $this->assertEquals(
             $this->getExpectedUsersVersion1()[1],
             $row->toArray()
         );
 
-        $this->assertFalse($iterator->hasNext());
+        $iterator->next();
+        $this->assertNull($iterator->current());
 
         // Posts
         $iterator = $this->migrate->getDbDriver()->getIterator('select * from posts');
 
-        $this->assertTrue($iterator->hasNext());
-        $row = $iterator->moveNext();
+        $this->assertNotNull($iterator->current());
+        $row = $iterator->current();
         $this->assertEquals(
             $this->getExpectedPostsVersion2()[0],
             $row->toArray()
@@ -263,8 +302,11 @@ abstract class BaseDatabase extends TestCase
      * @throws DatabaseDoesNotRegistered
      * @throws OldVersionSchemaException
      */
-    public function testGetCurrentVersionIsEmpty()
+    public function testGetCurrentVersionIsEmpty(): void
     {
+        if (!empty($this->skipTest)) {
+            $this->markTestSkipped($this->skipTest);
+        }
         $this->expectException(DatabaseNotVersionedException::class);
         $this->migrate->getCurrentVersion();
     }
@@ -272,8 +314,11 @@ abstract class BaseDatabase extends TestCase
     /**
      * @throws DatabaseDoesNotRegistered
      */
-    public function testCreateVersion()
+    public function testCreateVersion(): void
     {
+        if (!empty($this->skipTest)) {
+            $this->markTestSkipped($this->skipTest);
+        }
         $this->migrate->createVersion();
         $records = $this->migrate->getDbDriver()->getIterator("select * from " . $this->migrationTable)->toArray();
         $this->assertEquals([

@@ -1,7 +1,6 @@
 version: '3.4'
 services:
   mssql:
-    container_name: anydataset_db_mssql
     image: mcr.microsoft.com/mssql/server
     environment:
       - ACCEPT_EULA=Y
@@ -9,13 +8,12 @@ services:
     ports:
       - "1433:1433"
     healthcheck:
-      test: ["CMD", "/opt/mssql-tools/bin/sqlcmd", "-S", "localhost,1433", "-U", "sa", "-P", "Pa55word", "-Q", "SELECT 1"]
+      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-C", "-S", "localhost,1433", "-U", "sa", "-P", "Pa55word", "-Q", "SELECT 1"]
       timeout: 20s
       interval: 10s
       retries: 10
 
   postgres:
-    container_name: anydataset_db_postgres
     image: postgres:14-alpine
     environment:
       - POSTGRES_USER=postgres
@@ -29,9 +27,7 @@ services:
       retries: 10
 
   mysql:
-    container_name: anydataset_db_mysql
     image: mysql:8
-    command: --default-authentication-plugin=mysql_native_password
     environment:
       - MYSQL_ROOT_PASSWORD=password
     ports:

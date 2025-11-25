@@ -51,4 +51,7 @@ fabric.properties
 node_modules
 package-lock.json
 .usdocker
+phpunit.coverage.xml
+phpunit.report.xml
 .phpunit.result.cache
+*.bak

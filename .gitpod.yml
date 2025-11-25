@@ -1,0 +1,28 @@
+tasks:  
+  - name: Run Composer  
+    command: |  
+      composer install  
+  
+image: byjg/gitpod-image:latest  
+  
+jetbrains:  
+  phpstorm:  
+    vmoptions: '-Xmx4g'  
+  plugins:  
+    - com.github.copilot  
+    - com.intellij.kubernetes  
+    - com.intellij.mermaid  
+    - ru.adelf.idea.dotenv  
+    - org.toml.lang  
+  
+vscode:  
+  extensions:  
+    - ikappas.composer  
+    - hbenl.test-adapter-converter  
+    - hbenl.vscode-test-explorer  
+    - felixfbecker.php-debug  
+    - neilbrayfield.php-docblocker  
+    - bmewburn.vscode-intelephense-client  
+    - getpsalm.psalm-vscode-plugin  
+    - SonarSource.sonarlint-vscode  
+    - recca0120.vscode-phpunit 
