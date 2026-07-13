@@ -2,6 +2,7 @@
 
 namespace ByJG\DbMigration\Database;
 
+use ByJG\AnyDataset\Db\DatabaseExecutor;
 use ByJG\AnyDataset\Db\Interfaces\DbDriverInterface;
 use ByJG\AnyDataset\Db\Factory;
 use ByJG\DbMigration\Exception\DatabaseNotVersionedException;
@@ -17,6 +18,11 @@ abstract class AbstractDatabase implements DatabaseInterface
      * @var DbDriverInterface|null
      */
     private ?DbDriverInterface $dbDriver = null;
+
+    /**
+     * @var DatabaseExecutor|null
+     */
+    private ?DatabaseExecutor $executor = null;
 
     /**
      * @var UriInterface
@@ -44,9 +50,9 @@ abstract class AbstractDatabase implements DatabaseInterface
         return ltrim($uri->getPath(), '/');
     }
 
-    protected static function getDbDriverWithoutDatabase(UriInterface $uri, string $database = ''): DbDriverInterface
+    protected static function getExecutorWithoutDatabase(UriInterface $uri, string $database = ''): DatabaseExecutor
     {
-        return Factory::getDbInstance($uri->withPath("/$database")->__toString());
+        return DatabaseExecutor::using(Factory::getDbInstance($uri->withPath("/$database")->__toString()));
     }
 
     /**
@@ -71,6 +77,18 @@ abstract class AbstractDatabase implements DatabaseInterface
     }
 
     /**
+     * @return DatabaseExecutor
+     */
+    #[\Override]
+    public function getExecutor(): DatabaseExecutor
+    {
+        if (is_null($this->executor)) {
+            $this->executor = DatabaseExecutor::using($this->getDbDriver());
+        }
+        return $this->executor;
+    }
+
+    /**
      * @return array
      * @throws DatabaseNotVersionedException
      * @throws OldVersionSchemaException
@@ -80,13 +98,13 @@ abstract class AbstractDatabase implements DatabaseInterface
     {
         $result = [];
         try {
-            $result['version'] = $this->getDbDriver()->getScalar('SELECT version FROM ' . $this->getMigrationTable());
+            $result['version'] = $this->getExecutor()->getScalar('SELECT version FROM ' . $this->getMigrationTable());
         } catch (Exception $ex) {
             throw new DatabaseNotVersionedException('This database does not have a migration version. Please use "migrate reset" or "migrate install" to create one.');
         }
 
         try {
-            $result['status'] = $this->getDbDriver()->getScalar('SELECT status FROM ' . $this->getMigrationTable());
+            $result['status'] = $this->getExecutor()->getScalar('SELECT status FROM ' . $this->getMigrationTable());
         } catch (Exception $ex) {
             throw new OldVersionSchemaException('This database does not have a migration version. Please use "migrate install" for update it.');
         }
@@ -101,7 +119,7 @@ abstract class AbstractDatabase implements DatabaseInterface
     #[\Override]
     public function setVersion(int $version, MigrationStatus $status): void
     {
-        $this->getDbDriver()->execute(
+        $this->getExecutor()->execute(
             'UPDATE ' . $this->getMigrationTable() . ' SET version = :version, status = :status',
             [
                 'version' => $version,
@@ -119,7 +137,7 @@ abstract class AbstractDatabase implements DatabaseInterface
         // Get the version to check if exists
         $versionInfo = $this->getVersion();
         if ($versionInfo['version'] === false) {
-            $this->getDbDriver()->execute(sprintf(
+            $this->getExecutor()->execute(sprintf(
                 "insert into %s values(0, '%s')",
                 $this->getMigrationTable(),
                 MigrationStatus::unknown->value)
@@ -133,15 +151,15 @@ abstract class AbstractDatabase implements DatabaseInterface
     #[\Override]
     public function updateVersionTable(): void
     {
-        $currentVersion = $this->getDbDriver()->getScalar(sprintf('select version from %s', $this->getMigrationTable()));
-        $this->getDbDriver()->execute(sprintf('drop table %s', $this->getMigrationTable()));
+        $currentVersion = $this->getExecutor()->getScalar(sprintf('select version from %s', $this->getMigrationTable()));
+        $this->getExecutor()->execute(sprintf('drop table %s', $this->getMigrationTable()));
         $this->createVersion();
         $this->setVersion($currentVersion, MigrationStatus::unknown);
     }
 
     protected function isTableExists(?string $schema, string $table): bool
     {
-        $count = $this->getDbDriver()->getScalar(
+        $count = $this->getExecutor()->getScalar(
             'SELECT count(*) FROM information_schema.tables ' .
             ' WHERE table_schema = :schema ' .
             '  AND table_name = :table ',

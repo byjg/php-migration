@@ -29,7 +29,7 @@ class SqliteDatabase extends AbstractDatabase
     #[\Override]
     public function dropDatabase(): void
     {
-        $iterator = $this->getDbDriver()->getIterator("
+        $iterator = $this->getExecutor()->getIterator("
             select
                 'drop ' || type || ' ' || name || ';' as command
             from sqlite_master
@@ -45,7 +45,7 @@ class SqliteDatabase extends AbstractDatabase
         $list = $iterator->toArray();
 
         foreach ($list as $row) {
-            $this->getDbDriver()->execute($row['command']);
+            $this->getExecutor()->execute($row['command']);
         }
     }
 
@@ -56,7 +56,7 @@ class SqliteDatabase extends AbstractDatabase
     #[\Override]
     public function createVersion(): void
     {
-        $this->getDbDriver()->execute('CREATE TABLE IF NOT EXISTS ' . $this->getMigrationTable() . ' (version int, status varchar(20), PRIMARY KEY (version))');
+        $this->getExecutor()->execute('CREATE TABLE IF NOT EXISTS ' . $this->getMigrationTable() . ' (version int, status varchar(20), PRIMARY KEY (version))');
         $this->checkExistsVersion();
     }
 
@@ -79,13 +79,13 @@ class SqliteDatabase extends AbstractDatabase
         if (empty(trim($sql))) {
             return;
         }
-        $this->getDbDriver()->execute($sql);
+        $this->getExecutor()->execute($sql);
     }
 
     #[\Override]
     protected function isTableExists(?string $schema, string $table): bool
     {
-        $count = $this->getDbDriver()->getScalar(
+        $count = $this->getExecutor()->getScalar(
             "SELECT count(*) FROM sqlite_master WHERE type='table' AND name=:table",
             [
                 "table" => $table

@@ -2,7 +2,7 @@
 
 namespace ByJG\DbMigration\Database;
 
-use ByJG\AnyDataset\Db\Interfaces\DbDriverInterface;
+use ByJG\AnyDataset\Db\DatabaseExecutor;
 use ByJG\AnyDataset\Db\Factory;
 use ByJG\DbMigration\Exception\DatabaseNotVersionedException;
 use ByJG\DbMigration\Exception\OldVersionSchemaException;
@@ -22,23 +22,23 @@ class PgsqlDatabase extends AbstractDatabase
     {
         $uriInstance = $uri instanceof Uri ? $uri : new Uri($uri->__toString());
         $database = static::getDatabaseName($uriInstance);
-        $dbDriver = static::getDbDriverWithoutDatabase($uri, 'postgres');
-        static::createDatabaseIfNotExists($dbDriver, $database);
+        $executor = static::getExecutorWithoutDatabase($uri, 'postgres');
+        static::createDatabaseIfNotExists($executor, $database);
     }
 
     /**
-     * @param DbDriverInterface $dbDriver
+     * @param DatabaseExecutor $executor
      * @param $database
      */
-    protected static function createDatabaseIfNotExists(DbDriverInterface $dbDriver, string $database): void
+    protected static function createDatabaseIfNotExists(DatabaseExecutor $executor, string $database): void
     {
-        $currentDbName = $dbDriver->getScalar(
+        $currentDbName = $executor->getScalar(
             "SELECT datname FROM pg_catalog.pg_database WHERE lower(datname) = lower(:dbname)",
             ['dbname' => $database]
         );
 
         if (empty($currentDbName)) {
-            $dbDriver->execute("CREATE DATABASE $database WITH encoding=\"UTF8\";");
+            $executor->execute("CREATE DATABASE $database WITH encoding=\"UTF8\";");
         }
     }
 
@@ -46,17 +46,17 @@ class PgsqlDatabase extends AbstractDatabase
     public function createDatabase(): void
     {
         $database = static::getDatabaseName($this->getDbDriver()->getUri());
-        static::createDatabaseIfNotExists($this->getDbDriver(), $database);
+        static::createDatabaseIfNotExists($this->getExecutor(), $database);
     }
 
     #[\Override]
     public function dropDatabase(): void
     {
-        $iterator = $this->getDbDriver()->getIterator(
+        $iterator = $this->getExecutor()->getIterator(
             "select 'drop table if exists \"' || tablename || '\" cascade;' command from pg_tables where schemaname = 'public';"
         );
         foreach ($iterator as $singleRow) {
-            $this->getDbDriver()->execute($singleRow->get('command'));
+            $this->getExecutor()->execute($singleRow->get('command'));
         }
     }
 
@@ -67,7 +67,7 @@ class PgsqlDatabase extends AbstractDatabase
     #[\Override]
     public function createVersion(): void
     {
-        $this->getDbDriver()->execute('CREATE TABLE IF NOT EXISTS ' . $this->getMigrationTable() . ' (version int, status varchar(20), PRIMARY KEY (version))');
+        $this->getExecutor()->execute('CREATE TABLE IF NOT EXISTS ' . $this->getMigrationTable() . ' (version int, status varchar(20), PRIMARY KEY (version))');
         $this->checkExistsVersion();
     }
 
@@ -90,7 +90,7 @@ class PgsqlDatabase extends AbstractDatabase
         if (empty(trim($sql))) {
             return;
         }
-        $this->getDbDriver()->execute($sql);
+        $this->getExecutor()->execute($sql);
     }
 
     #[\Override]
