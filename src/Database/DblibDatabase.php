@@ -27,8 +27,8 @@ class DblibDatabase extends AbstractDatabase
     {
         $uriInstance = $uri instanceof Uri ? $uri : new Uri($uri->__toString());
         $database = static::getDatabaseName($uriInstance);
-        $dbDriver = static::getDbDriverWithoutDatabase($uri);
-        $dbDriver->execute("IF NOT EXISTS(select * from sys.databases where name='$database') CREATE DATABASE $database");
+        $executor = static::getExecutorWithoutDatabase($uri);
+        $executor->execute("IF NOT EXISTS(select * from sys.databases where name='$database') CREATE DATABASE $database");
     }
 
     #[\Override]
@@ -36,8 +36,8 @@ class DblibDatabase extends AbstractDatabase
     {
         $database = static::getDatabaseName($this->getDbDriver()->getUri());
 
-        $this->getDbDriver()->execute("IF NOT EXISTS(select * from sys.databases where name='$database') CREATE DATABASE $database");
-        $this->getDbDriver()->execute("USE $database");
+        $this->getExecutor()->execute("IF NOT EXISTS(select * from sys.databases where name='$database') CREATE DATABASE $database");
+        $this->getExecutor()->execute("USE $database");
     }
 
     #[\Override]
@@ -45,13 +45,13 @@ class DblibDatabase extends AbstractDatabase
     {
         $database = static::getDatabaseName($this->getDbDriver()->getUri());
 
-        $this->getDbDriver()->execute("use master");
-        $this->getDbDriver()->execute("drop database $database");
+        $this->getExecutor()->execute("use master");
+        $this->getExecutor()->execute("drop database $database");
     }
 
     protected function createTableIfNotExists(string $database, string $createTable): void
     {
-        $this->getDbDriver()->execute("use $database");
+        $this->getExecutor()->execute("use $database");
 
         $sql = "IF (NOT EXISTS (SELECT *
                  FROM INFORMATION_SCHEMA.TABLES
@@ -61,7 +61,7 @@ class DblibDatabase extends AbstractDatabase
                 $createTable
             END";
 
-        $this->getDbDriver()->execute($sql);
+        $this->getExecutor()->execute($sql);
     }
 
     /**
@@ -97,7 +97,7 @@ class DblibDatabase extends AbstractDatabase
         if (empty(trim($sql))) {
             return;
         }
-        $this->getDbDriver()->execute($sql);
+        $this->getExecutor()->execute($sql);
     }
 
     /**
@@ -108,7 +108,7 @@ class DblibDatabase extends AbstractDatabase
     #[\Override]
     protected function isTableExists(?string $schema, string $table): bool
     {
-        $count = $this->getDbDriver()->getScalar(
+        $count = $this->getExecutor()->getScalar(
             'SELECT count(*) FROM information_schema.tables ' .
             ' WHERE table_catalog = :schema ' .
             '  AND table_name = :table ',

@@ -186,12 +186,12 @@ abstract class BaseDatabase extends TestCase
      */
     protected function assertVersion0(): void
     {
-        $version = $this->migrate->getDbDriver()->getScalar('select version from '. $this->migrationTable);
+        $version = $this->migrate->getExecutor()->getScalar('select version from '. $this->migrationTable);
         $this->assertEquals(0, $version);
-        $status = $this->migrate->getDbDriver()->getScalar('select status from '. $this->migrationTable);
+        $status = $this->migrate->getExecutor()->getScalar('select status from '. $this->migrationTable);
         $this->assertEquals(MigrationStatus::complete->value, $status);
 
-        $iterator = $this->migrate->getDbDriver()->getIterator('select * from users');
+        $iterator = $this->migrate->getExecutor()->getIterator('select * from users');
 
         $this->assertNotNull($iterator->current());
         $row = $iterator->current();
@@ -212,7 +212,7 @@ abstract class BaseDatabase extends TestCase
         $this->assertNull($iterator->current());
 
         try {
-            $this->migrate->getDbDriver()->getIterator('select * from roles');
+            $this->migrate->getExecutor()->getIterator('select * from roles');
         } catch (\PDOException $ex) {
             $this->assertTrue(true);
         }
@@ -223,12 +223,12 @@ abstract class BaseDatabase extends TestCase
      */
     protected function assertVersion1(): void
     {
-        $version = $this->migrate->getDbDriver()->getScalar('select version from '. $this->migrationTable);
+        $version = $this->migrate->getExecutor()->getScalar('select version from '. $this->migrationTable);
         $this->assertEquals(1, $version);
-        $status = $this->migrate->getDbDriver()->getScalar('select status from '. $this->migrationTable);
+        $status = $this->migrate->getExecutor()->getScalar('select status from '. $this->migrationTable);
         $this->assertEquals(MigrationStatus::complete->value, $status);
 
-        $iterator = $this->migrate->getDbDriver()->getIterator($this->getSelectUsersVersion1());
+        $iterator = $this->migrate->getExecutor()->getIterator($this->getSelectUsersVersion1());
 
         $this->assertNotNull($iterator->current());
         $row = $iterator->current();
@@ -249,7 +249,7 @@ abstract class BaseDatabase extends TestCase
         $this->assertNull($iterator->current());
 
         try {
-            $this->migrate->getDbDriver()->getIterator('select * from roles');
+            $this->migrate->getExecutor()->getIterator('select * from roles');
         } catch (\PDOException $ex) {
             $this->assertTrue(true);
         }
@@ -261,13 +261,13 @@ abstract class BaseDatabase extends TestCase
      */
     protected function assertVersion2(): void
     {
-        $version = $this->migrate->getDbDriver()->getScalar('select version from '. $this->migrationTable);
+        $version = $this->migrate->getExecutor()->getScalar('select version from '. $this->migrationTable);
         $this->assertEquals(2, $version);
-        $status = $this->migrate->getDbDriver()->getScalar('select status from '. $this->migrationTable);
+        $status = $this->migrate->getExecutor()->getScalar('select status from '. $this->migrationTable);
         $this->assertEquals(MigrationStatus::complete->value, $status);
 
         // Users
-        $iterator = $this->migrate->getDbDriver()->getIterator($this->getSelectUsersVersion1());
+        $iterator = $this->migrate->getExecutor()->getIterator($this->getSelectUsersVersion1());
 
         $this->assertNotNull($iterator->current());
         $row = $iterator->current();
@@ -288,7 +288,7 @@ abstract class BaseDatabase extends TestCase
         $this->assertNull($iterator->current());
 
         // Posts
-        $iterator = $this->migrate->getDbDriver()->getIterator('select * from posts');
+        $iterator = $this->migrate->getExecutor()->getIterator('select * from posts');
 
         $this->assertNotNull($iterator->current());
         $row = $iterator->current();
@@ -320,7 +320,7 @@ abstract class BaseDatabase extends TestCase
             $this->markTestSkipped($this->skipTest);
         }
         $this->migrate->createVersion();
-        $records = $this->migrate->getDbDriver()->getIterator("select * from " . $this->migrationTable)->toArray();
+        $records = $this->migrate->getExecutor()->getIterator("select * from " . $this->migrationTable)->toArray();
         $this->assertEquals([
             [
                 'version' => '0',
@@ -330,7 +330,7 @@ abstract class BaseDatabase extends TestCase
 
         // Check Bug (cannot create twice)
         $this->migrate->createVersion();
-        $records = $this->migrate->getDbDriver()->getIterator("select * from " . $this->migrationTable)->toArray();
+        $records = $this->migrate->getExecutor()->getIterator("select * from " . $this->migrationTable)->toArray();
         $this->assertEquals([
             [
                 'version' => '0',

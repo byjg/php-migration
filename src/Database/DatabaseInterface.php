@@ -2,6 +2,7 @@
 
 namespace ByJG\DbMigration\Database;
 
+use ByJG\AnyDataset\Db\DatabaseExecutor;
 use ByJG\AnyDataset\Db\Interfaces\DbDriverInterface;
 use ByJG\DbMigration\Exception\DatabaseNotVersionedException;
 use ByJG\DbMigration\Exception\OldVersionSchemaException;
@@ -36,6 +37,8 @@ interface DatabaseInterface
     public function isDatabaseVersioned(): bool;
 
     public function getDbDriver(): DbDriverInterface;
+
+    public function getExecutor(): DatabaseExecutor;
 
     public function getMigrationTable(): string;
 

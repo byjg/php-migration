@@ -2,6 +2,7 @@
 
 namespace ByJG\DbMigration;
 
+use ByJG\AnyDataset\Db\DatabaseExecutor;
 use ByJG\AnyDataset\Db\Interfaces\DbDriverInterface;
 use ByJG\DbMigration\Database\DatabaseInterface;
 use ByJG\DbMigration\Exception\DatabaseDoesNotRegistered;
@@ -101,6 +102,15 @@ class Migration
     public function getDbDriver(): DbDriverInterface
     {
         return $this->getDbCommand()->getDbDriver();
+    }
+
+    /**
+     * @return DatabaseExecutor
+     * @throws DatabaseDoesNotRegistered
+     */
+    public function getExecutor(): DatabaseExecutor
+    {
+        return $this->getDbCommand()->getExecutor();
     }
 
     /**

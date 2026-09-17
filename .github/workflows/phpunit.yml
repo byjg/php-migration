@@ -18,6 +18,7 @@ jobs:
     strategy:
       matrix:
         php-version:
+          - "8.6"
           - "8.5"
           - "8.4"
           - "8.3"
@@ -81,7 +82,7 @@ jobs:
       # for github/codeql-action/upload-sarif to upload SARIF results
       security-events: write
     container:
-      image: byjg/php:8.4-cli
+      image: byjg/php:8.5-cli
       options: --user root --privileged
 
     steps:
@@ -94,10 +95,15 @@ jobs:
       - name: Composer
         run: composer install
 
+      - name: Composer (psalm)
+
+        run: composer --working-dir=tools/psalm update --no-interaction
+
+
       - name: Psalm
         # Note: Ignoring error code 2, which just signals that some
         # flaws were found, not that Psalm itself failed to run.
-        run: ./vendor/bin/psalm
+        run: ./tools/psalm/vendor/bin/psalm
           --show-info=true
           --report=psalm-results.sarif || [ $? = 2 ]
 

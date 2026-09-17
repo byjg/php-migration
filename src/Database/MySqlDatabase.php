@@ -21,8 +21,8 @@ class MySqlDatabase extends AbstractDatabase
     {
         $uriInstance = $uri instanceof Uri ? $uri : new Uri($uri->__toString());
         $database = static::getDatabaseName($uriInstance);
-        $dbDriver = static::getDbDriverWithoutDatabase($uri);
-        $dbDriver->execute("CREATE SCHEMA IF NOT EXISTS `$database` DEFAULT CHARACTER SET utf8 ;");
+        $executor = static::getExecutorWithoutDatabase($uri);
+        $executor->execute("CREATE SCHEMA IF NOT EXISTS `$database` DEFAULT CHARACTER SET utf8 ;");
     }
 
     #[\Override]
@@ -30,8 +30,8 @@ class MySqlDatabase extends AbstractDatabase
     {
         $database = static::getDatabaseName($this->getDbDriver()->getUri());
 
-        $this->getDbDriver()->execute("CREATE SCHEMA IF NOT EXISTS `$database` DEFAULT CHARACTER SET utf8 ;");
-        $this->getDbDriver()->execute("USE `$database`");
+        $this->getExecutor()->execute("CREATE SCHEMA IF NOT EXISTS `$database` DEFAULT CHARACTER SET utf8 ;");
+        $this->getExecutor()->execute("USE `$database`");
     }
 
     #[\Override]
@@ -39,7 +39,7 @@ class MySqlDatabase extends AbstractDatabase
     {
         $database = static::getDatabaseName($this->getDbDriver()->getUri());
 
-        $this->getDbDriver()->execute("drop database `$database`");
+        $this->getExecutor()->execute("drop database `$database`");
     }
 
     /**
@@ -49,14 +49,14 @@ class MySqlDatabase extends AbstractDatabase
     #[\Override]
     public function createVersion(): void
     {
-        $this->getDbDriver()->execute('CREATE TABLE IF NOT EXISTS ' . $this->getMigrationTable() . ' (version int, status varchar(20), PRIMARY KEY (version))');
+        $this->getExecutor()->execute('CREATE TABLE IF NOT EXISTS ' . $this->getMigrationTable() . ' (version int, status varchar(20), PRIMARY KEY (version))');
         $this->checkExistsVersion();
     }
 
     #[\Override]
     public function executeSql(string $sql): void
     {
-        $this->getDbDriver()->execute($sql);
+        $this->getExecutor()->execute($sql);
     }
 
     #[\Override]

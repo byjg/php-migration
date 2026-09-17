@@ -81,6 +81,9 @@ public static function registerDatabase(string $class): void
 // Get database driver instance
 public function getDbDriver(): DbDriverInterface
 
+// Get database executor instance (run queries: execute, getScalar, getIterator)
+public function getExecutor(): DatabaseExecutor
+
 // Get database command instance
 public function getDbCommand(): DatabaseInterface
 ```
@@ -120,6 +123,7 @@ interface DatabaseInterface
     public function getCurrentVersion(): int;
     public function executeSql(string $sql): void;
     public function getDbDriver(): DbDriverInterface;
+    public function getExecutor(): DatabaseExecutor;
     // ... other methods
 }
 ```
