@@ -3,7 +3,7 @@
 use ByJG\DbMigration\Database\DblibDatabase;
 use ByJG\DbMigration\Migration;
 
-require __DIR__ . "/../../vendor/autoload.php";
+require __DIR__ . "/../../../vendor/autoload.php";
 
 /**
  * Make sure you have a database with the user 'migrateuser' and password 'migratepwd'

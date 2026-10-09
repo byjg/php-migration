@@ -1,9 +1,9 @@
 <?php
 
-use ByJG\DbMigration\Database\PgsqlDatabase;
+use ByJG\DbMigration\Database\MySqlDatabase;
 use ByJG\DbMigration\Migration;
 
-require __DIR__ . "/../../vendor/autoload.php";
+require __DIR__ . "/../../../vendor/autoload.php";
 
 /**
  * Make sure you have a database with the user 'migrateuser' and password 'migratepwd'
@@ -11,9 +11,9 @@ require __DIR__ . "/../../vendor/autoload.php";
  * This user need to have grant for DDL commands; 
  */
 
-$uri = new \ByJG\Util\Uri('pgsql://postgres:password@postgres-container/migratedatabase');
+$uri = new \ByJG\Util\Uri('mysql://root:password@mysql-container/migratedatabase');
 
-Migration::registerDatabase(PgsqlDatabase::class);
+Migration::registerDatabase(MySqlDatabase::class);
 
 $migration = new Migration($uri, __DIR__);
 

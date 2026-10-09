@@ -66,7 +66,7 @@ jobs:
       MSSQL_TEST_HOST: sqlserver
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Configure git safe directory
         run: git config --global --add safe.directory /__w/php-migration/php-migration
       - run: composer install
@@ -87,7 +87,7 @@ jobs:
 
     steps:
       - name: Git checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Configure git safe directory
         run: git config --global --add safe.directory /__w/php-migration/php-migration
@@ -95,15 +95,10 @@ jobs:
       - name: Composer
         run: composer install
 
-      - name: Composer (psalm)
-
-        run: composer --working-dir=tools/psalm update --no-interaction
-
-
       - name: Psalm
         # Note: Ignoring error code 2, which just signals that some
         # flaws were found, not that Psalm itself failed to run.
-        run: ./tools/psalm/vendor/bin/psalm
+        run: ./vendor/bin/psalm.phar
           --show-info=true
           --report=psalm-results.sarif || [ $? = 2 ]
 

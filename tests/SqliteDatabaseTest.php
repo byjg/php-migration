@@ -36,7 +36,7 @@ class SqliteDatabaseTest extends BaseDatabase
 
         Migration::registerDatabase(SqliteDatabase::class);
 
-        $this->migrate = new Migration($uri, __DIR__ . '/../example/sqlite', true, $this->migrationTable);
+        $this->migrate = new Migration($uri, __DIR__ . '/fixtures/sqlite', true, $this->migrationTable);
         parent::setUp();
     }
 
@@ -49,7 +49,7 @@ class SqliteDatabaseTest extends BaseDatabase
         Migration::registerDatabase(SqliteDatabase::class);
 
         $uri = new Uri("sqlite://{$this->path}");
-        $this->migrate = new Migration($uri, __DIR__ . '/../example/sqlite', true, $this->migrationTable);
+        $this->migrate = new Migration($uri, __DIR__ . '/fixtures/sqlite', true, $this->migrationTable);
 
         parent::testUpVersion1();
     }

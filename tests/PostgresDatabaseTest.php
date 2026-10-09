@@ -37,7 +37,7 @@ class PostgresDatabaseTest extends BaseDatabase
 
         Migration::registerDatabase(PgsqlDatabase::class);
 
-        $this->migrate = new Migration(new Uri($uri), __DIR__ . '/../example/postgres', true, $this->migrationTable);
+        $this->migrate = new Migration(new Uri($uri), __DIR__ . '/fixtures/postgres', true, $this->migrationTable);
         parent::setUp();
     }
 }

@@ -37,7 +37,7 @@ class SqlServerDblibDatabaseTest extends BaseDatabase
 
         Migration::registerDatabase(DblibDatabase::class);
 
-        $this->migrate = new Migration(new Uri($uri), __DIR__ . '/../example/sql_server', true, $this->migrationTable);
+        $this->migrate = new Migration(new Uri($uri), __DIR__ . '/fixtures/sql_server', true, $this->migrationTable);
         parent::setUp();
     }
 
