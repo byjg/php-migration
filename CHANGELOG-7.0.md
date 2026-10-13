@@ -46,6 +46,16 @@ $value = $migration->getExecutor()->getScalar("select ...");
 - `getDbDriver()` is still available on `Migration` and `DatabaseInterface` for connection and transaction control (`beginTransaction`, `commitTransaction`, `rollbackTransaction`)
 - Migration scripts, folder structure, CLI usage, and connection strings are unaffected
 
+### Enum cases renamed to PascalCase
+
+Enum cases follow the ByJG standard and are written in PascalCase. The backed values did not
+change, so `->value`, `from()`, `tryFrom()` and stored data are not affected; only code that
+names a case (or reads `->name`) has to be updated.
+
+| Enum | Before (6.x) | After (7.0) |
+|---|---|---|
+| `MigrationStatus` | `unknown`, `partialUp`, `partialDown`, `complete` | `Unknown`, `PartialUp`, `PartialDown`, `Complete` |
+
 ## Upgrade Path from 6.x to 7.x
 
 ### Step 1: Update composer.json

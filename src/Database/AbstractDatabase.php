@@ -140,7 +140,7 @@ abstract class AbstractDatabase implements DatabaseInterface
             $this->getExecutor()->execute(sprintf(
                 "insert into %s values(0, '%s')",
                 $this->getMigrationTable(),
-                MigrationStatus::unknown->value)
+                MigrationStatus::Unknown->value)
             );
         }
     }
@@ -154,7 +154,7 @@ abstract class AbstractDatabase implements DatabaseInterface
         $currentVersion = $this->getExecutor()->getScalar(sprintf('select version from %s', $this->getMigrationTable()));
         $this->getExecutor()->execute(sprintf('drop table %s', $this->getMigrationTable()));
         $this->createVersion();
-        $this->setVersion($currentVersion, MigrationStatus::unknown);
+        $this->setVersion($currentVersion, MigrationStatus::Unknown);
     }
 
     protected function isTableExists(?string $schema, string $table): bool

@@ -189,7 +189,7 @@ abstract class BaseDatabase extends TestCase
         $version = $this->migrate->getExecutor()->getScalar('select version from '. $this->migrationTable);
         $this->assertEquals(0, $version);
         $status = $this->migrate->getExecutor()->getScalar('select status from '. $this->migrationTable);
-        $this->assertEquals(MigrationStatus::complete->value, $status);
+        $this->assertEquals(MigrationStatus::Complete->value, $status);
 
         $iterator = $this->migrate->getExecutor()->getIterator('select * from users');
 
@@ -226,7 +226,7 @@ abstract class BaseDatabase extends TestCase
         $version = $this->migrate->getExecutor()->getScalar('select version from '. $this->migrationTable);
         $this->assertEquals(1, $version);
         $status = $this->migrate->getExecutor()->getScalar('select status from '. $this->migrationTable);
-        $this->assertEquals(MigrationStatus::complete->value, $status);
+        $this->assertEquals(MigrationStatus::Complete->value, $status);
 
         $iterator = $this->migrate->getExecutor()->getIterator($this->getSelectUsersVersion1());
 
@@ -264,7 +264,7 @@ abstract class BaseDatabase extends TestCase
         $version = $this->migrate->getExecutor()->getScalar('select version from '. $this->migrationTable);
         $this->assertEquals(2, $version);
         $status = $this->migrate->getExecutor()->getScalar('select status from '. $this->migrationTable);
-        $this->assertEquals(MigrationStatus::complete->value, $status);
+        $this->assertEquals(MigrationStatus::Complete->value, $status);
 
         // Users
         $iterator = $this->migrate->getExecutor()->getIterator($this->getSelectUsersVersion1());
@@ -324,7 +324,7 @@ abstract class BaseDatabase extends TestCase
         $this->assertEquals([
             [
                 'version' => '0',
-                'status' => MigrationStatus::unknown->value
+                'status' => MigrationStatus::Unknown->value
             ]
         ], $records);
 
@@ -334,7 +334,7 @@ abstract class BaseDatabase extends TestCase
         $this->assertEquals([
             [
                 'version' => '0',
-                'status' => MigrationStatus::unknown->value
+                'status' => MigrationStatus::Unknown->value
             ]
         ], $records);
     }
