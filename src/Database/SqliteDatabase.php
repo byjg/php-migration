@@ -31,7 +31,7 @@ class SqliteDatabase extends AbstractDatabase
     {
         $iterator = $this->getExecutor()->getIterator("
             select
-                'drop ' || type || ' ' || name || ';' as command
+                printf('drop %s \"%w\";', type, name) as command
             from sqlite_master
             where name <> 'sqlite_sequence' and name not like 'sqlite_autoindex_%'
             order by CASE type

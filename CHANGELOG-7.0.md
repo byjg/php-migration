@@ -56,6 +56,12 @@ names a case (or reads `->name`) has to be updated.
 |---|---|---|
 | `MigrationStatus` | `unknown`, `partialUp`, `partialDown`, `complete` | `Unknown`, `PartialUp`, `PartialDown`, `Complete` |
 
+## Bug Fixes
+
+- SQLite `dropDatabase()`, used by `reset`, dropped each table, index, view and trigger by its
+  bare name, so a name that is a reserved word (e.g. a table called `transaction`) failed with
+  `near "transaction": syntax error`. The names are now quoted.
+
 ## Upgrade Path from 6.x to 7.x
 
 ### Step 1: Update composer.json
