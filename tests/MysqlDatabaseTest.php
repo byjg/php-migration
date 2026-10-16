@@ -40,7 +40,7 @@ class MysqlDatabaseTest extends BaseDatabase
 
         Migration::registerDatabase(MySqlDatabase::class);
 
-        $this->migrate = new Migration(new Uri($uri), __DIR__ . '/../example/mysql', true, $this->migrationTable);
+        $this->migrate = new Migration(new Uri($uri), __DIR__ . '/fixtures/mysql', true, $this->migrationTable);
         parent::setUp();
     }
 }

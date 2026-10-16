@@ -3,7 +3,7 @@
 use ByJG\DbMigration\Database\SqliteDatabase;
 use ByJG\DbMigration\Migration;
 
-require __DIR__ . "/../../vendor/autoload.php";
+require __DIR__ . "/../../../vendor/autoload.php";
 
 $uri = new \ByJG\Util\Uri('sqlite:///tmp/teste.sqlite');
 
