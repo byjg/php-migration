@@ -58,6 +58,19 @@ names a case (or reads `->name`) has to be updated.
 
 ## Bug Fixes
 
+- SQL Server: the database name went into `CREATE DATABASE`, `USE` and `DROP DATABASE`
+  unquoted, so a name that needs quoting (`my-app`, a reserved word) was a syntax error. It is
+  now quoted as `[name]`.
+- PostgreSQL `dropDatabase()`, used by `reset`, dropped the tables only: a function, view,
+  sequence, domain or type created by a migration survived, and the next `reset` failed on its
+  `CREATE` (`function "set_updated_at" already exists`). It now drops all of them in the `public`
+  schema; objects that belong to an extension are left to it.
+
+- `PgsqlDatabase` answered only to `pgsql://`, so a `postgres://` or `postgresql://` connection,
+  schemes byjg/anydataset-db accepts, failed with `Scheme "postgres" does not found`. It now
+  answers to all three. (A connection through those schemes also needs byjg/anydataset-db with
+  its scheme alias fix.)
+
 - SQLite `dropDatabase()`, used by `reset`, dropped each table, index, view and trigger by its
   bare name, so a name that is a reserved word (e.g. a table called `transaction`) failed with
   `near "transaction": syntax error`. The names are now quoted.
