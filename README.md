@@ -26,12 +26,6 @@ A simple, framework-agnostic database migration tool that uses pure SQL commands
 
 ## Quick Start
 
-### Installation
-
-```bash
-composer require "byjg/migration"
-```
-
 ### CLI Usage
 
 The package includes a built-in CLI tool:
@@ -84,6 +78,12 @@ For connection strings and specific database setup, see our [database documentat
 - [Micro ORM](https://github.com/byjg/micro-orm)
 - [Anydataset](https://github.com/byjg/anydataset)
 - [PHP Rest Template](https://github.com/byjg/php-rest-template)
+
+## Installation
+
+```bash
+composer require "byjg/migration"
+```
 
 ## Running Tests
 

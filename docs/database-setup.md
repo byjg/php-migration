@@ -13,7 +13,7 @@ The library supports the following databases:
 | Database      | Driver               | Connection String                                 |
 |---------------|----------------------|---------------------------------------------------|
 | MySQL/MariaDB | pdo_mysql            | mysql://username:password@hostname:port/database  |
-| PostgreSQL    | pdo_pgsql            | pgsql://username:password@hostname:port/database  |
+| PostgreSQL    | pdo_pgsql            | pgsql://username:password@hostname:port/database (also `postgres://`, `postgresql://`) |
 | SQLite        | pdo_sqlite           | sqlite:///path/to/file                            |
 | SQL Server    | pdo_dblib (Linux)    | dblib://username:password@hostname:port/database  |
 | SQL Server    | pdo_sqlsrv (Windows) | sqlsrv://username:password@hostname:port/database |
@@ -56,6 +56,7 @@ MySQL does not support DDL (Data Definition Language) statements within transact
    ```
    pgsql://username:password@hostname:port/database
    ```
+   The `postgres://` and `postgresql://` schemes are accepted as well.
 
 3. Transaction Support:
    - Full DDL transaction support

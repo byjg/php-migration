@@ -38,6 +38,7 @@ $value = $migration->getExecutor()->getScalar("select ...");
 | **DatabaseInterface** | — | `getExecutor(): DatabaseExecutor` | New required method. Custom database handlers must implement it (or extend `AbstractDatabase`, which provides it) |
 | **AbstractDatabase (protected)** | `getDbDriverWithoutDatabase(): DbDriverInterface` | `getExecutorWithoutDatabase(): DatabaseExecutor` | Renamed static helper used by `prepareEnvironment()` implementations |
 | **PgsqlDatabase (protected)** | `createDatabaseIfNotExists(DbDriverInterface $dbDriver, ...)` | `createDatabaseIfNotExists(DatabaseExecutor $executor, ...)` | Signature changed for subclasses overriding this method |
+| **PgsqlDatabase::schema()** | `string` (`'pgsql'`) | `array` (`['pgsql', 'postgres', 'postgresql']`) | Return type changed; a subclass overriding it must return `array` |
 | **PHPUnit** | `^10.5\|^11.5` | `^12.5` | Dev dependency upgrade |
 
 ### Unchanged
