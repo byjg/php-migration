@@ -2,6 +2,7 @@
 
 namespace ByJG\DbMigration;
 
+use ByJG\AnyDataset\Db\DatabaseExecutor;
 use ByJG\AnyDataset\Db\Interfaces\DbDriverInterface;
 use ByJG\DbMigration\Database\DatabaseInterface;
 use ByJG\DbMigration\Exception\DatabaseDoesNotRegistered;
@@ -101,6 +102,15 @@ class Migration
     public function getDbDriver(): DbDriverInterface
     {
         return $this->getDbCommand()->getDbDriver();
+    }
+
+    /**
+     * @return DatabaseExecutor
+     * @throws DatabaseDoesNotRegistered
+     */
+    public function getExecutor(): DatabaseExecutor
+    {
+        return $this->getDbCommand()->getExecutor();
     }
 
     /**
@@ -267,7 +277,7 @@ class Migration
             $this->getDbCommand()->executeSql($fileInfo["content"]);
         }
 
-        $this->getDbCommand()->setVersion(0, MigrationStatus::complete);
+        $this->getDbCommand()->setVersion(0, MigrationStatus::Complete);
         $this->up($upVersion);
     }
 
@@ -334,7 +344,7 @@ class Migration
         $versionInfo = $this->getCurrentVersion();
         $currentVersion = intval($versionInfo['version']) + $increment;
 
-        if (in_array($versionInfo['status'], [MigrationStatus::partialUp, MigrationStatus::partialDown]) && !$force) {
+        if (in_array($versionInfo['status'], [MigrationStatus::PartialUp, MigrationStatus::PartialDown]) && !$force) {
             throw new DatabaseIsIncompleteException('Database was not fully updated. Use --force for migrate.');
         }
 
@@ -356,9 +366,9 @@ class Migration
                 if ($useTransaction) {
                     $this->getDbDriver()->beginTransaction();
                 }
-                $this->getDbCommand()->setVersion($currentVersion, $increment>0 ? MigrationStatus::partialUp : MigrationStatus::partialDown);
+                $this->getDbCommand()->setVersion($currentVersion, $increment>0 ? MigrationStatus::PartialUp : MigrationStatus::PartialDown);
                 $this->getDbCommand()->executeSql($fileInfo["content"]);
-                $this->getDbCommand()->setVersion($currentVersion, MigrationStatus::complete);
+                $this->getDbCommand()->setVersion($currentVersion, MigrationStatus::Complete);
                 if ($useTransaction) {
                     $this->getDbDriver()->commitTransaction();
                 }

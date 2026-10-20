@@ -139,7 +139,7 @@ vendor/bin/migrate update -c mysql://user:pass@localhost/mydb --version 7
 
 | Option | Description |
 |--------|-------------|
-| `--version <n>` | `-u` | Target version for migration |
+| `--version <n>` / `-u <n>` | Target version for migration |
 | `--force` | Force migration even if database is in partial state |
 | `--no-transaction` | Disable transaction support |
 | `--no-base` | Skip base.sql validation |
@@ -151,7 +151,7 @@ vendor/bin/migrate update -c mysql://user:pass@localhost/mydb --version 7
 | `-v` | Verbose output (level 1) |
 | `-vv` | More verbose output (level 2) - shows connection details |
 | `-vvv` | Very verbose output (level 3) - shows stack traces on errors |
-| `--help` | `-h` | Show help message |
+| `--help` / `-h` | Show help message |
 
 ## Connection Strings
 
@@ -162,7 +162,7 @@ The `--connection` parameter accepts database URIs in the following formats:
 mysql://username:password@hostname:port/database
 mysql://username:password@hostname/database
 
-# PostgreSQL
+# PostgreSQL (postgres:// and postgresql:// are accepted too)
 pgsql://username:password@hostname:port/database
 pgsql://username:password@hostname/database
 

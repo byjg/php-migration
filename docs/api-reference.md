@@ -69,7 +69,7 @@ public function update(?int $version = null, bool $force = false): void
 public function withTransactionEnabled(bool $enabled = true): static
 
 // Add progress callback
-public function addCallbackProgress(Closure $callback): void
+public function addCallbackProgress(callable $callable): void
 
 // Register database handler
 public static function registerDatabase(string $class): void
@@ -81,8 +81,17 @@ public static function registerDatabase(string $class): void
 // Get database driver instance
 public function getDbDriver(): DbDriverInterface
 
+// Get database executor instance (run queries: execute, getScalar, getIterator)
+public function getExecutor(): DatabaseExecutor
+
 // Get database command instance
 public function getDbCommand(): DatabaseInterface
+
+// Create the database if it does not exist (do not use in production)
+public function prepareEnvironment(): void
+
+// Name of the migration tracking table
+public function getMigrationTable(): string
 ```
 
 ### Progress Callback
@@ -91,7 +100,7 @@ The progress callback receives three parameters:
 
 ```php
 function (
-    string $action,        // Current action (reset, up, down)
+    string $action,        // Current action: 'reset' or 'migrate'
     int $currentVersion,   // Current version number
     array $fileInfo        // File information array
 )
@@ -103,8 +112,8 @@ The `$fileInfo` array contains:
     'file' => string,        // Full path to migration file
     'description' => string, // Migration description
     'exists' => bool,        // Whether file exists
-    'checksum' => string,    // SHA1 hash of file contents
-    'content' => string      // File contents
+    'checksum' => ?string,   // SHA1 hash of file contents (null if the file does not exist)
+    'content' => ?string     // File contents (null if the file does not exist)
 ]
 ```
 
@@ -115,21 +124,31 @@ Custom database handlers must implement `DatabaseInterface`:
 ```php
 interface DatabaseInterface
 {
-    public function createVersion(): void;
-    public function updateTableVersion(): void;
-    public function getCurrentVersion(): int;
+    public static function schema();                       // URI scheme(s) handled: string or string[]
+    public static function prepareEnvironment(UriInterface $uri);
+    public function createDatabase(): void;
+    public function dropDatabase(): void;
+    public function getVersion(): array;                   // ['version' => ..., 'status' => ...]
+    public function updateVersionTable(): void;
     public function executeSql(string $sql): void;
+    public function setVersion(int $version, MigrationStatus $status): void;
+    public function createVersion(): void;
+    public function isDatabaseVersioned(): bool;
     public function getDbDriver(): DbDriverInterface;
-    // ... other methods
+    public function getExecutor(): DatabaseExecutor;
+    public function getMigrationTable(): string;
+    public function supportsTransaction(): bool;
 }
 ```
 
+Extending `AbstractDatabase` provides most of them.
+
 ### Built-in Handlers
 
-- `MySqlDatabase`: MySQL/MariaDB
-- `PgsqlDatabase`: PostgreSQL
-- `SqliteDatabase`: SQLite
-- `DblibDatabase`: Microsoft SQL Server (both dblib and sqlsrv)
+- `MySqlDatabase`: MySQL/MariaDB (`mysql://`, `mariadb://`)
+- `PgsqlDatabase`: PostgreSQL (`pgsql://`, `postgres://`, `postgresql://`)
+- `SqliteDatabase`: SQLite (`sqlite://`)
+- `DblibDatabase`: Microsoft SQL Server (`dblib://`, `sqlsrv://`)
 
 ## Examples
 

@@ -21,6 +21,12 @@ class SqlServerDblibDatabaseTest extends BaseDatabase
 
     protected string $scheme = "dblib";
 
+    /**
+     * The name of the test database; SqlServerQuotedDatabaseNameTest runs the tests with one that
+     * must be quoted.
+     */
+    protected string $database = 'migratedatabase';
+
     #[\Override]
     public function setUp(): void
     {
@@ -33,11 +39,11 @@ class SqlServerDblibDatabaseTest extends BaseDatabase
             $password = 'Pa55word';
         }
 
-        $uri = $this->scheme . "://sa:{$password}@{$host}/migratedatabase";
+        $uri = $this->scheme . "://sa:{$password}@{$host}/{$this->database}";
 
         Migration::registerDatabase(DblibDatabase::class);
 
-        $this->migrate = new Migration(new Uri($uri), __DIR__ . '/../example/sql_server', true, $this->migrationTable);
+        $this->migrate = new Migration(new Uri($uri), __DIR__ . '/fixtures/sql_server', true, $this->migrationTable);
         parent::setUp();
     }
 
