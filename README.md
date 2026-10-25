@@ -1,5 +1,6 @@
 ---
 sidebar_key: migration
+sidebar_category: data-access
 tags: [php, databases, cli]
 ---
 
