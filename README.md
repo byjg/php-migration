@@ -5,7 +5,7 @@ tags: [php, databases, cli]
 
 # Database Migration
 
-A simple, framework-agnostic database migration tool that uses pure SQL commands for versioning your database.
+Version your database with plain SQL files, from any framework or none.
 
 [![Sponsor](https://img.shields.io/badge/Sponsor-%23ea4aaa?logo=githubsponsors&logoColor=white&labelColor=0d1117)](https://github.com/sponsors/byjg)
 [![Build Status](https://github.com/byjg/php-migration/actions/workflows/phpunit.yml/badge.svg?branch=master)](https://github.com/byjg/php-migration/actions/workflows/phpunit.yml)
@@ -14,6 +14,27 @@ A simple, framework-agnostic database migration tool that uses pure SQL commands
 [![GitHub source](https://img.shields.io/badge/Github-source-informational?logo=github)](https://github.com/byjg/php-migration/)
 [![GitHub license](https://img.shields.io/github/license/byjg/php-migration.svg)](https://opensource.byjg.com/license/)
 [![GitHub release](https://img.shields.io/github/release/byjg/php-migration.svg)](https://github.com/byjg/php-migration/releases/)
+
+## Why
+
+Most migration tools are part of a framework and make you write migrations in its PHP
+schema builder. The migrations then only run inside that framework, and the SQL your
+database actually executes is hidden behind it.
+
+Here the schema starts from a `base.sql`, and each migration is a numbered `.sql` file in
+`migrations/up`, with an optional script in `migrations/down` to go back:
+
+```
+base.sql
+migrations/up/00001-add-email.sql      -- @description: Add the email column
+migrations/up/00002-create-orders.sql
+```
+
+- **Plain SQL.** You write exactly what the database runs, and any tool, PHP or not, can
+  read it.
+- **Framework independent.** Use the `migrate` CLI or the library, in any project.
+- **A failed migration is not forgotten.** The database is marked *partial up* or
+  *partial down*, and further migrations refuse to run until you fix it (or `--force`).
 
 ## Key Features
 
